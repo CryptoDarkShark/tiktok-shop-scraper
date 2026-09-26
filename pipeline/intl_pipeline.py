@@ -901,7 +901,7 @@ def cmd_approve(args):
 # ---------------------------------------------------------------- sending
 
 LOG_FIELDS = ["brand", "list", "email", "date_sent", "followup1_date", "followup2_date", "replied",
-              "bounced", "unsubscribed", "domain", "subject", "message_id", "resend_ids"]
+              "bounced", "unsubscribed", "domain", "subject", "message_id", "resend_ids", "auto_reply", "stopped"]
 
 
 def read_log():
@@ -985,6 +985,8 @@ def unsubscribe_header():
 
 
 def cmd_send(args):
+    if args.go and args.date > today().isoformat():
+        sys.exit(f"batch {args.date} is scheduled for {args.date}; refusing to send it early (today is {today()})")
     batch = json.loads((DRAFTS / f"batch-{args.date}.json").read_text())
     brands = curated()
     log = read_log()
@@ -1030,7 +1032,9 @@ def cmd_followup(args):
     now = today()
     due = []
     for r in log:
-        if "yes" in (r["replied"], r["bounced"], r["unsubscribed"]) or not r["date_sent"]:
+        # Auto-replies don't count as replies; only an explicit stop (e.g. an auto-reply asking us not to
+        # write again) ends follow-ups to that address.
+        if "yes" in (r["replied"], r["bounced"], r["unsubscribed"]) or r.get("stopped") or not r["date_sent"]:
             continue
         sent = dt.date.fromisoformat(r["date_sent"])
         for n, days in enumerate(FOLLOWUP_DAYS, 1):
@@ -1073,6 +1077,10 @@ def cmd_mark(args):
         for f in ("replied", "bounced", "unsubscribed"):
             if getattr(args, f):
                 r[f] = "yes"
+        if args.auto_reply:  # recorded only; follow-ups continue
+            r["auto_reply"] = (r.get("auto_reply", "") + f" {today().isoformat()}: {args.auto_reply}").strip()
+        if args.stop:        # e.g. auto-reply asking not to send more messages
+            r["stopped"] = f"{today().isoformat()}: {args.stop}"
     write_log(log)
     print(f"updated {len(hit)} row(s)")
 
@@ -1138,6 +1146,8 @@ def main():
     m.add_argument("--replied", action="store_true")
     m.add_argument("--bounced", action="store_true")
     m.add_argument("--unsubscribed", action="store_true")
+    m.add_argument("--auto-reply", help="note an auto-reply (does NOT count as a reply)")
+    m.add_argument("--stop", help="stop follow-ups to this address, with the reason")
     t = sub.add_parser("test")
     t.add_argument("--kind", required=True, choices=["initial_A", "initial_B", "followup1", "followup2"])
     t.add_argument("--domain", help="brand to render (default: first ready brand)")

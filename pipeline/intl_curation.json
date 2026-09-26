@@ -742,7 +742,8 @@
    "creators": "beauty and skincare creators",
    "anett": true,
    "flag": "",
-   "date_found": "2026-09-26"
+   "date_found": "2026-09-26",
+   "first_name_source": ""
   },
   "nipandfab.com": {
    "brand": "Nip+Fab",
@@ -755,7 +756,7 @@
    "price": "£39.95",
    "price_eur": 46,
    "email": "enquiries@nipandfab.com",
-   "first_name": "",
+   "first_name": "Maria",
    "tts_evidence": "TikTok profile @nipandfab is a TikTok Shop seller account (ttSeller)",
    "tts_market": "",
    "tts_market_confirmed": false,
@@ -768,7 +769,8 @@
    "creators": "beauty and skincare creators",
    "anett": true,
    "flag": "",
-   "date_found": "2026-09-26"
+   "date_found": "2026-09-26",
+   "first_name_source": "https://www.nipandfab.com/pages/founder-story"
   },
   "hairsyrup.co.uk": {
    "brand": "Hair Syrup",
@@ -794,7 +796,8 @@
    "creators": "beauty and skincare creators",
    "anett": true,
    "flag": "",
-   "date_found": "2026-09-26"
+   "date_found": "2026-09-26",
+   "first_name_source": ""
   },
   "petspurest.com": {
    "brand": "Pets Purest",
@@ -820,7 +823,8 @@
    "creators": "pet and lifestyle creators",
    "anett": false,
    "flag": "",
-   "date_found": "2026-09-26"
+   "date_found": "2026-09-26",
+   "first_name_source": ""
   },
   "orelia.co.uk": {
    "brand": "Orelia",
@@ -833,7 +837,7 @@
    "price": "£42",
    "price_eur": 49,
    "email": "press@orelia.co.uk",
-   "first_name": "",
+   "first_name": "Collette",
    "tts_evidence": "TikTok profile @oreliajewellery is a TikTok Shop seller account (ttSeller)",
    "tts_market": "",
    "tts_market_confirmed": false,
@@ -847,7 +851,8 @@
    "anett": false,
    "flag": "",
    "date_found": "2026-09-26",
-   "email_source": "https://orelia.com/pages/press-bloggers"
+   "email_source": "https://orelia.com/pages/press-bloggers",
+   "first_name_source": "https://orelia.com/pages/about-us"
   },
   "barebyvogue.com": {
    "brand": "Bare by Vogue",
@@ -873,7 +878,8 @@
    "creators": "beauty and skincare creators",
    "anett": true,
    "flag": "",
-   "date_found": "2026-09-26"
+   "date_found": "2026-09-26",
+   "first_name_source": ""
   },
   "bperfectcosmetics.com": {
    "brand": "BPerfect",
@@ -886,7 +892,7 @@
    "price": "£16.95",
    "price_eur": 20,
    "email": "aff@bperfectcosmetics.com",
-   "first_name": "",
+   "first_name": "Brendan",
    "tts_evidence": "About page: 'one of the Top 3 UK brands on TikTok Shop'; TikTok profile @bperfectcosmetics is a TikTok Shop seller account (ttSeller)",
    "tts_market": "UK",
    "tts_market_confirmed": true,
@@ -900,7 +906,8 @@
    "anett": true,
    "flag": "",
    "date_found": "2026-09-26",
-   "email_source": "https://www.bperfectcosmetics.com/pages/affiliate-area"
+   "email_source": "https://www.bperfectcosmetics.com/pages/affiliate-area",
+   "first_name_source": "https://www.bperfectcosmetics.com/pages/about"
   },
   "myjoliecandle.com": {
    "brand": "My Jolie Candle",
@@ -926,7 +933,8 @@
    "creators": "home and lifestyle creators",
    "anett": true,
    "flag": "",
-   "date_found": "2026-09-26"
+   "date_found": "2026-09-26",
+   "first_name_source": ""
   },
   "nailsinc.com": {
    "brand": "Nails.INC",
@@ -939,7 +947,7 @@
    "price": "£15",
    "price_eur": 17,
    "email": "press@nailsinc.com",
-   "first_name": "",
+   "first_name": "Thea",
    "tts_evidence": "TikTok profile @nailsinclondon is a TikTok Shop seller account (ttSeller)",
    "tts_market": "",
    "tts_market_confirmed": false,
@@ -953,7 +961,8 @@
    "anett": true,
    "flag": "",
    "date_found": "2026-09-26",
-   "email_source": "https://nailsinc.com/en-us/pages/faqs"
+   "email_source": "https://nailsinc.com/en-us/pages/faqs",
+   "first_name_source": "https://nailsinc.com/en-us/pages/our-history"
   },
   "boskanails.pl": {
    "brand": "Boska Nails",
@@ -966,7 +975,7 @@
    "price": "59,99 zł",
    "price_eur": 14,
    "email": "hello@boskanails.pl",
-   "first_name": "",
+   "first_name": "Maciej",
    "tts_evidence": "TikTok profile @boskanailspl is a TikTok Shop seller account (ttSeller)",
    "tts_market": "",
    "tts_market_confirmed": false,
@@ -979,7 +988,8 @@
    "creators": "beauty and skincare creators",
    "anett": true,
    "flag": "",
-   "date_found": "2026-09-26"
+   "date_found": "2026-09-26",
+   "first_name_source": "https://pl.linkedin.com/in/maciej-kusaj"
   },
   "skinnytan.co.uk": {
    "brand": "Skin & Tan",
@@ -1005,7 +1015,8 @@
    "creators": "beauty and skincare creators",
    "anett": true,
    "flag": "",
-   "date_found": "2026-09-26"
+   "date_found": "2026-09-26",
+   "first_name_source": ""
   },
   "vieve.co.uk": {
    "brand": "Vieve",
@@ -1031,7 +1042,8 @@
    "creators": "beauty and skincare creators",
    "anett": true,
    "flag": "",
-   "date_found": "2026-09-26"
+   "date_found": "2026-09-26",
+   "first_name_source": ""
   },
   "petmunchies.co.uk": {
    "brand": "Pet Munchies",
@@ -1057,7 +1069,8 @@
    "creators": "pet and lifestyle creators",
    "anett": false,
    "flag": "",
-   "date_found": "2026-09-26"
+   "date_found": "2026-09-26",
+   "first_name_source": ""
   },
   "bybi.com": {
    "brand": "BYBI",
@@ -1083,7 +1096,8 @@
    "creators": "beauty and skincare creators",
    "anett": true,
    "flag": "",
-   "date_found": "2026-09-26"
+   "date_found": "2026-09-26",
+   "first_name_source": ""
   },
   "beautykitchen.co.uk": {
    "brand": "Beauty Kitchen",
@@ -1110,7 +1124,8 @@
    "anett": true,
    "flag": "",
    "date_found": "2026-09-26",
-   "email_source": "https://beautykitchen.co.uk/pages/contact-us"
+   "email_source": "https://beautykitchen.co.uk/pages/contact-us",
+   "first_name_source": ""
   },
   "betteryou.com": {
    "brand": "BetterYou",
@@ -1137,7 +1152,8 @@
    "anett": true,
    "flag": "",
    "date_found": "2026-09-26",
-   "email_source": "https://betteryou.com/pages/ambassadors"
+   "email_source": "https://betteryou.com/pages/ambassadors",
+   "first_name_source": ""
   },
   "upcirclebeauty.com": {
    "brand": "UpCircle",
@@ -1150,7 +1166,7 @@
    "price": "£21.99",
    "price_eur": 25,
    "email": "hello@upcirclebeauty.com",
-   "first_name": "",
+   "first_name": "Will and Anna",
    "tts_evidence": "TikTok profile @upcirclebeauty is a TikTok Shop seller account (ttSeller)",
    "tts_market": "",
    "tts_market_confirmed": false,
@@ -1163,7 +1179,8 @@
    "creators": "beauty and skincare creators",
    "anett": true,
    "flag": "",
-   "date_found": "2026-09-26"
+   "date_found": "2026-09-26",
+   "first_name_source": "https://upcirclebeauty.com/pages/our-story"
   },
   "makear.pl": {
    "brand": "Makear",
@@ -1176,7 +1193,7 @@
    "price": "~10 € (8 ml)",
    "price_eur": 10,
    "email": "info@makear.pl",
-   "first_name": "",
+   "first_name": "Robert",
    "tts_evidence": "none on site; @makear is not a TikTok Shop seller account",
    "tts_market": "",
    "tts_market_confirmed": false,
@@ -1189,7 +1206,8 @@
    "creators": "beauty and skincare creators",
    "anett": true,
    "flag": "",
-   "date_found": "2026-09-26"
+   "date_found": "2026-09-26",
+   "first_name_source": "https://pl.linkedin.com/in/robert-cieslik-58a354171"
   },
   "emmahardie.com": {
    "brand": "Emma Hardie",
@@ -1215,7 +1233,8 @@
    "creators": "beauty and skincare creators",
    "anett": true,
    "flag": "",
-   "date_found": "2026-09-26"
+   "date_found": "2026-09-26",
+   "first_name_source": ""
   }
  },
  "skip": {
