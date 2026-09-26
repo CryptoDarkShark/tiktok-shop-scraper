@@ -8,10 +8,21 @@ Applies to every email sent by any session or tool, to brands, creators or anyon
 
 Sending: Resend (RESEND_API_KEY), from viktor@outreach.joinmatchly.com, reply-to info@joinmatchly.com. Never Zoho.
 
+## Follow-ups
+Never send a follow-up to anyone who hasn't received the first email. A follow-up is a reply in the same thread
+(`Re:` subject, `In-Reply-To`/`References` = the first email's Message-ID) with the original email quoted below it,
+exactly as it was sent, so the recipient sees the full message.
+
+## Test emails
+Every test is the full first email (with its personalized opening line), sent to info@joinmatchly.com in the
+paragraph format above. Test a follow-up only when the user specifically asks for it.
+
 ## Brand outreach (this repo)
-`pipeline/intl_pipeline.py` builds both versions from one source (`render()` -> `to_html()`), and `send` / `followup`
-refuse to run until `test --kind <type>` has sent the current wording to info@joinmatchly.com (recorded in
-`pipeline/email_tests.json`; editing a template requires a new test).
+`pipeline/intl_pipeline.py` builds both versions from one source (`render()` -> `to_html()`), and `send` refuses to run
+until `test --kind initial_A|initial_B` has sent the current first-email wording to info@joinmatchly.com (recorded in
+`pipeline/email_tests.json`; editing a template requires a new test). Every email sent to a brand is saved verbatim
+in `sent/<domain>-<n>.txt`; `followup` only runs for addresses with a logged first send AND that saved copy, and
+quotes it below the reply.
 
 ## Creator email (Hungarian) — correct layout
 

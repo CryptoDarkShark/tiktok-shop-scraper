@@ -799,9 +799,13 @@ FOLLOWUPS = {
 }
 
 
-def render_followup(b, n):
+def render_followup(b, n, greeting=None):
+    """greeting: the exact 'Hi …,' line of the first email, so the thread stays consistent."""
     name = b.get("first_name") or f"{b['brand']} team"
-    return "\n\n".join([p.format(name=name, brand=b["brand"]) for p in FOLLOWUPS[n]] + [UNSUBSCRIBE])
+    paras = [p.format(name=name, brand=b["brand"]) for p in FOLLOWUPS[n]]
+    if greeting:
+        paras[0] = greeting
+    return "\n\n".join(paras + [UNSUBSCRIBE])
 
 
 def to_html(text):
@@ -926,17 +930,46 @@ def daily_cap(date):
     return min(MAX_PER_DAY, START_PER_DAY + STEP_PER_DAY * (n - 1))
 
 
-def resend_send(to, subject, text, headers, idem):
+def resend_send(to, subject, text, headers, idem, html=None):
     key = os.environ.get("RESEND_API_KEY")
     if not key:
         sys.exit("RESEND_API_KEY is not set")
     r = requests.post("https://api.resend.com/emails", timeout=30, headers={
         "Authorization": f"Bearer {key}", "Content-Type": "application/json", "Idempotency-Key": idem},
         json={"from": FROM, "to": [to], "reply_to": REPLY_TO, "subject": subject, "text": text,
-              "html": to_html(text), "headers": headers})
+              "html": html or to_html(text), "headers": headers})
     if r.status_code >= 300:
         raise RuntimeError(f"Resend {r.status_code}: {r.text[:300]}")
     return r.json().get("id", "")
+
+
+SENT = ROOT / "sent"  # exact copy of every email sent to a brand: <domain>-<n>.txt (0 = first email)
+
+
+def save_sent(domain, n, subject, to, date, msg_id, body):
+    SENT.mkdir(exist_ok=True)
+    (SENT / f"{domain}-{n}.txt").write_text(
+        f"Subject: {subject}\nTo: {to}\nDate: {date}\nMessage-ID: {msg_id}\n\n{body}\n")
+
+
+def load_sent(domain, n=0):
+    """(headers dict, body) of an email we sent, or (None, None) if there is no record of it."""
+    p = SENT / f"{domain}-{n}.txt"
+    if not p.exists():
+        return None, None
+    head, _, body = p.read_text().partition("\n\n")
+    return dict(l.split(": ", 1) for l in head.splitlines()), body.rstrip("\n")
+
+
+def quoted(original, date_iso):
+    """Plain-text and HTML quote of the original email, like a normal mail client reply."""
+    d = dt.date.fromisoformat(date_iso)
+    intro = f"On {d.strftime('%a, %-d %b %Y')}, {FROM} wrote:"
+    text = intro + "\n" + "\n".join(("> " + l) if l else ">" for l in original.splitlines())
+    inner = to_html(original).replace("<!doctype html><html><body>", "").replace("</body></html>", "")
+    html = (f"<p>{html_escape(intro)}</p><blockquote style=\"margin:0 0 0 .8ex;border-left:1px solid #ccc;"
+            f"padding-left:1ex\">{inner}</blockquote>")
+    return text, html
 
 
 TEST_TO = "info@joinmatchly.com"
@@ -1016,6 +1049,7 @@ def cmd_send(args):
         except Exception as e:
             print(f"  FAILED {b['brand']}: {e}")
             continue
+        save_sent(b["domain"], 0, subject, b["email"], now, msg_id, body)
         log.append({"brand": b["brand"], "list": b["list"], "email": b["email"], "date_sent": now,
                     "replied": "no", "bounced": "no", "unsubscribed": "no", "domain": b["domain"],
                     "subject": subject, "message_id": msg_id, "resend_ids": rid})
@@ -1042,23 +1076,36 @@ def cmd_followup(args):
             if not r[field] and (now - sent).days >= days and (n == 1 or r["followup1_date"]):
                 due.append((r, n))
                 break
-    print(f"{len(due)} follow-ups due")
-    if args.go:
-        for n in sorted({n for _, n in due}):
-            require_test(f"followup{n}")
+    # Rule: never follow up with anyone who hasn't received the first email. Requires the logged send
+    # (date, Message-ID, Resend id) AND the saved copy of that email, which is quoted below the follow-up.
+    ok = []
     for r, n in due:
+        hdr, original = load_sent(r["domain"], 0)
+        if not (r["date_sent"] and r["message_id"] and r["resend_ids"] and original
+                and hdr.get("To", "").lower() == r["email"].lower()):
+            print(f"  SKIP {r['brand']} <{r['email']}>: no record of a first email to this address")
+            continue
+        ok.append((r, n, original))
+    print(f"{len(ok)} follow-ups due")
+    for r, n, original in ok:
         b = brands.get(r["domain"]) or {"brand": r["brand"]}
-        text = render_followup(b, n)
+        greeting = original.splitlines()[0] if original.startswith("Hi ") else None
+        reply = render_followup(b, n, greeting)
+        q_text, q_html = quoted(original, r["date_sent"])
+        text = reply + "\n\n" + q_text
+        html = to_html(reply).replace("</body></html>", q_html + "</body></html>")
         if not args.go:
             print(f"  would send follow-up {n}: {r['brand']} <{r['email']}>")
             continue
         headers = {"In-Reply-To": r["message_id"], "References": r["message_id"],
                    "Message-ID": f"<{uuid.uuid4()}@outreach.joinmatchly.com>", **unsubscribe_header()}
         try:
-            rid = resend_send(r["email"], "Re: " + r["subject"], text, headers, idem=f"intl-{r['domain']}-{n}")
+            rid = resend_send(r["email"], "Re: " + r["subject"], text, headers, idem=f"intl-{r['domain']}-{n}",
+                              html=html)
         except Exception as e:
             print(f"  FAILED {r['brand']}: {e}")
             continue
+        save_sent(r["domain"], n, "Re: " + r["subject"], r["email"], now.isoformat(), headers["Message-ID"], text)
         r[f"followup{n}_date"] = now.isoformat()
         r["resend_ids"] = (r["resend_ids"] + " " + rid).strip()
         write_log(log)
@@ -1149,6 +1196,7 @@ def main():
     m.add_argument("--auto-reply", help="note an auto-reply (does NOT count as a reply)")
     m.add_argument("--stop", help="stop follow-ups to this address, with the reason")
     t = sub.add_parser("test")
+    # Tests are the full first email (with its opener). Follow-up tests only when the user asks for one.
     t.add_argument("--kind", required=True, choices=["initial_A", "initial_B", "followup1", "followup2"])
     t.add_argument("--domain", help="brand to render (default: first ready brand)")
     t.add_argument("--to", default=TEST_TO)
