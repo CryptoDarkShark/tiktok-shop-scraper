@@ -52,7 +52,23 @@ REPLY_TO = "info@joinmatchly.com"
 START_PER_DAY, STEP_PER_DAY, MAX_PER_DAY = 20, 5, 40
 FOLLOWUP_DAYS = (3, 7)
 MAX_OPENER_WORDS = 35  # template text is fixed; only the opener is length-checked
+# Rulebook section 2: who gets email, who goes to LinkedIn, who waits for ExpandNow.
+EMAIL_COUNTRIES = {"United Kingdom", "Ireland", "Spain", "France", "Italy", "Netherlands", "Belgium", "Poland"}
 LINKEDIN_ONLY = {"Germany", "Austria"}
+SKIP_COUNTRIES = {"Hungary"}  # not in this pipeline
+PRICE_RANGE_EUR = (10, 60)
+
+
+def route(b):
+    """'email', 'linkedin', 'later' or 'skip' for a curated brand."""
+    c = b.get("country", "")
+    if c in SKIP_COUNTRIES:
+        return "skip"
+    if c in LINKEDIN_ONLY:
+        return "linkedin"
+    if c in EMAIL_COUNTRIES:
+        return "email"
+    return "later"
 
 
 def today():
@@ -396,17 +412,49 @@ def bestseller_text(blob):
     return (m.group(1) + m.group(2)) if m else ""
 
 
-def tiktok_profile(handle):
-    """(is_seller, followers, bio) from a public TikTok profile; (None, None, '') if unreadable."""
+def tiktok_user(handle):
+    """Public TikTok profile as {'user': ..., 'stats': ...}, or None if unreadable."""
     try:
         r = requests.get(f"https://www.tiktok.com/{handle}", headers={"User-Agent": UA}, timeout=20)
         m = re.search(r'<script id="__UNIVERSAL_DATA_FOR_REHYDRATION__"[^>]*>(.*?)</script>', r.text, re.S)
-        info = json.loads(m.group(1))["__DEFAULT_SCOPE__"]["webapp.user-detail"]["userInfo"]
-        user = info["user"]
-        bio = (user.get("signature", "") + " " + json.dumps(user.get("bioLink", ""))).strip()
-        return bool(user.get("ttSeller")) or "shop.tiktok.com" in bio, info.get("stats", {}).get("followerCount"), bio
+        return json.loads(m.group(1))["__DEFAULT_SCOPE__"]["webapp.user-detail"]["userInfo"]
     except Exception:
+        return None
+
+
+def tiktok_profile(handle):
+    """(is_seller, followers, bio) from a public TikTok profile; (None, None, '') if unreadable."""
+    info = tiktok_user(handle)
+    if not info:
         return None, None, ""
+    user = info["user"]
+    bio = (user.get("signature", "") + " " + json.dumps(user.get("bioLink", ""))).strip()
+    return bool(user.get("ttSeller")) or "shop.tiktok.com" in bio, info.get("stats", {}).get("followerCount"), bio
+
+
+def hu_tiktok_check(handle, brand):
+    """Rulebook 3 (List A): look for signs the brand already sells to Hungarians on TikTok.
+    Probes Hungarian account variants and the main profile bio. Returns 'none found (...)' or the evidence."""
+    base = handle.lstrip("@").lower()
+    stems = {base, re.sub(r"[._](official|pl|uk|cosmetics|kosmetyki|toys|shop|store)$", "", base),
+             re.sub(r"[^a-z0-9]", "", brand.lower())}
+    probes = sorted({f"@{s}{suf}" for s in stems if s for suf in (".hu", "_hu", "hu", ".hungary", "hungary", "_hungary", ".magyarorszag")})
+    stem = re.sub(r"[^a-z0-9]", "", brand.lower())
+    for p in probes:
+        info = tiktok_user(p)
+        if not info:
+            continue
+        user, stats = info["user"], info.get("stats", {})
+        named = stem in re.sub(r"[^a-z0-9]", "", user.get("nickname", "").lower() + p.lower())
+        active = user.get("ttSeller") or stats.get("videoCount", 0) > 0
+        # Counts only if it is the brand's account and it sells or posts (an empty namesake doesn't).
+        if named and active:
+            return (f"Hungarian account {p} exists (seller={bool(user.get('ttSeller'))}, "
+                    f"videos={stats.get('videoCount')}, followers={stats.get('followerCount')})")
+    _, _, bio = tiktok_profile("@" + base)
+    if re.search(r"magyar|hungary|\.hu\b|ft\b", bio, re.I):
+        return f"main profile bio mentions Hungary: {bio[:80]}"
+    return f"none found (checked @{base} bio and {', '.join(probes)})"
 
 
 def hu_sibling(domain, brand):
@@ -582,9 +630,10 @@ def cmd_triage(args):
     print(f"{len(rows)} uncurated candidates with A/B signals -> {DATA / 'triage.xlsx'}")
 
 
-BRAND_COLUMNS = ["Brand", "Website", "Home Country", "List", "Category", "Featured Product",
-                 "Contact Email", "First Name", "TikTok Shop Evidence", "TikTok Shop Market",
-                 "Hungary Evidence", "Legal Page", "Opening Line", "Creator Type", "Flag", "Date Found"]
+BRAND_COLUMNS = ["Brand", "Website", "Home Country", "Country Confirmed On", "List", "Category",
+                 "Featured Product", "Price", "Contact Email", "First Name", "TikTok Shop Evidence",
+                 "TikTok Shop Market", "Hungarian TikTok Check", "Hungary Evidence", "Opening Line",
+                 "Creator Type", "Flag", "Date Found"]
 
 
 def curated():
@@ -593,15 +642,28 @@ def curated():
 
 
 def brand_row(b):
-    return [b["brand"], b["website"], b["country"], b["list"], b["category"], b.get("product", ""),
-            b.get("email", ""), b.get("first_name", ""), b.get("tts_evidence", ""),
-            (b.get("tts_market", "") + (f" ({b['tts_market_note']})" if b.get("tts_market_note") else "")).strip(),
-            b.get("hu_evidence", ""), b.get("legal_page", ""), b.get("opener", ""), b.get("creators", ""),
-            flag_of(b), b.get("date_found", "")]
+    market = b.get("tts_market", "") if b.get("tts_market_confirmed") else ""
+    market = f"{market} (confirmed: {b.get('tts_market_note', '')})" if market else "not confirmed"
+    return [b["brand"], b["website"], b["country"],
+            b.get("legal_page", "") if b.get("country_confirmed") else "NOT CONFIRMED",
+            b["list"], b["category"], b.get("product", ""), b.get("price", ""), b.get("email", ""),
+            b.get("first_name", ""), b.get("tts_evidence", ""), market if b["list"] == "A" else "",
+            b.get("hu_tiktok", "") if b["list"] == "A" else "", b.get("hu_evidence", ""),
+            b.get("opener", ""), b.get("creators", ""), flag_of(b), b.get("date_found", "")]
 
 
 def flag_of(b):
+    """Everything that stops a brand from being emailed under the rulebook (empty = OK to draft)."""
     flags = []
+    if not b.get("country_confirmed"):
+        flags.append("home country not confirmed on the brand's legal/imprint/terms page")
+    if b.get("list") not in ("A", "B"):
+        flags.append("fits neither list")
+    if b.get("list") == "A" and not str(b.get("hu_tiktok", "")).startswith("none"):
+        flags.append("Hungarian TikTok presence not checked" if not b.get("hu_tiktok")
+                     else f"sells to Hungarians on TikTok: {b['hu_tiktok']}")
+    if b.get("price_eur") is not None and not PRICE_RANGE_EUR[0] <= b["price_eur"] <= PRICE_RANGE_EUR[1]:
+        flags.append(f"featured product price ~{b['price_eur']} EUR outside {PRICE_RANGE_EUR[0]}-{PRICE_RANGE_EUR[1]} EUR")
     if not b.get("opener"):
         flags.append("no specific opener found on site")
     elif words(b["opener"]) >= MAX_OPENER_WORDS or len(re.findall(r"[.!?](?:\s|$)", b["opener"])) > 2:
@@ -610,8 +672,6 @@ def flag_of(b):
         flags.append("no featured product")
     if not b.get("email"):
         flags.append("no email")
-    if b["list"] == "A" and not b.get("tts_market"):
-        flags.append("TikTok Shop market unknown")
     if b.get("flag"):
         flags.append(b["flag"])
     return "; ".join(flags)
@@ -619,8 +679,11 @@ def flag_of(b):
 
 def cmd_output(args):
     brands = curated()
-    email_rows = [b for b in brands.values() if b["country"] not in LINKEDIN_ONLY]
-    li_rows = [b for b in brands.values() if b["country"] in LINKEDIN_ONLY]
+    email_rows = [b for b in brands.values() if route(b) == "email"]
+    li_rows = [b for b in brands.values() if route(b) == "linkedin"]
+    later_rows = [b for b in brands.values() if route(b) == "later"]
+    later_rows.sort(key=lambda b: (b["country"], b["brand"].lower()))
+    write_xlsx(ROOT / "later_expandnow.xlsx", BRAND_COLUMNS, [brand_row(b) for b in later_rows])
     email_rows.sort(key=lambda b: (b["list"], b["country"], b["brand"].lower()))
     write_xlsx(ROOT / "brands_intl.xlsx", BRAND_COLUMNS, [brand_row(b) for b in email_rows])
     write_xlsx(ROOT / "linkedin_only.xlsx",
@@ -635,6 +698,7 @@ def cmd_output(args):
         print(f"List {lst}: {len(n)} brands ({sum(1 for b in n if not flag_of(b))} ready, "
               f"{sum(1 for b in n if flag_of(b))} flagged)")
     print(f"linkedin_only.xlsx: {len(li_rows)} (Germany/Austria)")
+    print(f"later_expandnow.xlsx: {len(later_rows)} ({', '.join(sorted({b['country'] for b in later_rows}))})")
 
 
 # ---------------------------------------------------------------- drafts
@@ -654,9 +718,10 @@ def render(b):
     brand = b["brand"]
     if b["list"] == "A":
         subject = f"{brand} on TikTok Shop in Hungary"
-        market = b["tts_market"]
-        market = f"the {market}" if market in ("UK", "US", "Netherlands", "Czech Republic") else market  # "tts_market" is a bare name
-        noticed = (f"I noticed {brand} is already on TikTok Shop in {market}. Since this summer, TikTok Shop "
+        market = b.get("tts_market", "") if b.get("tts_market_confirmed") else ""
+        market = f"the {market}" if market in ("UK", "US", "Netherlands") else market
+        where = f" in {market}" if market else ""  # rulebook 4: country only when confirmed
+        noticed = (f"I noticed {brand} is already on TikTok Shop{where}. Since this summer, TikTok Shop "
                    f"is open to shoppers in Hungary too: people buy straight from the video they're watching, "
                    f"and every sale is trackable back to the video that drove it. {brand} isn't reaching "
                    f"Hungarian shoppers yet, and I think it would be a great fit.")
@@ -711,7 +776,7 @@ def words(text):
 
 
 def ready(b):
-    return not flag_of(b) and b["country"] not in LINKEDIN_ONLY
+    return not flag_of(b) and route(b) == "email"
 
 
 def draft_md(items, title):
@@ -719,7 +784,8 @@ def draft_md(items, title):
     for b in items:
         subject, body = render(b)
         out.append(f"## {b['brand']} ({b['domain']}) - List {b['list']}\n")
-        out.append(f"- To: {b['email']}\n- Country: {b['country']}\n- Category: {b['category']}\n"
+        out.append(f"- To: {b['email']}\n- Country: {b['country']} (confirmed on {b.get('legal_page', '')})\n"
+                   f"- Category: {b['category']}\n"
                    f"- Product: {b['product']}\n- Evidence: {b.get('opener_source', '')}\n"
                    f"- Opener words: {words(b['opener'])}\n")
         out.append(f"**Subject:** {subject}\n\n```\n{body}\n```\n")
@@ -764,12 +830,15 @@ def cmd_draft(args):
     batch = {"date": date, "items": [{"domain": b["domain"], "approved": False} for b in pick]}
     batch_path.write_text(json.dumps(batch, indent=1))
     review = [f"# Batch {date}: {len(pick)} brands (cap {daily_cap(date)})\n",
-              "Approve with: `python pipeline/intl_pipeline.py approve --date " + date + "`\n",
-              "| # | Brand | List | Country | Opening line |", "|---|---|---|---|---|"]
+              "Approve with: `python pipeline/intl_pipeline.py approve --date " + date + "` "
+              "(or `--exclude domain1,domain2` for \"OK except #n\")\n",
+              "| # | Brand | Country (confirmed on) | List | Product | Opening line | Email |",
+              "|---|---|---|---|---|---|---|"]
     for i, b in enumerate(pick, 1):
-        review.append(f"| {i} | {b['brand']} | {b['list']} | {b['country']} | {b['opener']} |")
+        review.append(f"| {i} | {b['brand']} | {b['country']} ({b.get('legal_page', '')}) | {b['list']} | "
+                      f"{b['product']} | {b['opener']} | {b['email']} |")
     (DRAFTS / f"batch-{date}.md").write_text("\n".join(review) + "\n\n" + draft_md(pick, "Full drafts"))
-    flagged = [b for b in brands.values() if flag_of(b) and b["country"] not in LINKEDIN_ONLY]
+    flagged = [b for b in brands.values() if flag_of(b) and route(b) == "email"]
     print(f"{len(pick)} drafts -> {DRAFTS / f'batch-{date}.md'} ({len(pool) - len(pick)} ready brands left, "
           f"{len(flagged)} flagged brands not drafted)")
 
@@ -839,6 +908,10 @@ def cmd_send(args):
     cap = daily_cap(now) - sum(1 for r in log if r["date_sent"] == now)
     todo = [brands[it["domain"]] for it in batch["items"] if it["approved"] and it["domain"] in brands
             and brands[it["domain"]]["email"].lower() not in sent]
+    held = [b["brand"] for b in todo if not ready(b)]  # rules re-checked at send time
+    if held:
+        print(f"held back (no longer pass the rulebook): {', '.join(held)}")
+    todo = [b for b in todo if ready(b)]
     todo = todo[:max(cap, 0)]
     print(f"{len(todo)} to send today (cap left {cap})")
     for b in todo:
