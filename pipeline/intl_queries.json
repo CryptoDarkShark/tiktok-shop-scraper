@@ -1,0 +1,78 @@
+{
+ "_note": "SerpAPI query sets for the international pipeline. 'direct' queries keep result domains as candidates. 'harvest' queries are articles/lists: the pipeline also fetches each result page and keeps the outbound shop links it finds. Each query costs 1 SerpAPI search (free plan: 250/month).",
+ "list_b_hu_imprint": {
+  "gl": "hu", "hl": "hu", "mode": "direct",
+  "queries": [
+   "site:.hu székhely \"Csehország\" webáruház",
+   "site:.hu székhely \"Csehország\" kozmetikum",
+   "site:.hu székhely \"Csehország\" ruha webshop",
+   "site:.hu székhely \"Lengyelország\" webshop",
+   "site:.hu székhely \"Lengyelország\" kozmetikum",
+   "site:.hu székhely \"Lengyelország\" ruha",
+   "site:.hu székhely \"Szlovákia\" webáruház",
+   "site:.hu székhely \"Szlovákia\" kozmetikum",
+   "site:.hu székhely \"Románia\" webshop",
+   "site:.hu székhely \"Egyesült Királyság\" webshop",
+   "site:.hu székhely \"Olaszország\" webshop",
+   "site:.hu székhely \"Hollandia\" webshop",
+   "site:.hu székhely \"Szlovénia\" webshop",
+   "site:.hu székhely \"Horvátország\" webshop",
+   "site:.hu székhely \"Litvánia\" webshop",
+   "site:.hu székhely \"Észtország\" webshop",
+   "site:.hu székhely \"Spanyolország\" webshop",
+   "site:.hu székhely \"Franciaország\" webshop",
+   "site:.hu székhely \"Dánia\" webshop",
+   "site:.hu székhely \"Svédország\" webshop",
+   "site:.hu székhely \"Bulgária\" webshop",
+   "site:.hu székhely \"Lettország\" webshop",
+   "site:.hu \"s.r.o.\" ÁSZF kozmetikum webáruház",
+   "site:.hu \"sp. z o.o.\" ÁSZF webáruház saját márka"
+  ]
+ },
+ "list_a_tiktok_shop": {
+  "gl": "pl", "hl": "pl", "mode": "harvest",
+  "queries": [
+   "polskie marki TikTok Shop sprzedaż sukces",
+   "marki kosmetyczne na TikTok Shop Polska",
+   "TikTok Shop Polska pierwsze marki lista",
+   "polska marka TikTok Shop wyniki sprzedaży"
+  ]
+ },
+ "list_a_tiktok_shop_uk": {
+  "gl": "uk", "hl": "en", "mode": "harvest",
+  "queries": [
+   "small UK brands succeeding on TikTok Shop",
+   "TikTok Shop UK success story independent brand",
+   "best independent brands to buy on TikTok Shop UK",
+   "TikTok Shop UK beauty brands small business case study"
+  ]
+ },
+ "list_a_tiktok_shop_eu": {
+  "gl": "it", "hl": "it", "mode": "harvest",
+  "queries": [
+   "brand italiani su TikTok Shop successo",
+   "marchi italiani TikTok Shop vendite"
+  ]
+ },
+ "list_a_tiktok_shop_es": {
+  "gl": "es", "hl": "es", "mode": "harvest",
+  "queries": [
+   "marcas españolas en TikTok Shop éxito",
+   "marcas pequeñas TikTok Shop España ventas"
+  ]
+ },
+ "list_a_tiktok_shop_fr": {
+  "gl": "fr", "hl": "fr", "mode": "harvest",
+  "queries": [
+   "marques françaises TikTok Shop succès",
+   "petites marques TikTok Shop France ventes"
+  ]
+ },
+ "list_a_tiktok_shop_cz": {
+  "gl": "cz", "hl": "cs", "mode": "harvest",
+  "queries": [
+   "české značky TikTok Shop",
+   "české e-shopy TikTok Shop prodej"
+  ]
+ }
+}

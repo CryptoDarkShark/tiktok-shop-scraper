@@ -1,0 +1,984 @@
+"""International brand outreach pipeline (brands registered outside Hungary).
+
+List A: already on TikTok Shop somewhere (site links to TikTok Shop / shows a badge).
+List B: already sells to Hungary (.hu site, Hungarian webshop, ships to HU), no TikTok Shop link.
+
+Stages:
+    python pipeline/intl_pipeline.py source [--set NAME]   # SerpAPI -> data/intl/candidates.json
+    python pipeline/intl_pipeline.py enrich [--domains a.com,b.pl]  # fetch sites -> data/intl/enriched.json
+    python pipeline/intl_pipeline.py triage                 # data/intl/triage.xlsx for manual curation
+    python pipeline/intl_pipeline.py output                 # curation -> brands_intl.xlsx, linkedin_only.xlsx
+    python pipeline/intl_pipeline.py draft [--date D] [--size N] [--samples]
+    python pipeline/intl_pipeline.py approve --date D [--only x.com,y.pl] [--exclude z.cz]
+    python pipeline/intl_pipeline.py send --date D --go     # approved, unsent drafts, within daily cap
+    python pipeline/intl_pipeline.py followup [--go]        # day 3 / day 7 follow-ups, same thread
+    python pipeline/intl_pipeline.py mark EMAIL --replied|--bounced|--unsubscribed
+    python pipeline/intl_pipeline.py sync                   # bounce status from Resend (needs a full-access key)
+    python pipeline/intl_pipeline.py status
+
+Manual curation lives in pipeline/intl_curation.json: every fact that ends up in an
+email (country, product, opener, first name) is checked there by a person against the
+brand's own site. Nothing is sent without `approve` + `send --go`.
+"""
+import argparse
+import csv
+import datetime as dt
+import json
+import os
+import re
+import sys
+import time
+import uuid
+from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+from urllib.parse import urljoin, urlparse
+from zoneinfo import ZoneInfo
+
+import requests
+from bs4 import BeautifulSoup
+
+ROOT = Path(__file__).resolve().parent.parent
+DATA = ROOT / "data" / "intl"
+DRAFTS = ROOT / "drafts" / "intl"
+CURATION = ROOT / "pipeline" / "intl_curation.json"
+QUERIES = ROOT / "pipeline" / "intl_queries.json"
+LOG = ROOT / "log.csv"
+TZ = ZoneInfo("Europe/Budapest")
+UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+      "(KHTML, like Gecko) Chrome/126.0 Safari/537.36")
+
+FROM = "Fazekas Viktor <viktor@outreach.joinmatchly.com>"
+REPLY_TO = "info@joinmatchly.com"
+START_PER_DAY, STEP_PER_DAY, MAX_PER_DAY = 20, 5, 40
+FOLLOWUP_DAYS = (3, 7)
+MAX_OPENER_WORDS = 35  # template text is fixed; only the opener is length-checked
+LINKEDIN_ONLY = {"Germany", "Austria"}
+
+
+def today():
+    return dt.datetime.now(TZ).date()
+
+
+# Marketplaces, retail chains, household-name brands, media and social: never targets.
+BLOCKED_DOMAINS = {
+    "amazon", "ebay", "etsy", "aliexpress", "temu", "shein", "allegro", "emag", "alza",
+    "zalando", "aboutyou", "answear", "notino", "douglas", "sephora", "rossmann", "dm",
+    "hm", "zara", "mango", "reserved", "sinsay", "ikea", "decathlon", "lidl", "aldi",
+    "tesco", "boots", "superdrug", "asos", "primark", "next", "argos", "johnlewis",
+    "marksandspencer", "lookfantastic", "cultbeauty", "facebook", "instagram", "tiktok",
+    "youtube", "linkedin", "pinterest", "reddit", "wikipedia", "google", "x", "twitter",
+    "threads", "apple", "microsoft", "shopify", "wix", "wordpress", "medium", "forbes",
+    "vogue", "elle", "glamour", "cosmopolitan", "businessinsider", "theguardian", "bbc",
+    "independent", "telegraph", "dailymail", "mirror", "thesun", "standard", "wizaz",
+    "wiadomoscikosmetyczne", "dlahandlu", "pepita", "arukereso", "argep", "vatera",
+    "jofogas", "xxxlutz", "butlers", "mediamarkt", "euronics", "kaufland", "auchan",
+    "spar", "pepco", "tchibo", "lacoste", "nike", "adidas", "puma", "loreal", "nivea",
+    "garnier", "cerave", "unilever", "pg", "samsung", "xiaomi", "huawei", "lenovo",
+    "ceneo", "heureka", "mall", "kasa", "datart", "czc", "trustpilot", "shoptet",
+    "shoprenter", "unas", "packeta", "gls-group", "dpd", "inpost", "ups", "dhl", "fedex",
+    "paypal", "stripe", "klarna", "visa", "mastercard", "gov", "europa", "abiszoo",
+    "linktr", "lnk", "beacons", "canva", "hubspot", "semrush", "statista", "similarweb",
+    "glossy", "modernretail", "retailgazette", "drapersonline", "cosmeticsbusiness",
+    "marketingweek", "thedrum", "campaignlive", "econsultancy", "ecommercenews",
+    "sellerapp", "junglescout", "helium10", "tiktokshop", "seller-uk", "pl.linkedin",
+}
+BLOCKED_SUFFIXES = (".gov", ".edu", ".gov.uk", ".gov.pl", ".gov.hu", ".ac.uk")
+
+COUNTRY_NAMES = {
+    # country -> spellings in EN / local / HU / PL / CZ / DE
+    "Poland": ["poland", "polska", "lengyelország", "polsko", "polen"],
+    "Czech Republic": ["czech republic", "czechia", "česká republika", "česko", "csehország", "tschechien", "czechy"],
+    "Slovakia": ["slovakia", "slovensko", "slovenská republika", "szlovákia", "słowacja", "slowakei"],
+    "Romania": ["romania", "românia", "románia", "rumunia", "rumänien"],
+    "United Kingdom": ["united kingdom", "england", "scotland", "wales", "egyesült királyság", "wielka brytania", "großbritannien"],
+    "Ireland": ["ireland", "írország", "irlandia"],
+    "Italy": ["italy", "italia", "olaszország", "włochy", "itálie", "italien"],
+    "Spain": ["spain", "españa", "spanyolország", "hiszpania", "španělsko", "spanien"],
+    "France": ["france", "franciaország", "francja", "francie", "frankreich"],
+    "Netherlands": ["netherlands", "nederland", "the netherlands", "hollandia", "holandia", "nizozemsko", "niederlande"],
+    "Belgium": ["belgium", "belgië", "belgique", "belgia", "belgie", "belgien"],
+    "Slovenia": ["slovenia", "slovenija", "szlovénia", "słowenia", "slowenien"],
+    "Croatia": ["croatia", "hrvatska", "horvátország", "chorwacja", "chorvatsko", "kroatien"],
+    "Lithuania": ["lithuania", "lietuva", "litvánia", "litwa", "litauen"],
+    "Latvia": ["latvia", "latvija", "lettország", "łotwa", "lettland"],
+    "Estonia": ["estonia", "eesti", "észtország", "estonsko", "estland"],
+    "Bulgaria": ["bulgaria", "българия", "bulgária", "bulharsko", "bulgarien"],
+    "Denmark": ["denmark", "danmark", "dánia", "dania", "dänemark"],
+    "Sweden": ["sweden", "sverige", "svédország", "szwecja", "schweden"],
+    "Finland": ["finland", "suomi", "finnország", "finlandia"],
+    "Portugal": ["portugal", "portugália", "portugalia"],
+    "Greece": ["greece", "ελλάδα", "görögország", "grecja"],
+    "Germany": ["germany", "deutschland", "németország", "niemcy", "německo"],
+    "Austria": ["austria", "österreich", "ausztria", "rakousko"],
+    "Switzerland": ["switzerland", "schweiz", "suisse", "svájc", "szwajcaria"],
+    "United States": ["united states", "usa", "u.s.a."],
+    "Hungary": ["hungary", "magyarország", "węgry", "maďarsko", "ungarn"],
+}
+VAT_PREFIX = {"PL": "Poland", "CZ": "Czech Republic", "SK": "Slovakia", "RO": "Romania",
+              "GB": "United Kingdom", "IE": "Ireland", "IT": "Italy", "ES": "Spain", "FR": "France",
+              "NL": "Netherlands", "BE": "Belgium", "SI": "Slovenia", "HR": "Croatia",
+              "LT": "Lithuania", "LV": "Latvia", "EE": "Estonia", "BG": "Bulgaria", "DK": "Denmark",
+              "SE": "Sweden", "FI": "Finland", "PT": "Portugal", "EL": "Greece", "DE": "Germany",
+              "ATU": "Austria", "HU": "Hungary"}
+VAT_RE = re.compile(r"\b(PL\d{10}|CZ\d{8,10}|SK\d{10}|RO\d{2,10}|GB\d{9}|IE\d{7}[A-Z]{1,2}|IT\d{11}|"
+                    r"ES[A-Z0-9]\d{7}[A-Z0-9]|FR[A-Z0-9]{2}\d{9}|NL\d{9}B\d{2}|BE0?\d{9,10}|SI\d{8}|"
+                    r"HR\d{11}|LT\d{9,12}|LV\d{11}|EE\d{9}|BG\d{9,10}|DK\d{8}|SE\d{12}|FI\d{8}|"
+                    r"PT\d{9}|EL\d{9}|DE\d{9}|ATU\d{8}|HU\d{8})\b")
+COMPANY_FORMS = [
+    (r"\bsp\.\s?z\s?o\.\s?o\.?", "Poland"), (r"\bs\.\s?r\.\s?o\.?", "Czech Republic / Slovakia"),
+    (r"\bspol\. s r\.o\.", "Czech Republic / Slovakia"), (r"\ba\.s\.", "Czech Republic / Slovakia"),
+    (r"\bs\.r\.l\.", "Romania / Italy"), (r"\bs\.l\.u?\.?\b", "Spain"), (r"\bs\.a\.s\.?\b|\bsarl\b", "France"),
+    (r"\bb\.v\.", "Netherlands"), (r"\bd\.o\.o\.", "Slovenia / Croatia"), (r"\bUAB\b", "Lithuania"),
+    (r"\bSIA\b", "Latvia"), (r"\bOÜ\b", "Estonia"), (r"\bEOOD\b|\bOOD\b", "Bulgaria"), (r"\bApS\b", "Denmark"),
+    (r"\bLtd\b|\bLimited\b", "United Kingdom / Ireland"), (r"\bGmbH\b", "Germany / Austria"),
+    (r"\bKft\.?|\bZrt\.?|\bBt\.", "Hungary"),
+]
+
+EMAIL_RE = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
+GENERIC_PREFIXES = ("info", "hello", "hi", "contact", "kontakt", "hey", "team", "office", "shop",
+                    "sales", "support", "care", "customercare", "service", "biuro", "sklep",
+                    "obchod", "ugyfelszolgalat", "mail", "orders", "help", "partners", "business")
+FOUNDER_RE = re.compile(
+    r"(?:founder|co-founder|founded by|CEO|owner|e-?commerce manager|head of e-?commerce|"
+    r"założyciel(?:ka)?|właściciel(?:ka)?|zakladatel(?:ka)?|majitel(?:ka)?|alapító|fondatrice|fondateur|"
+    r"fondatrice|fondatore|fundador(?:a)?)\s*[:,\-–]?\s*"
+    r"([A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽĄĆĘŁŃŚŹŻ][a-záčďéěíňóřšťúůýžąćęłńśźżöüőű]+)\s+([A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽĄĆĘŁŃŚŹŻ][a-záčďéěíňóřšťúůýžąćęłńśźżöüőű]+)",
+)
+LEGAL_WORDS = ["impressum", "imprint", "legal", "mentions", "note-legali", "aviso-legal", "terms",
+               "regulamin", "obchodni-podminky", "obchodne-podmienky", "vop", "aszf", "impresszum",
+               "about", "o-nas", "o-nás", "rolunk", "rólunk", "chi-siamo", "quienes-somos",
+               "contact", "kontakt", "kapcsolat", "shipping", "delivery", "dostawa", "doprava",
+               "szallitas", "szállítás", "wysylka", "wysyłka", "our-story", "company"]
+TTS_PATTERNS = [
+    re.compile(r"https?://(?:[a-z]+\.)?shop\.tiktok\.com[^\s\"'<>]*", re.I),
+    re.compile(r"https?://(?:www\.)?tiktok\.com/(?:@[\w.]+/)?shop[^\s\"'<>]*", re.I),
+    re.compile(r"https?://vt\.tiktok\.com/[^\s\"'<>]*", re.I),
+    re.compile(r"https?://(?:www\.)?tiktok\.com/view/product[^\s\"'<>]*", re.I),
+]
+TTS_TEXT = re.compile(r"tik\s?tok\s?shop", re.I)
+
+
+def cf_emails(html):
+    """Decode Cloudflare-obfuscated addresses (data-cfemail / /cdn-cgi/l/email-protection#...)."""
+    out = []
+    for hexs in re.findall(r'(?:data-cfemail="|email-protection#)([0-9a-f]{6,})', html):
+        key = int(hexs[:2], 16)
+        out.append("".join(chr(int(hexs[i:i + 2], 16) ^ key) for i in range(2, len(hexs), 2)))
+    return out
+
+
+def domain_of(url):
+    host = urlparse(url).netloc.lower().split(":")[0]
+    return host[4:] if host.startswith("www.") else host
+
+
+def is_blocked(domain):
+    if not domain or "." not in domain or domain.endswith(BLOCKED_SUFFIXES):
+        return True
+    labels = domain.split(".")
+    return any(l in BLOCKED_DOMAINS for l in labels[:-1])
+
+
+# ---------------------------------------------------------------- source
+
+def serp(query, gl, hl):
+    key = os.environ.get("SERPAPI_KEY")
+    if not key:
+        sys.exit("SERPAPI_KEY is not set")
+    r = requests.get("https://serpapi.com/search.json", params={
+        "q": query, "gl": gl, "hl": hl, "num": 20, "api_key": key}, timeout=60)
+    r.raise_for_status()
+    d = r.json()
+    if d.get("error") and "hasn't returned any results" not in d["error"]:
+        raise RuntimeError(d["error"])
+    return d.get("organic_results", [])
+
+
+def fetch(url, lang="en,hu;q=0.8"):
+    try:
+        r = requests.get(url, headers={"User-Agent": UA, "Accept-Language": lang},
+                         timeout=15, allow_redirects=True)
+        if r.status_code == 200 and "html" in r.headers.get("content-type", ""):
+            if r.encoding in (None, "ISO-8859-1"):
+                r.encoding = r.apparent_encoding
+            return r.url, r.text
+    except requests.RequestException:
+        pass
+    return None, None
+
+
+def harvest_links(url):
+    """Outbound shop-looking links from an article page."""
+    final, html = fetch(url)
+    if not html:
+        return []
+    src = domain_of(final)
+    out = []
+    for a in BeautifulSoup(html, "html.parser").find_all("a", href=True):
+        u = urljoin(final, a["href"])
+        d = domain_of(u)
+        if u.startswith("http") and d != src and not is_blocked(d) and d not in out:
+            out.append(d)
+    return out[:60]
+
+
+def load_json(path, default):
+    return json.loads(path.read_text()) if path.exists() else default
+
+
+def cmd_source(args):
+    DATA.mkdir(parents=True, exist_ok=True)
+    out = DATA / "candidates.json"
+    cands = load_json(out, {})
+    searches = cands.pop("_searches", [])
+    done = {s["query"] for s in searches}
+    sets = load_json(QUERIES, {})
+    budget = args.max_searches
+    for name, cfg in sets.items():
+        if name.startswith("_") or (args.set and name not in args.set.split(",")):
+            continue
+        for q in cfg["queries"]:
+            if q in done:
+                continue
+            if budget <= 0:
+                print("search budget reached; stopping")
+                break
+            budget -= 1
+            try:
+                results = serp(q, cfg["gl"], cfg["hl"])
+            except Exception as e:
+                print(f"search failed: {q!r}: {e}")
+                continue
+            searches.append({"query": q, "set": name, "n": len(results), "date": today().isoformat()})
+            new = 0
+            for r in results:
+                link = r.get("link", "")
+                d = domain_of(link)
+                found = [d] if not is_blocked(d) else []
+                if cfg["mode"] == "harvest":
+                    found += harvest_links(link)
+                for fd in found:
+                    if fd in cands:
+                        continue
+                    cands[fd] = {"domain": fd, "url": f"https://{fd}/", "set": name, "query": q,
+                                 "via": link if fd != d else "", "title": r.get("title", "") if fd == d else "",
+                                 "snippet": r.get("snippet", "") if fd == d else "", "source": "SerpAPI"}
+                    new += 1
+            print(f"[{name}] {q!r}: {len(results)} results, {new} new domains ({len(cands)} total)")
+            time.sleep(0.3)
+    cands["_searches"] = searches
+    out.write_text(json.dumps(cands, ensure_ascii=False, indent=1))
+    print(f"{len(searches)} searches so far, {len(cands) - 1} candidate domains -> {out}")
+
+
+# ---------------------------------------------------------------- enrich
+
+def find_links(soup, base, words, limit=8):
+    hits = []
+    for a in soup.find_all("a", href=True):
+        href = a["href"]
+        text = (a.get_text(" ", strip=True) + " " + href).lower()
+        if any(w in text for w in words):
+            u = urljoin(base, href).split("#")[0]
+            if domain_of(u) == domain_of(base) and u not in hits:
+                hits.append(u)
+    return hits[:limit]
+
+
+def pick_emails(emails, domain):
+    emails = {e.lower().strip(".") for e in emails}
+    emails = [e for e in emails if not re.search(r"\.(png|jpe?g|gif|webp|svg|js|css)$", e)
+              and not any(b in e for b in ("sentry", "example", "wixpress", "domain.com", "email.com",
+                                           "yourname", "godaddy", "@2x", "shoptet.cz", "privacy@"))]
+    root = domain.split(".")[-2] if "." in domain else domain
+
+    def score(e):
+        local, _, host = e.partition("@")
+        return (10 if root in host else 0) + (5 if local.startswith(GENERIC_PREFIXES) else 0) \
+            - (3 if any(w in local for w in ("gdpr", "rodo", "dpo", "privacy", "noreply", "no-reply")) else 0)
+    return sorted(emails, key=score, reverse=True)
+
+
+def social_handle(soup, host):
+    skip = {"p", "reel", "explore", "share", "sharer", "intent", "tr", "plugins", "stories",
+            "accounts", "about", "legal", "discover", "tag", "embed", "shop", "view", "video"}
+    for a in soup.find_all("a", href=True):
+        u = urlparse(a["href"])
+        if host in u.netloc and "shop.tiktok" not in u.netloc:
+            parts = [p for p in u.path.split("/") if p]
+            if parts and parts[0].lstrip("@").lower() not in skip:
+                return "@" + parts[0].lstrip("@")
+    return ""
+
+
+def guess_country(legal_text):
+    """Return (best guess, evidence) from imprint/legal text. Always confirmed by hand."""
+    scores, evidence = {}, []
+    for m in VAT_RE.finditer(legal_text):
+        vat = m.group(1)
+        c = VAT_PREFIX.get(vat[:3]) or VAT_PREFIX.get(vat[:2])
+        if c:
+            scores[c] = scores.get(c, 0) + 5
+            evidence.append(f"VAT {vat}")
+    low = legal_text.lower()
+    for c, names in COUNTRY_NAMES.items():
+        n = sum(len(re.findall(r"(?<![\w])" + re.escape(x) + r"(?![\w])", low)) for x in names)
+        if n:
+            scores[c] = scores.get(c, 0) + min(n, 4)
+    for rx, c in COMPANY_FORMS:
+        m = re.search(rx, legal_text)
+        if m:
+            evidence.append(f"company form '{m.group(0).strip()}' -> {c}")
+    if not scores:
+        return "", "; ".join(evidence)
+    best = max(scores, key=scores.get)
+    top = sorted(scores.items(), key=lambda x: -x[1])[:4]
+    evidence.append("mentions " + ", ".join(f"{c}:{s}" for c, s in top))
+    return best, "; ".join(evidence)
+
+
+def hu_evidence(domain, soups, htmls, blob):
+    ev = []
+    if domain.endswith(".hu"):
+        ev.append(".hu domain")
+    for s in soups[:1]:
+        h = s.find("html")
+        if h and (h.get("lang") or "").lower().startswith("hu"):
+            ev.append("site language hu")
+        for l in s.find_all("link", hreflang=True):
+            if l["hreflang"].lower().startswith("hu"):
+                ev.append(f"hreflang hu {l.get('href', '')}")
+                break
+        for a in s.find_all("a", href=True):
+            href = a["href"]
+            if re.search(r"(^|//)hu\.|/hu(/|$)|\.hu(/|$)", href) and domain_of(urljoin(f"https://{domain}/", href)) != "":
+                d = domain_of(urljoin(f"https://{domain}/", href))
+                if not is_blocked(d):
+                    ev.append(f"link to HU version {urljoin(f'https://{domain}/', href)}")
+                    break
+    low = blob.lower()
+    for kw in ("hungary", "magyarország", "węgry", "maďarsko", "ungarn", "huf"):
+        i = low.find(kw)
+        if i >= 0:
+            ev.append(f"mentions '{kw}': …{blob[max(0, i - 60): i + 60]}…")
+            break
+    return ev
+
+
+def products(soups):
+    names = []
+    for s in soups:
+        for tag in s.find_all("script", type="application/ld+json"):
+            try:
+                data = json.loads(tag.string or "")
+            except Exception:
+                continue
+            stack = data if isinstance(data, list) else [data]
+            while stack:
+                x = stack.pop()
+                if isinstance(x, dict):
+                    if x.get("@type") in ("Product", ["Product"]) and x.get("name"):
+                        names.append(str(x["name"]))
+                    stack.extend(v for v in x.values() if isinstance(v, (dict, list)))
+                elif isinstance(x, list):
+                    stack.extend(x)
+        for a in s.find_all("a", href=True):
+            if re.search(r"/(products?|produkt|produkty|p|termek|prodotto|producto|produit)/", a["href"]):
+                t = a.get_text(" ", strip=True)
+                if 4 < len(t) < 80 and t not in names:
+                    names.append(t)
+    return names[:15]
+
+
+def bestseller_text(blob):
+    m = re.search(r"(best[\s-]?sellers?|bestsellery?|most popular|nejprodávanější|najlepiej sprzedające|"
+                  r"legnépszerűbb|bestseller|más vendidos|meilleures ventes|i più venduti)(.{0,400})", blob, re.I)
+    return (m.group(1) + m.group(2)) if m else ""
+
+
+def tiktok_profile(handle):
+    """(is_seller, followers, bio) from a public TikTok profile; (None, None, '') if unreadable."""
+    try:
+        r = requests.get(f"https://www.tiktok.com/{handle}", headers={"User-Agent": UA}, timeout=20)
+        m = re.search(r'<script id="__UNIVERSAL_DATA_FOR_REHYDRATION__"[^>]*>(.*?)</script>', r.text, re.S)
+        info = json.loads(m.group(1))["__DEFAULT_SCOPE__"]["webapp.user-detail"]["userInfo"]
+        user = info["user"]
+        bio = (user.get("signature", "") + " " + json.dumps(user.get("bioLink", ""))).strip()
+        return bool(user.get("ttSeller")) or "shop.tiktok.com" in bio, info.get("stats", {}).get("followerCount"), bio
+    except Exception:
+        return None, None, ""
+
+
+def hu_sibling(domain, brand):
+    """A same-name .hu webshop (e.g. brand.pl -> brand.hu) that names the same brand."""
+    label = domain.split(".")[-2] if domain.count(".") >= 1 else domain
+    if domain.endswith(".hu"):
+        return ""
+    final, html = fetch(f"https://{label}.hu/", lang="hu")
+    if not html:
+        return ""
+    if domain_of(final) == domain:
+        return ""
+    soup = BeautifulSoup(html, "html.parser")
+    h = soup.find("html")
+    title = (soup.title.get_text(" ", strip=True) if soup.title else "").lower()
+    if brand.lower().split()[0] in title and h and (h.get("lang") or "").lower().startswith("hu"):
+        return f"Hungarian webshop {final}"
+    return ""
+
+
+def enrich_one(c):
+    domain = c["domain"]
+    final, html = fetch(c["url"])
+    if not html:
+        return {**c, "status": "unreachable"}
+    base = f"{urlparse(final).scheme}://{urlparse(final).netloc}/"
+    home = BeautifulSoup(html, "html.parser")
+    soups, htmls, texts, pages = [home], [html], [home.get_text(" ", strip=True)], [final]
+    legal_texts = []
+    for u in find_links(home, base, LEGAL_WORDS, limit=10):
+        if u in pages:
+            continue
+        f, h = fetch(u)
+        if h:
+            s = BeautifulSoup(h, "html.parser")
+            soups.append(s)
+            htmls.append(h)
+            t = s.get_text(" ", strip=True)
+            texts.append(t)
+            pages.append(f)
+            if any(w in u.lower() for w in ("impress", "imprint", "legal", "mentions", "legali", "terms",
+                                             "regulamin", "podminky", "podmienky", "vop", "aszf", "contact",
+                                             "kontakt", "kapcsolat", "company")):
+                legal_texts.append(t)
+    blob = " \n ".join(texts)
+    raw = "".join(htmls)
+    legal = " \n ".join(legal_texts) or blob
+
+    tts_links = sorted({m.group(0)[:160] for rx in TTS_PATTERNS for m in rx.finditer(raw)})
+    tts_text = []
+    for m in TTS_TEXT.finditer(blob):
+        tts_text.append(blob[max(0, m.start() - 60): m.end() + 60])
+    for img in home.find_all("img"):
+        alt = (img.get("alt", "") + " " + img.get("src", "")).lower()
+        if "tiktok" in alt and "shop" in alt:
+            tts_text.append(f"image: {alt[:120]}")
+
+    blob_n = re.sub(r"\s*(?:\[at\]|\(at\)|\[@\]|\(@\))\s*", "@", blob)
+    emails = set(EMAIL_RE.findall(blob_n)) | set(cf_emails(raw))
+    for s in soups:
+        for a in s.select("a[href^=mailto]"):
+            emails.add(a["href"][7:].split("?")[0])
+    founder = ""
+    fm = FOUNDER_RE.search(blob)
+    if fm:
+        founder = f"{fm.group(1)} {fm.group(2)} (…{blob[max(0, fm.start() - 40): fm.end() + 20]}…)"
+
+    og = home.find("meta", property="og:site_name")
+    brand = og["content"].strip() if og and og.get("content") else ""
+    if not brand or len(brand) > 40:
+        brand = domain.split(".")[0].replace("-", " ").title()
+    title = home.title.get_text(strip=True) if home.title else ""
+    desc = home.find("meta", attrs={"name": "description"})
+    country, country_ev = guess_country(legal)
+    tiktok = next((h for h in (social_handle(s, "tiktok.com") for s in soups) if h), "")
+    seller, followers, bio = tiktok_profile(tiktok) if tiktok else (None, None, "")
+    hu_ev = hu_evidence(domain, soups, htmls, blob)
+    sib = hu_sibling(domain, brand)
+    if sib:
+        hu_ev.insert(0, sib)
+    return {
+        **c, "status": "ok", "brand": brand, "website": base, "title": title,
+        "description": desc.get("content", "") if desc else "",
+        "emails": pick_emails(emails, domain), "founder_hint": founder,
+        "instagram": next((h for h in (social_handle(s, "instagram.com") for s in soups) if h), ""),
+        "tiktok": tiktok, "tiktok_seller": seller, "tiktok_followers": followers, "tiktok_bio": bio[:200],
+        "tts_links": tts_links, "tts_text": tts_text[:5],
+        "hu_evidence": hu_ev,
+        "country_guess": country, "country_evidence": country_ev,
+        "products": products(soups), "bestseller": bestseller_text(blob),
+        "home_excerpt": texts[0][:1500], "pages": pages,
+    }
+
+
+def cmd_enrich(args):
+    cands = load_json(DATA / "candidates.json", {})
+    cands.pop("_searches", None)
+    extra = args.domains.split(",") if args.domains else []
+    if args.seeds:
+        extra += [l.strip() for l in (ROOT / "pipeline" / "intl_seeds.txt").read_text().splitlines()
+                  if l.strip() and not l.startswith("#")]
+    if extra:
+        for d in extra:
+            d = domain_of("https://" + d.strip().removeprefix("https://").removeprefix("http://"))
+            cands.setdefault(d, {"domain": d, "url": f"https://{d}/", "set": "manual", "query": "",
+                                 "via": "", "title": "", "snippet": "", "source": "manual"})
+    prev = {r["domain"]: r for r in load_json(DATA / "enriched.json", [])}
+    todo = [c for d, c in cands.items() if not is_blocked(d)
+            and (d not in prev or d in extra)]
+    print(f"{len(cands)} candidates, {len(todo)} to enrich")
+    with ThreadPoolExecutor(max_workers=12) as ex:
+        for r in ex.map(enrich_one, todo):
+            prev[r["domain"]] = r
+    DATA.mkdir(parents=True, exist_ok=True)
+    (DATA / "enriched.json").write_text(json.dumps(list(prev.values()), ensure_ascii=False, indent=1))
+    (DATA / "candidates.json").write_text(json.dumps({**cands, "_searches": load_json(
+        DATA / "candidates.json", {}).get("_searches", [])}, ensure_ascii=False, indent=1))
+    ok = [r for r in prev.values() if r["status"] == "ok"]
+    print(f"reachable {len(ok)}; TikTok Shop link {sum(1 for r in ok if r['tts_links'])}; "
+          f"TikTok seller profile {sum(1 for r in ok if r.get('tiktok_seller'))}; "
+          f"HU evidence {sum(1 for r in ok if r['hu_evidence'])}; with email {sum(1 for r in ok if r['emails'])}")
+
+
+# ---------------------------------------------------------------- triage / output
+
+def auto_list(r):
+    if r.get("tts_links") or r.get("tiktok_seller"):
+        return "A"
+    if r.get("hu_evidence"):
+        return "B"
+    return ""
+
+
+def write_xlsx(path, header, rows, title="Brands"):
+    from openpyxl import Workbook
+    from openpyxl.styles import Alignment, Font
+    wb = Workbook()
+    ws = wb.active
+    ws.title = title
+    ws.append(header)
+    for c in ws[1]:
+        c.font = Font(bold=True)
+    for r in rows:
+        ws.append(r)
+    for col in ws.columns:
+        width = min(60, max(10, *(len(str(c.value or "")) for c in col)) + 2)
+        ws.column_dimensions[col[0].column_letter].width = width
+        for c in col[1:]:
+            c.alignment = Alignment(wrap_text=width >= 60, vertical="top")
+    ws.freeze_panes = "A2"
+    wb.save(path)
+
+
+def cmd_triage(args):
+    """Candidates with an automatic list guess, for manual curation."""
+    res = load_json(DATA / "enriched.json", [])
+    cur = load_json(CURATION, {"brands": {}, "skip": {}})
+    rows = []
+    for r in res:
+        if r["status"] != "ok" or r["domain"] in cur["brands"] or r["domain"] in cur["skip"]:
+            continue
+        lst = auto_list(r)
+        if not lst:
+            continue
+        rows.append([r["domain"], lst, r["brand"], r["country_guess"], r["country_evidence"][:200],
+                     " | ".join(r["tts_links"][:2]), " | ".join(r["hu_evidence"][:2])[:200],
+                     ", ".join(r["emails"][:3]), r["founder_hint"][:100], " | ".join(r["products"][:5])[:250],
+                     r["title"][:120]])
+    rows.sort(key=lambda x: (x[1], x[3]))
+    write_xlsx(DATA / "triage.xlsx", ["Domain", "Auto List", "Brand", "Country Guess", "Country Evidence",
+                                      "TikTok Shop Links", "HU Evidence", "Emails", "Founder Hint",
+                                      "Products", "Title"], rows)
+    print(f"{len(rows)} uncurated candidates with A/B signals -> {DATA / 'triage.xlsx'}")
+
+
+BRAND_COLUMNS = ["Brand", "Website", "Home Country", "List", "Category", "Featured Product",
+                 "Contact Email", "First Name", "TikTok Shop Evidence", "TikTok Shop Market",
+                 "Hungary Evidence", "Legal Page", "Opening Line", "Creator Type", "Flag", "Date Found"]
+
+
+def curated():
+    cur = load_json(CURATION, {"brands": {}, "skip": {}})
+    return {d: {"domain": d, **b} for d, b in cur["brands"].items()}
+
+
+def brand_row(b):
+    return [b["brand"], b["website"], b["country"], b["list"], b["category"], b.get("product", ""),
+            b.get("email", ""), b.get("first_name", ""), b.get("tts_evidence", ""),
+            (b.get("tts_market", "") + (f" ({b['tts_market_note']})" if b.get("tts_market_note") else "")).strip(),
+            b.get("hu_evidence", ""), b.get("legal_page", ""), b.get("opener", ""), b.get("creators", ""),
+            flag_of(b), b.get("date_found", "")]
+
+
+def flag_of(b):
+    flags = []
+    if not b.get("opener"):
+        flags.append("no specific opener found on site")
+    elif words(b["opener"]) >= MAX_OPENER_WORDS or len(re.findall(r"[.!?](?:\s|$)", b["opener"])) > 2:
+        flags.append(f"opener too long ({words(b['opener'])} words, max 2 sentences)")
+    if not b.get("product"):
+        flags.append("no featured product")
+    if not b.get("email"):
+        flags.append("no email")
+    if b["list"] == "A" and not b.get("tts_market"):
+        flags.append("TikTok Shop market unknown")
+    if b.get("flag"):
+        flags.append(b["flag"])
+    return "; ".join(flags)
+
+
+def cmd_output(args):
+    brands = curated()
+    email_rows = [b for b in brands.values() if b["country"] not in LINKEDIN_ONLY]
+    li_rows = [b for b in brands.values() if b["country"] in LINKEDIN_ONLY]
+    email_rows.sort(key=lambda b: (b["list"], b["country"], b["brand"].lower()))
+    write_xlsx(ROOT / "brands_intl.xlsx", BRAND_COLUMNS, [brand_row(b) for b in email_rows])
+    write_xlsx(ROOT / "linkedin_only.xlsx",
+               ["Brand", "Website", "Home Country", "List", "Category", "Featured Product",
+                "First Name", "LinkedIn Company Search", "Notes", "Date Found"],
+               [[b["brand"], b["website"], b["country"], b["list"], b["category"], b.get("product", ""),
+                 b.get("first_name", ""),
+                 "https://www.linkedin.com/search/results/companies/?keywords=" + requests.utils.quote(b["brand"]),
+                 b.get("flag", ""), b.get("date_found", "")] for b in li_rows])
+    for lst in "AB":
+        n = [b for b in email_rows if b["list"] == lst]
+        print(f"List {lst}: {len(n)} brands ({sum(1 for b in n if not flag_of(b))} ready, "
+              f"{sum(1 for b in n if flag_of(b))} flagged)")
+    print(f"linkedin_only.xlsx: {len(li_rows)} (Germany/Austria)")
+
+
+# ---------------------------------------------------------------- drafts
+
+ANETT_CATEGORIES = {"beauty", "lifestyle", "fitness"}
+
+
+def creator_sentence(b):
+    anett = ", including Anett (37K followers on TikTok)," if b.get("anett") else ""
+    return (f"We already have {b['creators']} ready to promote your products{anett} from 300+ vetted "
+            f"creators in our agency, where brands like GymBeam work with us. Creators are paid a "
+            f"percentage of the trackable sales, so there are no upfront creator fees.")
+
+
+def render(b):
+    name = b.get("first_name") or f"{b['brand']} team"
+    brand = b["brand"]
+    if b["list"] == "A":
+        subject = f"{brand} on TikTok Shop in Hungary"
+        market = b["tts_market"]
+        market = f"the {market}" if market in ("UK", "US", "Netherlands", "Czech Republic") else market  # "tts_market" is a bare name
+        noticed = (f"I noticed {brand} is already on TikTok Shop in {market}. Since this summer, TikTok Shop "
+                   f"is open to shoppers in Hungary too: people buy straight from the video they're watching, "
+                   f"and every sale is trackable back to the video that drove it. {brand} isn't reaching "
+                   f"Hungarian shoppers yet, and I think it would be a great fit.")
+        run = "We launch and run your whole Hungarian presence for you:"
+        question = "Which product would you launch first in Hungary? Just reply with it."
+    else:
+        subject = f"TikTok Shop for {brand} in Hungary"
+        noticed = ("You already sell to Hungary, but you're not on TikTok Shop yet. Since this summer it's open "
+                   "to Hungarian shoppers: people buy straight from the video they're watching, and every sale "
+                   "is trackable back to the video that drove it.")
+        run = "We set up and run the whole shop for you:"
+        question = "Which product would you launch first on TikTok Shop? Just reply with it."
+    body = f"""Hi {name},
+
+{b['opener']}
+
+{noticed}
+
+SEDLAK, a small eyewear brand, went from zero to millions of dollars in sales on TikTok Shop.
+
+{run} Hungarian listings, your affiliate program, creator management, videos, promotions, customer messages and weekly sales reports. You just send the products.
+
+{creator_sentence(b)}
+
+We only take on a few new brands each month so every shop gets proper attention. Within 24 hours of your reply, I'll send you a free Hungarian launch plan for {brand}: the creators I'd match and the first month of videos.
+
+{question}
+
+Fazekas Viktor
+Founder, Matchly · +36 30 690 0060
+
+If you'd rather not hear from us, just reply "unsubscribe"."""
+    return subject, body
+
+
+FOLLOWUPS = {
+    1: "Hi {name},\n\nJust bringing this back to the top of your inbox. If you tell me which {brand} product "
+       "you'd start with, I'll send the free Hungarian launch plan within 24 hours.\n\nViktor",
+    2: "Hi {name},\n\nLast note from me. If Hungary isn't a priority for {brand} right now, no problem at all. "
+       "If it is, just reply with one product and I'll take it from there.\n\nViktor",
+}
+
+
+def render_followup(b, n):
+    name = b.get("first_name") or f"{b['brand']} team"
+    return FOLLOWUPS[n].format(name=name, brand=b["brand"]) + \
+        "\n\nIf you'd rather not hear from us, just reply \"unsubscribe\"."
+
+
+def words(text):
+    return len(text.split())
+
+
+def ready(b):
+    return not flag_of(b) and b["country"] not in LINKEDIN_ONLY
+
+
+def draft_md(items, title):
+    out = [f"# {title}\n"]
+    for b in items:
+        subject, body = render(b)
+        out.append(f"## {b['brand']} ({b['domain']}) - List {b['list']}\n")
+        out.append(f"- To: {b['email']}\n- Country: {b['country']}\n- Category: {b['category']}\n"
+                   f"- Product: {b['product']}\n- Evidence: {b.get('opener_source', '')}\n"
+                   f"- Opener words: {words(b['opener'])}\n")
+        out.append(f"**Subject:** {subject}\n\n```\n{body}\n```\n")
+    return "\n".join(out)
+
+
+def logged_emails():
+    return {row["email"].lower() for row in read_log()}
+
+
+def cmd_draft(args):
+    DRAFTS.mkdir(parents=True, exist_ok=True)
+    brands = curated()
+    if args.samples:
+        md = []
+        for lst in "AB":
+            pick = [b for b in brands.values() if b["list"] == lst and ready(b)][:3]
+            md.append(draft_md(pick, f"Sample drafts - List {lst}"))
+        p = DRAFTS / "samples.md"
+        p.write_text("\n\n".join(md))
+        print(f"-> {p}")
+        return
+    date = args.date or today().isoformat()
+    batch_path = DRAFTS / f"batch-{date}.json"
+    if batch_path.exists() and not args.force:
+        sys.exit(f"{batch_path} exists; use --force to rebuild it")
+    sent = logged_emails()
+    queued = set()
+    for p in DRAFTS.glob("batch-*.json"):
+        if p != batch_path:
+            queued |= {x["domain"] for x in json.loads(p.read_text())["items"]}
+    size = args.size or daily_cap(date)
+    pool = [b for b in brands.values() if ready(b) and b["email"].lower() not in sent and b["domain"] not in queued]
+    # Alternate lists so each day mixes A and B.
+    a = [b for b in pool if b["list"] == "A"]
+    bb = [b for b in pool if b["list"] == "B"]
+    pick = []
+    while len(pick) < size and (a or bb):
+        for src in (a, bb):
+            if src and len(pick) < size:
+                pick.append(src.pop(0))
+    batch = {"date": date, "items": [{"domain": b["domain"], "approved": False} for b in pick]}
+    batch_path.write_text(json.dumps(batch, indent=1))
+    review = [f"# Batch {date}: {len(pick)} brands (cap {daily_cap(date)})\n",
+              "Approve with: `python pipeline/intl_pipeline.py approve --date " + date + "`\n",
+              "| # | Brand | List | Country | Opening line |", "|---|---|---|---|---|"]
+    for i, b in enumerate(pick, 1):
+        review.append(f"| {i} | {b['brand']} | {b['list']} | {b['country']} | {b['opener']} |")
+    (DRAFTS / f"batch-{date}.md").write_text("\n".join(review) + "\n\n" + draft_md(pick, "Full drafts"))
+    flagged = [b for b in brands.values() if flag_of(b) and b["country"] not in LINKEDIN_ONLY]
+    print(f"{len(pick)} drafts -> {DRAFTS / f'batch-{date}.md'} ({len(pool) - len(pick)} ready brands left, "
+          f"{len(flagged)} flagged brands not drafted)")
+
+
+def cmd_approve(args):
+    p = DRAFTS / f"batch-{args.date}.json"
+    batch = json.loads(p.read_text())
+    only = set(args.only.split(",")) if args.only else None
+    exclude = set(args.exclude.split(",")) if args.exclude else set()
+    for it in batch["items"]:
+        it["approved"] = (only is None or it["domain"] in only) and it["domain"] not in exclude
+    p.write_text(json.dumps(batch, indent=1))
+    print(f"approved {sum(it['approved'] for it in batch['items'])}/{len(batch['items'])} in {p.name}")
+
+
+# ---------------------------------------------------------------- sending
+
+LOG_FIELDS = ["brand", "list", "email", "date_sent", "followup1_date", "followup2_date", "replied",
+              "bounced", "unsubscribed", "domain", "subject", "message_id", "resend_ids"]
+
+
+def read_log():
+    if not LOG.exists():
+        return []
+    with LOG.open(newline="") as f:
+        return list(csv.DictReader(f))
+
+
+def write_log(rows):
+    with LOG.open("w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=LOG_FIELDS)
+        w.writeheader()
+        for r in rows:
+            w.writerow({k: r.get(k, "") for k in LOG_FIELDS})
+
+
+def daily_cap(date):
+    """20 on the first sending day, +5 each later sending day, max 40."""
+    days = sorted({r["date_sent"] for r in read_log() if r["date_sent"]})
+    n = len([d for d in days if d < date]) + 1
+    return min(MAX_PER_DAY, START_PER_DAY + STEP_PER_DAY * (n - 1))
+
+
+def resend_send(to, subject, text, headers, idem):
+    key = os.environ.get("RESEND_API_KEY")
+    if not key:
+        sys.exit("RESEND_API_KEY is not set")
+    r = requests.post("https://api.resend.com/emails", timeout=30, headers={
+        "Authorization": f"Bearer {key}", "Content-Type": "application/json", "Idempotency-Key": idem},
+        json={"from": FROM, "to": [to], "reply_to": REPLY_TO, "subject": subject, "text": text,
+              "headers": headers})
+    if r.status_code >= 300:
+        raise RuntimeError(f"Resend {r.status_code}: {r.text[:300]}")
+    return r.json().get("id", "")
+
+
+def unsubscribe_header():
+    return {"List-Unsubscribe": f"<mailto:{REPLY_TO}?subject=unsubscribe>"}
+
+
+def cmd_send(args):
+    batch = json.loads((DRAFTS / f"batch-{args.date}.json").read_text())
+    brands = curated()
+    log = read_log()
+    sent = {r["email"].lower() for r in log}
+    now = today().isoformat()
+    cap = daily_cap(now) - sum(1 for r in log if r["date_sent"] == now)
+    todo = [brands[it["domain"]] for it in batch["items"] if it["approved"] and it["domain"] in brands
+            and brands[it["domain"]]["email"].lower() not in sent]
+    todo = todo[:max(cap, 0)]
+    print(f"{len(todo)} to send today (cap left {cap})")
+    for b in todo:
+        subject, body = render(b)
+        if not args.go:
+            print(f"  would send: {b['brand']} <{b['email']}>")
+            continue
+        msg_id = f"<{uuid.uuid4()}@outreach.joinmatchly.com>"
+        try:
+            rid = resend_send(b["email"], subject, body, {"Message-ID": msg_id, **unsubscribe_header()},
+                              idem=f"intl-{b['domain']}-0")
+        except Exception as e:
+            print(f"  FAILED {b['brand']}: {e}")
+            continue
+        log.append({"brand": b["brand"], "list": b["list"], "email": b["email"], "date_sent": now,
+                    "replied": "no", "bounced": "no", "unsubscribed": "no", "domain": b["domain"],
+                    "subject": subject, "message_id": msg_id, "resend_ids": rid})
+        write_log(log)
+        print(f"  sent: {b['brand']} <{b['email']}>")
+        time.sleep(args.pause)
+    if not args.go:
+        print("dry run: add --go to send")
+
+
+def cmd_followup(args):
+    log = read_log()
+    brands = curated()
+    now = today()
+    due = []
+    for r in log:
+        if "yes" in (r["replied"], r["bounced"], r["unsubscribed"]) or not r["date_sent"]:
+            continue
+        sent = dt.date.fromisoformat(r["date_sent"])
+        for n, days in enumerate(FOLLOWUP_DAYS, 1):
+            field = f"followup{n}_date"
+            if not r[field] and (now - sent).days >= days and (n == 1 or r["followup1_date"]):
+                due.append((r, n))
+                break
+    print(f"{len(due)} follow-ups due")
+    for r, n in due:
+        b = brands.get(r["domain"]) or {"brand": r["brand"]}
+        text = render_followup(b, n)
+        if not args.go:
+            print(f"  would send follow-up {n}: {r['brand']} <{r['email']}>")
+            continue
+        headers = {"In-Reply-To": r["message_id"], "References": r["message_id"],
+                   "Message-ID": f"<{uuid.uuid4()}@outreach.joinmatchly.com>", **unsubscribe_header()}
+        try:
+            rid = resend_send(r["email"], "Re: " + r["subject"], text, headers, idem=f"intl-{r['domain']}-{n}")
+        except Exception as e:
+            print(f"  FAILED {r['brand']}: {e}")
+            continue
+        r[f"followup{n}_date"] = now.isoformat()
+        r["resend_ids"] = (r["resend_ids"] + " " + rid).strip()
+        write_log(log)
+        print(f"  sent follow-up {n}: {r['brand']}")
+        time.sleep(args.pause)
+    if not args.go:
+        print("dry run: add --go to send")
+
+
+def cmd_mark(args):
+    log = read_log()
+    hit = [r for r in log if r["email"].lower() == args.email.lower() or r["domain"] == args.email.lower()]
+    if not hit:
+        sys.exit(f"{args.email} not in log.csv")
+    for r in hit:
+        for f in ("replied", "bounced", "unsubscribed"):
+            if getattr(args, f):
+                r[f] = "yes"
+    write_log(log)
+    print(f"updated {len(hit)} row(s)")
+
+
+def cmd_sync(args):
+    """Mark bounces from Resend's email status. Needs a key with read access (RESEND_READ_KEY)."""
+    key = os.environ.get("RESEND_READ_KEY") or os.environ.get("RESEND_API_KEY")
+    log = read_log()
+    changed = 0
+    for r in log:
+        if r["bounced"] == "yes":
+            continue
+        for rid in r["resend_ids"].split():
+            resp = requests.get(f"https://api.resend.com/emails/{rid}", timeout=30,
+                                headers={"Authorization": f"Bearer {key}"})
+            if resp.status_code == 401:
+                sys.exit("This Resend key can only send. Set RESEND_READ_KEY (full access) to sync bounces, "
+                         "or mark them with: mark EMAIL --bounced")
+            if resp.ok and resp.json().get("last_event") in ("bounced", "complained"):
+                r["bounced"] = "yes"
+                changed += 1
+    write_log(log)
+    print(f"{changed} new bounces marked")
+
+
+def cmd_status(args):
+    log = read_log()
+    now = today().isoformat()
+    print(f"sent total {len(log)}, today {sum(1 for r in log if r['date_sent'] == now)}, cap today {daily_cap(now)}")
+    for f in ("replied", "bounced", "unsubscribed"):
+        print(f"{f}: {sum(1 for r in log if r[f] == 'yes')}")
+
+
+def main():
+    p = argparse.ArgumentParser()
+    sub = p.add_subparsers(dest="cmd", required=True)
+    s = sub.add_parser("source")
+    s.add_argument("--set", help="comma-separated query set names from intl_queries.json")
+    s.add_argument("--max-searches", type=int, default=60)
+    e = sub.add_parser("enrich")
+    e.add_argument("--domains", help="comma-separated domains to (re)enrich, e.g. hand-added brands")
+    e.add_argument("--seeds", action="store_true", help="also enrich pipeline/intl_seeds.txt")
+    sub.add_parser("triage")
+    sub.add_parser("output")
+    d = sub.add_parser("draft")
+    d.add_argument("--date")
+    d.add_argument("--size", type=int)
+    d.add_argument("--samples", action="store_true")
+    d.add_argument("--force", action="store_true")
+    a = sub.add_parser("approve")
+    a.add_argument("--date", required=True)
+    a.add_argument("--only")
+    a.add_argument("--exclude")
+    se = sub.add_parser("send")
+    se.add_argument("--date", required=True)
+    se.add_argument("--go", action="store_true")
+    se.add_argument("--pause", type=float, default=45, help="seconds between emails")
+    f = sub.add_parser("followup")
+    f.add_argument("--go", action="store_true")
+    f.add_argument("--pause", type=float, default=30)
+    m = sub.add_parser("mark")
+    m.add_argument("email", help="email or domain")
+    m.add_argument("--replied", action="store_true")
+    m.add_argument("--bounced", action="store_true")
+    m.add_argument("--unsubscribed", action="store_true")
+    sub.add_parser("sync")
+    sub.add_parser("status")
+    args = p.parse_args()
+    globals()["cmd_" + args.cmd](args)
+
+
+if __name__ == "__main__":
+    main()
