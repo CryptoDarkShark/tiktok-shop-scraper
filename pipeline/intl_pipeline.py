@@ -735,13 +735,19 @@ ANETT_CATEGORIES = {"beauty", "lifestyle", "fitness"}
 
 
 def creator_sentence(b):
-    anett = ", including Anett (37K followers on TikTok)," if b.get("anett") else ""
-    return (f"We already have {b['creators']} ready to promote your products{anett} from 300+ vetted "
-            f"creators in our agency, where brands like GymBeam work with us. Creators are paid a "
-            f"percentage of the trackable sales, so there are no upfront creator fees.")
+    anett = ", including Anett, who has 37K followers on TikTok" if b.get("anett") else ""
+    return (f"We already have {b['creators']} ready to promote your products{anett}. They're among the 300+ "
+            f"vetted creators in our agency, and brands like GymBeam already work with us. Creators are paid "
+            f"a percentage of the sales they drive, so there are no upfront creator fees.")
+
+
+SIGNATURE = "Fazekas Viktor\nFounder, Matchly\n+36 30 690 0060"
+UNSUBSCRIBE = 'If you\'d rather not hear from us, just reply "unsubscribe".'
 
 
 def render(b):
+    """(subject, text). Paragraphs are separated by a blank line; lines inside one paragraph
+    (the signature) by a single newline. to_html() turns each paragraph into its own <p>."""
     name = b.get("first_name") or f"{b['brand']} team"
     brand = b["brand"]
     if b["list"] == "A":
@@ -749,54 +755,64 @@ def render(b):
         market = b.get("tts_market", "") if b.get("tts_market_confirmed") else ""
         market = f"the {market}" if market in ("UK", "US", "Netherlands") else market
         where = f" in {market}" if market else ""  # rulebook 4: country only when confirmed
-        noticed = (f"I noticed {brand} is already on TikTok Shop{where}. Since this summer, TikTok Shop "
-                   f"is open to shoppers in Hungary too: people buy straight from the video they're watching, "
-                   f"and every sale is trackable back to the video that drove it. {brand} isn't reaching "
-                   f"Hungarian shoppers yet, and I think it would be a great fit.")
+        noticed = (f"I noticed {brand} is already on TikTok Shop{where}. Since this summer, shoppers in Hungary "
+                   f"can use TikTok Shop too. People buy straight from the video they're watching, and every sale "
+                   f"can be traced back to the video that drove it. {brand} isn't reaching Hungarian shoppers yet, "
+                   f"and I think it would be a great fit.")
         run = "We launch and run your whole Hungarian presence for you:"
-        question = "Which product would you launch first in Hungary? Just reply with it."
+        question = "Which product would you launch first in Hungary? Just reply with its name."
     else:
         subject = f"TikTok Shop for {brand} in Hungary"
-        noticed = ("You already sell to Hungary, but you're not on TikTok Shop yet. Since this summer it's open "
-                   "to Hungarian shoppers: people buy straight from the video they're watching, and every sale "
-                   "is trackable back to the video that drove it.")
+        noticed = ("You already sell to Hungary, but you're not on TikTok Shop yet. Since this summer, it's open to "
+                   "Hungarian shoppers. People buy straight from the video they're watching, and every sale can be "
+                   "traced back to the video that drove it.")
         run = "We set up and run the whole shop for you:"
-        question = "Which product would you launch first on TikTok Shop? Just reply with it."
-    body = f"""Hi {name},
-
-{b['opener']}
-
-{noticed}
-
-SEDLAK, a small eyewear brand, went from zero to millions of dollars in sales on TikTok Shop.
-
-{run} Hungarian listings, your affiliate program, creator management, videos, promotions, customer messages and weekly sales reports. You just send the products.
-
-{creator_sentence(b)}
-
-We only take on a few new brands each month so every shop gets proper attention. Within 24 hours of your reply, I'll send you a free Hungarian launch plan for {brand}: the creators I'd match and the first month of videos.
-
-{question}
-
-Fazekas Viktor
-Founder, Matchly · +36 30 690 0060
-
-If you'd rather not hear from us, just reply "unsubscribe"."""
-    return subject, body
+        question = "Which product would you launch first on TikTok Shop? Just reply with its name."
+    paragraphs = [
+        f"Hi {name},",
+        b["opener"],
+        noticed,
+        "SEDLAK, a small eyewear brand, went from zero to millions of dollars in sales on TikTok Shop.",
+        f"{run} Hungarian listings, your affiliate program, creator management, videos, promotions, customer "
+        f"messages and weekly sales reports. You just send the products.",
+        creator_sentence(b),
+        f"We only take on a few new brands each month, so every shop gets proper attention. If you reply, I'll "
+        f"send you a free Hungarian launch plan for {brand} within 24 hours: the creators I'd match and the first "
+        f"month of videos.",
+        question,
+        SIGNATURE,
+        UNSUBSCRIBE,
+    ]
+    return subject, "\n\n".join(paragraphs)
 
 
 FOLLOWUPS = {
-    1: "Hi {name},\n\nJust bringing this back to the top of your inbox. If you tell me which {brand} product "
-       "you'd start with, I'll send the free Hungarian launch plan within 24 hours.\n\nViktor",
-    2: "Hi {name},\n\nLast note from me. If Hungary isn't a priority for {brand} right now, no problem at all. "
-       "If it is, just reply with one product and I'll take it from there.\n\nViktor",
+    1: ["Hi {name},",
+        "Just bringing this back to the top of your inbox.",
+        "If you tell me which {brand} product you'd start with, I'll send you the free Hungarian launch plan "
+        "within 24 hours.",
+        "Viktor"],
+    2: ["Hi {name},",
+        "Last note from me. If Hungary isn't a priority for {brand} right now, no problem at all.",
+        "If it is, just reply with one product and I'll take it from there.",
+        "Viktor"],
 }
 
 
 def render_followup(b, n):
     name = b.get("first_name") or f"{b['brand']} team"
-    return FOLLOWUPS[n].format(name=name, brand=b["brand"]) + \
-        "\n\nIf you'd rather not hear from us, just reply \"unsubscribe\"."
+    return "\n\n".join([p.format(name=name, brand=b["brand"]) for p in FOLLOWUPS[n]] + [UNSUBSCRIBE])
+
+
+def to_html(text):
+    """Every email goes out as HTML + plain text: one <p> per paragraph, <br> between signature lines."""
+    paras = [p for p in text.split("\n\n") if p.strip()]
+    body = "".join(f"<p>{'<br>'.join(html_escape(l) for l in p.splitlines())}</p>" for p in paras)
+    return f"<!doctype html><html><body>{body}</body></html>"
+
+
+def html_escape(s):
+    return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
 
 
 def words(text):
@@ -917,10 +933,51 @@ def resend_send(to, subject, text, headers, idem):
     r = requests.post("https://api.resend.com/emails", timeout=30, headers={
         "Authorization": f"Bearer {key}", "Content-Type": "application/json", "Idempotency-Key": idem},
         json={"from": FROM, "to": [to], "reply_to": REPLY_TO, "subject": subject, "text": text,
-              "headers": headers})
+              "html": to_html(text), "headers": headers})
     if r.status_code >= 300:
         raise RuntimeError(f"Resend {r.status_code}: {r.text[:300]}")
     return r.json().get("id", "")
+
+
+TEST_TO = "info@joinmatchly.com"
+TESTS = ROOT / "pipeline" / "email_tests.json"
+_DUMMY = {"brand": "Brand", "list": "A", "opener": "Opener.", "creators": "creators", "anett": True,
+          "tts_market": "UK", "tts_market_confirmed": True}
+
+
+def template_hash(kind):
+    """Fingerprint of an email type's current wording/layout (initial_A, initial_B, followup1, followup2)."""
+    import hashlib
+    if kind.startswith("initial"):
+        text = render({**_DUMMY, "list": kind[-1]})[1]
+    else:
+        text = render_followup(_DUMMY, int(kind[-1]))
+    return hashlib.sha1(to_html(text).encode()).hexdigest()[:12]
+
+
+def require_test(kind):
+    """Rule: before any new type of email goes out, one test must have gone to info@joinmatchly.com."""
+    done = load_json(TESTS, {})
+    if done.get(kind, {}).get("hash") != template_hash(kind):
+        sys.exit(f"No test sent for the current '{kind}' email. Run: test --kind {kind} (sends to {TEST_TO})")
+
+
+def cmd_test(args):
+    brands = curated()
+    b = brands[args.domain] if args.domain else next(x for x in brands.values() if ready(x) and x["list"] == (
+        args.kind[-1] if args.kind.startswith("initial") else "A"))
+    if args.kind.startswith("initial"):
+        b = {**b, "list": args.kind[-1]}
+        subject, text = render(b)
+    else:
+        subject, text = "Re: " + render(b)[0], render_followup(b, int(args.kind[-1]))
+    rid = resend_send(args.to, f"[TEST] {subject}", text, unsubscribe_header(),
+                      idem=f"test-{args.kind}-{template_hash(args.kind)}-{b['domain']}-{args.to}")
+    done = load_json(TESTS, {})
+    done[args.kind] = {"hash": template_hash(args.kind), "sent_to": args.to, "brand": b["brand"],
+                       "date": dt.datetime.now(TZ).isoformat(timespec="minutes"), "resend_id": rid}
+    TESTS.write_text(json.dumps(done, indent=1))
+    print(f"test '{args.kind}' ({b['brand']}) sent to {args.to}")
 
 
 def unsubscribe_header():
@@ -941,6 +998,9 @@ def cmd_send(args):
         print(f"held back (no longer pass the rulebook): {', '.join(held)}")
     todo = [b for b in todo if ready(b)]
     todo = todo[:max(cap, 0)]
+    if args.go:
+        for kind in sorted({f"initial_{b['list']}" for b in todo}):
+            require_test(kind)
     print(f"{len(todo)} to send today (cap left {cap})")
     for b in todo:
         subject, body = render(b)
@@ -979,6 +1039,9 @@ def cmd_followup(args):
                 due.append((r, n))
                 break
     print(f"{len(due)} follow-ups due")
+    if args.go:
+        for n in sorted({n for _, n in due}):
+            require_test(f"followup{n}")
     for r, n in due:
         b = brands.get(r["domain"]) or {"brand": r["brand"]}
         text = render_followup(b, n)
@@ -1075,6 +1138,10 @@ def main():
     m.add_argument("--replied", action="store_true")
     m.add_argument("--bounced", action="store_true")
     m.add_argument("--unsubscribed", action="store_true")
+    t = sub.add_parser("test")
+    t.add_argument("--kind", required=True, choices=["initial_A", "initial_B", "followup1", "followup2"])
+    t.add_argument("--domain", help="brand to render (default: first ready brand)")
+    t.add_argument("--to", default=TEST_TO)
     sub.add_parser("sync")
     sub.add_parser("status")
     args = p.parse_args()

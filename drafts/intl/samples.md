@@ -16,20 +16,21 @@ Hi Orientana team,
 
 Your sandalwood and turmeric face cream, marked as a bestseller on your site, is the kind of product Hungarian creators can show in a simple morning skincare routine video.
 
-I noticed Orientana is already on TikTok Shop. Since this summer, TikTok Shop is open to shoppers in Hungary too: people buy straight from the video they're watching, and every sale is trackable back to the video that drove it. Orientana isn't reaching Hungarian shoppers yet, and I think it would be a great fit.
+I noticed Orientana is already on TikTok Shop. Since this summer, shoppers in Hungary can use TikTok Shop too. People buy straight from the video they're watching, and every sale can be traced back to the video that drove it. Orientana isn't reaching Hungarian shoppers yet, and I think it would be a great fit.
 
 SEDLAK, a small eyewear brand, went from zero to millions of dollars in sales on TikTok Shop.
 
 We launch and run your whole Hungarian presence for you: Hungarian listings, your affiliate program, creator management, videos, promotions, customer messages and weekly sales reports. You just send the products.
 
-We already have beauty and skincare creators ready to promote your products, including Anett (37K followers on TikTok), from 300+ vetted creators in our agency, where brands like GymBeam work with us. Creators are paid a percentage of the trackable sales, so there are no upfront creator fees.
+We already have beauty and skincare creators ready to promote your products, including Anett, who has 37K followers on TikTok. They're among the 300+ vetted creators in our agency, and brands like GymBeam already work with us. Creators are paid a percentage of the sales they drive, so there are no upfront creator fees.
 
-We only take on a few new brands each month so every shop gets proper attention. Within 24 hours of your reply, I'll send you a free Hungarian launch plan for Orientana: the creators I'd match and the first month of videos.
+We only take on a few new brands each month, so every shop gets proper attention. If you reply, I'll send you a free Hungarian launch plan for Orientana within 24 hours: the creators I'd match and the first month of videos.
 
-Which product would you launch first in Hungary? Just reply with it.
+Which product would you launch first in Hungary? Just reply with its name.
 
 Fazekas Viktor
-Founder, Matchly · +36 30 690 0060
+Founder, Matchly
++36 30 690 0060
 
 If you'd rather not hear from us, just reply "unsubscribe".
 ```
@@ -50,20 +51,21 @@ Hi PAESE team,
 
 Your Puff Cloud pressed powder with a blur effect is exactly the kind of product that sells in a 15-second before-and-after video.
 
-I noticed PAESE is already on TikTok Shop. Since this summer, TikTok Shop is open to shoppers in Hungary too: people buy straight from the video they're watching, and every sale is trackable back to the video that drove it. PAESE isn't reaching Hungarian shoppers yet, and I think it would be a great fit.
+I noticed PAESE is already on TikTok Shop. Since this summer, shoppers in Hungary can use TikTok Shop too. People buy straight from the video they're watching, and every sale can be traced back to the video that drove it. PAESE isn't reaching Hungarian shoppers yet, and I think it would be a great fit.
 
 SEDLAK, a small eyewear brand, went from zero to millions of dollars in sales on TikTok Shop.
 
 We launch and run your whole Hungarian presence for you: Hungarian listings, your affiliate program, creator management, videos, promotions, customer messages and weekly sales reports. You just send the products.
 
-We already have beauty and skincare creators ready to promote your products, including Anett (37K followers on TikTok), from 300+ vetted creators in our agency, where brands like GymBeam work with us. Creators are paid a percentage of the trackable sales, so there are no upfront creator fees.
+We already have beauty and skincare creators ready to promote your products, including Anett, who has 37K followers on TikTok. They're among the 300+ vetted creators in our agency, and brands like GymBeam already work with us. Creators are paid a percentage of the sales they drive, so there are no upfront creator fees.
 
-We only take on a few new brands each month so every shop gets proper attention. Within 24 hours of your reply, I'll send you a free Hungarian launch plan for PAESE: the creators I'd match and the first month of videos.
+We only take on a few new brands each month, so every shop gets proper attention. If you reply, I'll send you a free Hungarian launch plan for PAESE within 24 hours: the creators I'd match and the first month of videos.
 
-Which product would you launch first in Hungary? Just reply with it.
+Which product would you launch first in Hungary? Just reply with its name.
 
 Fazekas Viktor
-Founder, Matchly · +36 30 690 0060
+Founder, Matchly
++36 30 690 0060
 
 If you'd rather not hear from us, just reply "unsubscribe".
 ```
@@ -84,20 +86,21 @@ Hi Claresa team,
 
 With hybrid polishes in over 300 colours, Claresa is made for nail swatch videos, and your Builder Gel Starter System gives creators a full at-home manicure to film.
 
-I noticed Claresa is already on TikTok Shop. Since this summer, TikTok Shop is open to shoppers in Hungary too: people buy straight from the video they're watching, and every sale is trackable back to the video that drove it. Claresa isn't reaching Hungarian shoppers yet, and I think it would be a great fit.
+I noticed Claresa is already on TikTok Shop. Since this summer, shoppers in Hungary can use TikTok Shop too. People buy straight from the video they're watching, and every sale can be traced back to the video that drove it. Claresa isn't reaching Hungarian shoppers yet, and I think it would be a great fit.
 
 SEDLAK, a small eyewear brand, went from zero to millions of dollars in sales on TikTok Shop.
 
 We launch and run your whole Hungarian presence for you: Hungarian listings, your affiliate program, creator management, videos, promotions, customer messages and weekly sales reports. You just send the products.
 
-We already have beauty and skincare creators ready to promote your products, including Anett (37K followers on TikTok), from 300+ vetted creators in our agency, where brands like GymBeam work with us. Creators are paid a percentage of the trackable sales, so there are no upfront creator fees.
+We already have beauty and skincare creators ready to promote your products, including Anett, who has 37K followers on TikTok. They're among the 300+ vetted creators in our agency, and brands like GymBeam already work with us. Creators are paid a percentage of the sales they drive, so there are no upfront creator fees.
 
-We only take on a few new brands each month so every shop gets proper attention. Within 24 hours of your reply, I'll send you a free Hungarian launch plan for Claresa: the creators I'd match and the first month of videos.
+We only take on a few new brands each month, so every shop gets proper attention. If you reply, I'll send you a free Hungarian launch plan for Claresa within 24 hours: the creators I'd match and the first month of videos.
 
-Which product would you launch first in Hungary? Just reply with it.
+Which product would you launch first in Hungary? Just reply with its name.
 
 Fazekas Viktor
-Founder, Matchly · +36 30 690 0060
+Founder, Matchly
++36 30 690 0060
 
 If you'd rather not hear from us, just reply "unsubscribe".
 ```
@@ -121,20 +124,21 @@ Hi Mokosh team,
 
 Your bronzing body and face balm with orange and cinnamon is exactly the kind of product that sells on TikTok: the glow is visible before and after in one short video.
 
-You already sell to Hungary, but you're not on TikTok Shop yet. Since this summer it's open to Hungarian shoppers: people buy straight from the video they're watching, and every sale is trackable back to the video that drove it.
+You already sell to Hungary, but you're not on TikTok Shop yet. Since this summer, it's open to Hungarian shoppers. People buy straight from the video they're watching, and every sale can be traced back to the video that drove it.
 
 SEDLAK, a small eyewear brand, went from zero to millions of dollars in sales on TikTok Shop.
 
 We set up and run the whole shop for you: Hungarian listings, your affiliate program, creator management, videos, promotions, customer messages and weekly sales reports. You just send the products.
 
-We already have beauty and skincare creators ready to promote your products, including Anett (37K followers on TikTok), from 300+ vetted creators in our agency, where brands like GymBeam work with us. Creators are paid a percentage of the trackable sales, so there are no upfront creator fees.
+We already have beauty and skincare creators ready to promote your products, including Anett, who has 37K followers on TikTok. They're among the 300+ vetted creators in our agency, and brands like GymBeam already work with us. Creators are paid a percentage of the sales they drive, so there are no upfront creator fees.
 
-We only take on a few new brands each month so every shop gets proper attention. Within 24 hours of your reply, I'll send you a free Hungarian launch plan for Mokosh: the creators I'd match and the first month of videos.
+We only take on a few new brands each month, so every shop gets proper attention. If you reply, I'll send you a free Hungarian launch plan for Mokosh within 24 hours: the creators I'd match and the first month of videos.
 
-Which product would you launch first on TikTok Shop? Just reply with it.
+Which product would you launch first on TikTok Shop? Just reply with its name.
 
 Fazekas Viktor
-Founder, Matchly · +36 30 690 0060
+Founder, Matchly
++36 30 690 0060
 
 If you'd rather not hear from us, just reply "unsubscribe".
 ```
@@ -155,20 +159,56 @@ Hi Sylveco team,
 
 Your birch cream with betulin, one of your bestsellers, is a simple product to show in a short skincare video, with a natural-ingredient story creators can explain in seconds.
 
-You already sell to Hungary, but you're not on TikTok Shop yet. Since this summer it's open to Hungarian shoppers: people buy straight from the video they're watching, and every sale is trackable back to the video that drove it.
+You already sell to Hungary, but you're not on TikTok Shop yet. Since this summer, it's open to Hungarian shoppers. People buy straight from the video they're watching, and every sale can be traced back to the video that drove it.
 
 SEDLAK, a small eyewear brand, went from zero to millions of dollars in sales on TikTok Shop.
 
 We set up and run the whole shop for you: Hungarian listings, your affiliate program, creator management, videos, promotions, customer messages and weekly sales reports. You just send the products.
 
-We already have beauty and skincare creators ready to promote your products, including Anett (37K followers on TikTok), from 300+ vetted creators in our agency, where brands like GymBeam work with us. Creators are paid a percentage of the trackable sales, so there are no upfront creator fees.
+We already have beauty and skincare creators ready to promote your products, including Anett, who has 37K followers on TikTok. They're among the 300+ vetted creators in our agency, and brands like GymBeam already work with us. Creators are paid a percentage of the sales they drive, so there are no upfront creator fees.
 
-We only take on a few new brands each month so every shop gets proper attention. Within 24 hours of your reply, I'll send you a free Hungarian launch plan for Sylveco: the creators I'd match and the first month of videos.
+We only take on a few new brands each month, so every shop gets proper attention. If you reply, I'll send you a free Hungarian launch plan for Sylveco within 24 hours: the creators I'd match and the first month of videos.
 
-Which product would you launch first on TikTok Shop? Just reply with it.
+Which product would you launch first on TikTok Shop? Just reply with its name.
 
 Fazekas Viktor
-Founder, Matchly · +36 30 690 0060
+Founder, Matchly
++36 30 690 0060
+
+If you'd rather not hear from us, just reply "unsubscribe".
+```
+
+## Makear (makear.pl) - List B
+
+- To: info@makear.pl
+- Country: Poland (confirmed on https://makear.pl/pl/terms.html — 'Adres siedziby Sprzedającego: Krzysztofa Kolumba 9B, 51-503 Wrocław')
+- Category: Beauty / nails
+- Product: NEONS UV gel polish (glow in the dark)
+- Evidence: makear.pl Bestsellery 'NEONS UV Gel Polish … glow in dark'
+- Opener words: 30
+
+**Subject:** TikTok Shop for Makear in Hungary
+
+```
+Hi Makear team,
+
+Your NEONS UV gel polishes glow in the dark, which is exactly the kind of effect that sells in a 15-second video: lights off, and the result is on screen.
+
+You already sell to Hungary, but you're not on TikTok Shop yet. Since this summer, it's open to Hungarian shoppers. People buy straight from the video they're watching, and every sale can be traced back to the video that drove it.
+
+SEDLAK, a small eyewear brand, went from zero to millions of dollars in sales on TikTok Shop.
+
+We set up and run the whole shop for you: Hungarian listings, your affiliate program, creator management, videos, promotions, customer messages and weekly sales reports. You just send the products.
+
+We already have beauty and skincare creators ready to promote your products, including Anett, who has 37K followers on TikTok. They're among the 300+ vetted creators in our agency, and brands like GymBeam already work with us. Creators are paid a percentage of the sales they drive, so there are no upfront creator fees.
+
+We only take on a few new brands each month, so every shop gets proper attention. If you reply, I'll send you a free Hungarian launch plan for Makear within 24 hours: the creators I'd match and the first month of videos.
+
+Which product would you launch first on TikTok Shop? Just reply with its name.
+
+Fazekas Viktor
+Founder, Matchly
++36 30 690 0060
 
 If you'd rather not hear from us, just reply "unsubscribe".
 ```

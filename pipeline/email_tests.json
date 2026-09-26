@@ -1,0 +1,30 @@
+{
+ "initial_A": {
+  "hash": "5183a2f16e70",
+  "sent_to": "info@joinmatchly.com",
+  "brand": "Hair Syrup",
+  "date": "2026-09-26T22:30+02:00",
+  "resend_id": "01a0df69-6f15-752a-ad17-2b3bd055dd7a"
+ },
+ "initial_B": {
+  "hash": "b3e03fe1aee7",
+  "sent_to": "info@joinmatchly.com",
+  "brand": "Emma Hardie",
+  "date": "2026-09-26T22:30+02:00",
+  "resend_id": "01a0df69-71a5-731d-a012-4a41cf195978"
+ },
+ "followup1": {
+  "hash": "43c04c2637d5",
+  "sent_to": "info@joinmatchly.com",
+  "brand": "Hair Syrup",
+  "date": "2026-09-26T22:30+02:00",
+  "resend_id": "01a0df69-7417-7653-aa60-0b27f36bdb88"
+ },
+ "followup2": {
+  "hash": "af6db2799710",
+  "sent_to": "info@joinmatchly.com",
+  "brand": "Hair Syrup",
+  "date": "2026-09-26T22:30+02:00",
+  "resend_id": "01a0df69-76ad-75bd-be51-ced8871bde17"
+ }
+}
