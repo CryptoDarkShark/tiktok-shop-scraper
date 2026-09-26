@@ -301,18 +301,46 @@ def find_links(soup, base, words, limit=8):
     return hits[:limit]
 
 
-def pick_emails(emails, domain):
-    emails = {e.lower().strip(".") for e in emails}
+# Contact priority (user rule): 1) marketing/partnerships/collab/influencer/creators/pr/affiliate,
+# 2) a named marketing or e-commerce manager published on the site, 3) info/hello/contact,
+# then any other address the brand publishes. Only addresses found on the brand's own pages.
+TIER1 = ("marketing", "partnerships", "partnership", "partners", "partenariat", "collab", "influencer",
+         "creators", "creator", "pr", "press", "media", "affiliate", "aff")
+TIER3 = ("info", "hello", "contact")
+ROLE_WORDS = re.compile(r"marketing|e-?commerce|ecommerce|digital|brand manager|partnership", re.I)
+JUNK = ("sentry", "example", "wixpress", "domain.com", "email.com", "yourname", "godaddy", "@2x",
+        "shoptet.cz", "privacy@", "your@")
+
+
+def email_tier(email, context=""):
+    """1-4 (lower is better) for an address the brand publishes; context = text around it on the page."""
+    local = email.split("@")[0].lower()
+    parts = re.split(r"[._\-+]", local)
+    # Short tags (pr, aff, media, press) must match exactly; longer ones may be prefixes (partnerships2@).
+    if any(p in TIER1 or (len(t) >= 6 and p.startswith(t)) for p in parts for t in TIER1):
+        return 1
+    if "." in local and not local.startswith(TIER3) and ROLE_WORDS.search(context or ""):
+        return 2  # named person whose published role is marketing / e-commerce
+    if local.startswith(TIER3):
+        return 3
+    return 4
+
+
+def pick_emails(emails, domain, contexts=None):
+    """Brand's own published addresses, best first. contexts: {email: surrounding text}."""
+    contexts = contexts or {}
+    emails = {m.group(0).lower().strip(".") for e in emails for m in [EMAIL_RE.search(e)] if m}
     emails = [e for e in emails if not re.search(r"\.(png|jpe?g|gif|webp|svg|js|css)$", e)
-              and not any(b in e for b in ("sentry", "example", "wixpress", "domain.com", "email.com",
-                                           "yourname", "godaddy", "@2x", "shoptet.cz", "privacy@"))]
+              and not any(b in e for b in JUNK)]
     root = domain.split(".")[-2] if "." in domain else domain
 
     def score(e):
         local, _, host = e.partition("@")
-        return (10 if root in host else 0) + (5 if local.startswith(GENERIC_PREFIXES) else 0) \
-            - (3 if any(w in local for w in ("gdpr", "rodo", "dpo", "privacy", "noreply", "no-reply")) else 0)
-    return sorted(emails, key=score, reverse=True)
+        own = root in host
+        bad = any(w in local for w in ("gdpr", "rodo", "dpo", "privacy", "noreply", "no-reply", "reklamac",
+                                        "claims", "returns", "jobs", "careers", "praca", "iod"))
+        return (0 if own else 1, 1 if bad else 0, email_tier(e, contexts.get(e, "")))
+    return sorted(emails, key=score)
 
 
 def social_handle(soup, host):

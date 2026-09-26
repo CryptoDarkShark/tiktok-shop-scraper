@@ -832,7 +832,7 @@
    "product": "Pavé & Pearl Drop Ear Stacking Set",
    "price": "£42",
    "price_eur": 49,
-   "email": "info@orelia.co.uk",
+   "email": "press@orelia.co.uk",
    "first_name": "",
    "tts_evidence": "TikTok profile @oreliajewellery is a TikTok Shop seller account (ttSeller)",
    "tts_market": "",
@@ -846,7 +846,8 @@
    "creators": "fashion and accessories creators",
    "anett": false,
    "flag": "",
-   "date_found": "2026-09-26"
+   "date_found": "2026-09-26",
+   "email_source": "https://orelia.com/pages/press-bloggers"
   },
   "barebyvogue.com": {
    "brand": "Bare by Vogue",
@@ -884,7 +885,7 @@
    "product": "Mrs Glam - Instant Bronze Boost Gel Drops",
    "price": "£16.95",
    "price_eur": 20,
-   "email": "customercare@bperfectcosmetics.com",
+   "email": "aff@bperfectcosmetics.com",
    "first_name": "",
    "tts_evidence": "About page: 'one of the Top 3 UK brands on TikTok Shop'; TikTok profile @bperfectcosmetics is a TikTok Shop seller account (ttSeller)",
    "tts_market": "UK",
@@ -898,7 +899,8 @@
    "creators": "beauty and skincare creators",
    "anett": true,
    "flag": "",
-   "date_found": "2026-09-26"
+   "date_found": "2026-09-26",
+   "email_source": "https://www.bperfectcosmetics.com/pages/affiliate-area"
   },
   "myjoliecandle.com": {
    "brand": "My Jolie Candle",
@@ -936,7 +938,7 @@
    "product": "45 Second Speedy Gloss nail polish duo",
    "price": "£15",
    "price_eur": 17,
-   "email": "hello@nailsinc.com",
+   "email": "press@nailsinc.com",
    "first_name": "",
    "tts_evidence": "TikTok profile @nailsinclondon is a TikTok Shop seller account (ttSeller)",
    "tts_market": "",
@@ -950,7 +952,8 @@
    "creators": "beauty and skincare creators",
    "anett": true,
    "flag": "",
-   "date_found": "2026-09-26"
+   "date_found": "2026-09-26",
+   "email_source": "https://nailsinc.com/en-us/pages/faqs"
   },
   "boskanails.pl": {
    "brand": "Boska Nails",
@@ -1092,7 +1095,7 @@
    "product": "Seahorse Plankton+ Really Radiant Moisturiser 60ml",
    "price": "£24.50",
    "price_eur": 28,
-   "email": "hello@beautykitchen.co.uk",
+   "email": "pr@beautykitchen.co.uk",
    "first_name": "",
    "tts_evidence": "TikTok profile @beautykitchentiktok is a TikTok Shop seller account (ttSeller)",
    "tts_market": "",
@@ -1106,7 +1109,8 @@
    "creators": "beauty and skincare creators",
    "anett": true,
    "flag": "",
-   "date_found": "2026-09-26"
+   "date_found": "2026-09-26",
+   "email_source": "https://beautykitchen.co.uk/pages/contact-us"
   },
   "betteryou.com": {
    "brand": "BetterYou",
@@ -1118,7 +1122,7 @@
    "product": "Magnesium Max 3-in-1 Original Powder",
    "price": "£9.99",
    "price_eur": 12,
-   "email": "wecare@betteryou.com",
+   "email": "media@betteryou.com",
    "first_name": "",
    "tts_evidence": "TikTok profile @betteryou_ltd is a TikTok Shop seller account (ttSeller)",
    "tts_market": "",
@@ -1132,7 +1136,8 @@
    "creators": "fitness creators",
    "anett": true,
    "flag": "",
-   "date_found": "2026-09-26"
+   "date_found": "2026-09-26",
+   "email_source": "https://betteryou.com/pages/ambassadors"
   },
   "upcirclebeauty.com": {
    "brand": "UpCircle",
