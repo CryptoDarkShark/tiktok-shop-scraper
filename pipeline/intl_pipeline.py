@@ -440,8 +440,15 @@ def bestseller_text(blob):
     return (m.group(1) + m.group(2)) if m else ""
 
 
+# tiktok.com/robots.txt disallows Claude's agents (ClaudeBot, Claude-User, Claude-SearchBot): no TikTok fetching.
+# TikTok Shop status comes only from the brand's own site (shop.tiktok.com links / TikTok Shop badge).
+ALLOW_TIKTOK = False
+
+
 def tiktok_user(handle):
-    """Public TikTok profile as {'user': ..., 'stats': ...}, or None if unreadable."""
+    """Public TikTok profile as {'user': ..., 'stats': ...}, or None if unreadable / not allowed."""
+    if not ALLOW_TIKTOK:
+        return None
     try:
         r = requests.get(f"https://www.tiktok.com/{handle}", headers={"User-Agent": UA}, timeout=20)
         m = re.search(r'<script id="__UNIVERSAL_DATA_FOR_REHYDRATION__"[^>]*>(.*?)</script>', r.text, re.S)
