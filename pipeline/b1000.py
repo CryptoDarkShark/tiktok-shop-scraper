@@ -667,6 +667,13 @@ def signals_one(item):
         if m:
             out["ch_number"] = m.group(1).upper().zfill(8)
             out["ch"] = companies_house(out["ch_number"])
+        else:
+            num, nm = ch_search_any(e.get("brand_name", ""), r.get("title", "").split("|")[0].split("–")[0].strip(),
+                                    r["domain"].split(".")[0])
+            if num:
+                out["ch_number"] = num
+                out["ch"] = (companies_house(num) + f" [matched by name: {nm}]").strip()
+    out["uk_v"] = 3 if e.get("country") == "United Kingdom" else None
     return k, out
 
 
@@ -679,6 +686,68 @@ FOUNDER_PAT = re.compile(
     rf"|(?i:hi|hello|hey),? (?i:i['’]m) {NAME}")
 
 
+NOT_NAME = {w.lower() for w in """Meet Our Skip Story Mission From The Shop About Read More Letter Team Journey Us We Why How
+Welcome Discover Learn Vision Values Behind Brand Founder Founders Co Ceo Message Note Words Pharmacy Bench Home Menu Cart Contact
+Your You Philosophy Beginning History Inspiration Heart Science Promise Collection New Best Sellers Explore Hello Hi Dear Team And
+Sustainability Community Ingredients Blog Press Care Careers Journal Beauty Skin Hair Body Wellness Health Love Life World Nature
+Natural Organic Clean Pure London Paris Madrid Warsaw Poland Spain France Italy Ireland England Uk Europe Eu Ltd Limited Company
+Group Family Founded Created Started Est Established Since In Of For With By At On To Nasza Nasz Historia Notre Nuestra La Le El
+Il Die Der Das De Het Een""".split()}
+
+
+def clean_person(name, brand=""):
+    """A plausible person name (1-3 capitalised words, no stop words, not the brand), else ''."""
+    name = re.sub(r"\s*\(.*$", "", name or "").strip()
+    name = re.sub(r"^(?:meet|hi|hello|dear|founder|by)\s+", "", name, flags=re.I)
+    toks = name.split()
+    if not 1 <= len(toks) <= 3 or any(t.lower().strip(".,") in NOT_NAME for t in toks):
+        return ""
+    if brand and norm(brand) and (norm(brand) in norm(name) or norm(name) in norm(brand)):
+        return ""
+    if not all(re.match(r"^[A-ZÀ-Ž][a-zà-ž'’\-]+(?:[A-Z][a-zà-ž]+)?$", t) for t in toks):
+        return ""
+    return name
+
+
+GENERIC_TAIL = r"\b(wellbeing|well-being|beauty|skincare|skin care|cosmetics|london|uk|organics?|naturals?|botanicals?|"\
+               r"nutrition|health|co\.?|company|official|store|shop|the)\b"
+
+
+def ch_search_any(*names):
+    """Try the brand name, the name without generic words, and the domain label."""
+    tried = []
+    for nm in names:
+        for q in (nm, re.sub(GENERIC_TAIL, "", nm or "", flags=re.I).strip(" -&|")):
+            q = re.sub(r"\s+", " ", q or "").strip()
+            if len(norm(q)) >= 4 and q.lower() not in tried:
+                tried.append(q.lower())
+                num, matched = ch_search(q)
+                if num:
+                    return num, matched
+    return "", ""
+
+
+def ch_search(brand):
+    """Companies House public search by brand name: (number, matched name) for an exact active match, else ('','')."""
+    f, h = polite_get("https://find-and-update.company-information.service.gov.uk/search/companies?q=" + requests.utils.quote(brand))
+    if not h or h in ("ROBOTS", "BLOCKED"):
+        return "", ""
+    soup = BeautifulSoup(h, "html.parser")
+    want = norm(re.sub(r"\b(ltd|limited|uk|london)\b", "", brand, flags=re.I))
+    for li in soup.select("li.type-company"):
+        a = li.find("a")
+        if not a:
+            continue
+        nm = a.get_text(" ", strip=True)
+        base = norm(re.sub(r"\b(ltd|limited|uk|london|plc|llp)\b\.?", "", nm, flags=re.I))
+        status = li.get_text(" ", strip=True)
+        if base == want and "Dissolved" not in status and "Liquidation" not in status:
+            m = re.search(r"/company/([A-Z0-9]{8})", a["href"])
+            if m:
+                return m.group(1), nm
+    return "", ""
+
+
 def qualifies_for_signals(n, r, e):
     return e.get("status") == "ok" and e.get("category") and e.get("country") in (EMAIL_COUNTRIES | {"Germany", "Austria"}) \
         and size_check(n, r, e, None)[0] != "drop"
@@ -687,7 +756,8 @@ def qualifies_for_signals(n, r, e):
 def cmd_signals(args):
     names, res = ip.load_json(D / "names.json", {}), ip.load_json(D / "resolved.json", {})
     enr, sig = ip.load_json(D / "enriched.json", {}), ip.load_json(D / "signals.json", {})
-    todo = [(k, res[k], e) for k, e in enr.items() if (k not in sig or sig[k].get("v") != 2)
+    todo = [(k, res[k], {**e, "brand_name": names.get(k, {}).get("name", "")}) for k, e in enr.items()
+            if (k not in sig or sig[k].get("v") != 2 or (e.get("country") == "United Kingdom" and sig[k].get("uk_v") != 3))
             and e.get("rules") == 2 and qualifies_for_signals(names.get(k, {}), res[k], e)]
     todo = todo[: args.limit] if args.limit else todo
     print(f"collecting signals for {len(todo)} brands")
@@ -899,8 +969,10 @@ def cmd_output(args):
         s = s or {}
         peur = eur(e["price"], e["currency"], rates)
         price = f"{e['price']} {e['currency']}".strip() + (f" (~€{peur:.0f})" if peur and e["currency"] != "EUR" else "") if e["price"] else ""
-        founder = re.sub(r"\s*\(.*$", "", e.get("contact", "") or (s or {}).get("founder", "") or (s or {}).get("director", ""))
-        contact_full = e.get("contact", "") or (s or {}).get("founder", "") or (s or {}).get("director", "")
+        brand_name = n.get("name") or r.get("title", "")
+        contact_full = next((c for c in (e.get("contact", ""), (s or {}).get("founder", ""), (s or {}).get("director", ""))
+                             if clean_person(c, brand_name)), "")
+        founder = clean_person(contact_full, brand_name)
         first = founder.split()[0].lower() if founder else ""
         founder_email = next((x for x in (e["marketing_email"], e["general_email"]) if first and x and x.split("@")[0].startswith(first)), "")
         email_ok = bool(e["marketing_email"] or founder_email)
