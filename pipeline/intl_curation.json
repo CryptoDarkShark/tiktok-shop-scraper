@@ -743,7 +743,8 @@
    "anett": true,
    "flag": "",
    "date_found": "2026-09-26",
-   "first_name_source": ""
+   "first_name_source": "",
+   "category_fill": "beauty and haircare"
   },
   "nipandfab.com": {
    "brand": "Nip+Fab",
@@ -770,7 +771,8 @@
    "anett": true,
    "flag": "",
    "date_found": "2026-09-26",
-   "first_name_source": "https://www.nipandfab.com/pages/founder-story"
+   "first_name_source": "https://www.nipandfab.com/pages/founder-story",
+   "category_fill": "beauty and skincare"
   },
   "hairsyrup.co.uk": {
    "brand": "Hair Syrup",
@@ -797,7 +799,8 @@
    "anett": true,
    "flag": "",
    "date_found": "2026-09-26",
-   "first_name_source": ""
+   "first_name_source": "",
+   "category_fill": "beauty and haircare"
   },
   "petspurest.com": {
    "brand": "Pets Purest",
@@ -824,7 +827,8 @@
    "anett": false,
    "flag": "",
    "date_found": "2026-09-26",
-   "first_name_source": ""
+   "first_name_source": "",
+   "category_fill": "pet"
   },
   "orelia.co.uk": {
    "brand": "Orelia",
@@ -852,7 +856,8 @@
    "flag": "",
    "date_found": "2026-09-26",
    "email_source": "https://orelia.com/pages/press-bloggers",
-   "first_name_source": "https://orelia.com/pages/about-us"
+   "first_name_source": "https://orelia.com/pages/about-us",
+   "category_fill": "fashion and jewellery"
   },
   "barebyvogue.com": {
    "brand": "Bare by Vogue",
@@ -879,7 +884,8 @@
    "anett": true,
    "flag": "",
    "date_found": "2026-09-26",
-   "first_name_source": ""
+   "first_name_source": "",
+   "category_fill": "beauty and self-tan"
   },
   "bperfectcosmetics.com": {
    "brand": "BPerfect",
@@ -907,7 +913,8 @@
    "flag": "",
    "date_found": "2026-09-26",
    "email_source": "https://www.bperfectcosmetics.com/pages/affiliate-area",
-   "first_name_source": "https://www.bperfectcosmetics.com/pages/about"
+   "first_name_source": "https://www.bperfectcosmetics.com/pages/about",
+   "category_fill": "beauty and makeup"
   },
   "myjoliecandle.com": {
    "brand": "My Jolie Candle",
@@ -934,7 +941,8 @@
    "anett": true,
    "flag": "",
    "date_found": "2026-09-26",
-   "first_name_source": ""
+   "first_name_source": "",
+   "category_fill": "home and lifestyle"
   },
   "nailsinc.com": {
    "brand": "Nails.INC",
@@ -962,7 +970,8 @@
    "flag": "",
    "date_found": "2026-09-26",
    "email_source": "https://nailsinc.com/en-us/pages/faqs",
-   "first_name_source": "https://nailsinc.com/en-us/pages/our-history"
+   "first_name_source": "https://nailsinc.com/en-us/pages/our-history",
+   "category_fill": "nail and beauty"
   },
   "boskanails.pl": {
    "brand": "Boska Nails",
@@ -989,7 +998,8 @@
    "anett": true,
    "flag": "",
    "date_found": "2026-09-26",
-   "first_name_source": "https://pl.linkedin.com/in/maciej-kusaj"
+   "first_name_source": "https://pl.linkedin.com/in/maciej-kusaj",
+   "category_fill": "nail and beauty"
   },
   "skinnytan.co.uk": {
    "brand": "Skin & Tan",
@@ -1016,7 +1026,8 @@
    "anett": true,
    "flag": "",
    "date_found": "2026-09-26",
-   "first_name_source": ""
+   "first_name_source": "",
+   "category_fill": "beauty and self-tan"
   },
   "vieve.co.uk": {
    "brand": "Vieve",
@@ -1043,7 +1054,8 @@
    "anett": true,
    "flag": "",
    "date_found": "2026-09-26",
-   "first_name_source": ""
+   "first_name_source": "",
+   "category_fill": "beauty and makeup"
   },
   "petmunchies.co.uk": {
    "brand": "Pet Munchies",
@@ -1070,7 +1082,8 @@
    "anett": false,
    "flag": "",
    "date_found": "2026-09-26",
-   "first_name_source": ""
+   "first_name_source": "",
+   "category_fill": "pet"
   },
   "bybi.com": {
    "brand": "BYBI",
@@ -1097,7 +1110,8 @@
    "anett": true,
    "flag": "",
    "date_found": "2026-09-26",
-   "first_name_source": ""
+   "first_name_source": "",
+   "category_fill": "beauty and skincare"
   },
   "beautykitchen.co.uk": {
    "brand": "Beauty Kitchen",
@@ -1125,7 +1139,8 @@
    "flag": "",
    "date_found": "2026-09-26",
    "email_source": "https://beautykitchen.co.uk/pages/contact-us",
-   "first_name_source": ""
+   "first_name_source": "",
+   "category_fill": "beauty and skincare"
   },
   "betteryou.com": {
    "brand": "BetterYou",
@@ -1153,7 +1168,8 @@
    "flag": "",
    "date_found": "2026-09-26",
    "email_source": "https://betteryou.com/pages/ambassadors",
-   "first_name_source": ""
+   "first_name_source": "",
+   "category_fill": "wellness and fitness"
   },
   "upcirclebeauty.com": {
    "brand": "UpCircle",
@@ -1180,7 +1196,8 @@
    "anett": true,
    "flag": "",
    "date_found": "2026-09-26",
-   "first_name_source": "https://upcirclebeauty.com/pages/our-story"
+   "first_name_source": "https://upcirclebeauty.com/pages/our-story",
+   "category_fill": "beauty and skincare"
   },
   "makear.pl": {
    "brand": "Makear",
@@ -1207,7 +1224,8 @@
    "anett": true,
    "flag": "",
    "date_found": "2026-09-26",
-   "first_name_source": "https://pl.linkedin.com/in/robert-cieslik-58a354171"
+   "first_name_source": "https://pl.linkedin.com/in/robert-cieslik-58a354171",
+   "category_fill": "nail and beauty"
   },
   "emmahardie.com": {
    "brand": "Emma Hardie",
@@ -1234,7 +1252,8 @@
    "anett": true,
    "flag": "",
    "date_found": "2026-09-26",
-   "first_name_source": ""
+   "first_name_source": "",
+   "category_fill": "beauty and skincare"
   }
  },
  "skip": {

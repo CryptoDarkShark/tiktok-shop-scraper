@@ -8,6 +8,15 @@ Applies to every email sent by any session or tool, to brands, creators or anyon
 
 Sending: Resend (RESEND_API_KEY), from viktor@outreach.joinmatchly.com, reply-to info@joinmatchly.com. Never Zoho.
 
+## Wording
+Keep the approved email text exactly as it is, word for word, for first emails and follow-ups. Don't rewrite or add
+sentences. Only personalize the fill-in spots, for every brand, from facts on their own website or TikTok:
+[Name] (contact's first name if known, else "[Brand] team"), [Brand] (as they write it), [country] (only where their
+TikTok Shop is confirmed; otherwise the version without a country), [category] (creator type for their products),
+[product] (real best-seller or featured product) and the 1-2 sentence opening line. Never leave a fill-in blank or
+generic: if something can't be found, skip the brand and list it for the user instead of sending. The daily table
+shows every filled-in value per brand.
+
 ## Follow-ups
 Never send a follow-up to anyone who hasn't received the first email. A follow-up is a reply in the same thread
 (`Re:` subject, `In-Reply-To`/`References` = the first email's Message-ID) with the original email quoted below it,

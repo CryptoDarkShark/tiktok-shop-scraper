@@ -692,6 +692,9 @@ def flag_of(b):
                      else f"sells to Hungarians on TikTok: {b['hu_tiktok']}")
     if b.get("price_eur") is not None and not PRICE_RANGE_EUR[0] <= b["price_eur"] <= PRICE_RANGE_EUR[1]:
         flags.append(f"featured product price ~{b['price_eur']} EUR outside {PRICE_RANGE_EUR[0]}-{PRICE_RANGE_EUR[1]} EUR")
+    missing = [k for k, v in fill_ins(b).items() if k != "country" and not v]
+    if missing:
+        flags.append("missing fill-in: " + ", ".join(missing))
     if not b.get("opener"):
         flags.append("no specific opener found on site")
     elif words(b["opener"]) >= MAX_OPENER_WORDS or len(re.findall(r"[.!?](?:\s|$)", b["opener"])) > 2:
@@ -734,67 +737,69 @@ def cmd_output(args):
 ANETT_CATEGORIES = {"beauty", "lifestyle", "fitness"}
 
 
-def creator_sentence(b):
-    anett = ", including Anett, who has 37K followers on TikTok" if b.get("anett") else ""
-    return (f"We already have {b['creators']} ready to promote your products{anett}. They're among the 300+ "
-            f"vetted creators in our agency, and brands like GymBeam already work with us. Creators are paid "
-            f"a percentage of the sales they drive, so there are no upfront creator fees.")
+def category_fill(b):
+    """[category] fill-in: the creator type for the brand's products, e.g. 'beauty and skincare'."""
+    c = (b.get("category_fill") or b.get("creators", "")).strip()
+    return re.sub(r"\s*creators$", "", c)
 
 
 SIGNATURE = "Fazekas Viktor\nFounder, Matchly\n+36 30 690 0060"
 UNSUBSCRIBE = 'If you\'d rather not hear from us, just reply "unsubscribe".'
 
 
+# Approved template text, word for word. Only the fill-in spots change: [Name], [Brand], [country],
+# [category] and the personalized opening line (about the brand's real best-seller / featured product).
+TEMPLATE_A = [
+    "Hi {name},",
+    "{opener}",
+    "I noticed {brand} is already on TikTok Shop{in_country}. Since this summer, TikTok Shop is open to shoppers in "
+    "Hungary too: people buy straight from the video they're watching, and every sale is trackable back to the video "
+    "that drove it. {brand} isn't reaching Hungarian shoppers yet, and I think it would be a great fit.",
+    "SEDLAK, a small eyewear brand, went from zero to millions of dollars in sales on TikTok Shop.",
+    "We launch and run your whole Hungarian presence for you: Hungarian listings, your affiliate program, creator "
+    "management, videos, promotions, customer messages and weekly sales reports. You just send the products.",
+    "We already have {category} creators ready to promote your products, from 300+ vetted creators in our agency, "
+    "where brands like GymBeam work with us. Creators are paid a percentage of the trackable sales, so there are no "
+    "upfront creator fees.",
+    "We only take on a few new brands each month so every shop gets proper attention. Within 24 hours of your reply, "
+    "I'll send you a free Hungarian launch plan for {brand}: the creators I'd match and the first month of videos.",
+    "Which product would you launch first in Hungary? Just reply with it.",
+]
+TEMPLATE_B = list(TEMPLATE_A)
+TEMPLATE_B[2] = ("You already sell to Hungary, but you're not on TikTok Shop yet. Since this summer it's open to "
+                 "Hungarian shoppers: people buy straight from the video they're watching, and every sale is "
+                 "trackable back to the video that drove it.")
+TEMPLATE_B[4] = TEMPLATE_B[4].replace("We launch and run your whole Hungarian presence for you:",
+                                      "We set up and run the whole shop for you:")
+TEMPLATE_B[7] = "Which product would you launch first on TikTok Shop? Just reply with it."
+SUBJECT = {"A": "{brand} on TikTok Shop in Hungary", "B": "TikTok Shop for {brand} in Hungary"}
+
+
+def fill_ins(b):
+    """Every fill-in value for a brand; missing ones are '' (the brand is then held back, never sent generic)."""
+    market = b.get("tts_market", "") if b.get("tts_market_confirmed") else ""
+    shown = f"the {market}" if market in ("UK", "US", "Netherlands") else market
+    return {"name": b.get("first_name") or (f"{b['brand']} team" if b.get("brand") else ""),
+            "brand": b.get("brand", ""), "country": shown, "category": category_fill(b),
+            "product": b.get("product", ""), "opener": b.get("opener", "")}
+
+
 def render(b):
-    """(subject, text). Paragraphs are separated by a blank line; lines inside one paragraph
-    (the signature) by a single newline. to_html() turns each paragraph into its own <p>."""
-    name = b.get("first_name") or f"{b['brand']} team"
-    brand = b["brand"]
-    if b["list"] == "A":
-        subject = f"{brand} on TikTok Shop in Hungary"
-        market = b.get("tts_market", "") if b.get("tts_market_confirmed") else ""
-        market = f"the {market}" if market in ("UK", "US", "Netherlands") else market
-        where = f" in {market}" if market else ""  # rulebook 4: country only when confirmed
-        noticed = (f"I noticed {brand} is already on TikTok Shop{where}. Since this summer, shoppers in Hungary "
-                   f"can use TikTok Shop too. People buy straight from the video they're watching, and every sale "
-                   f"can be traced back to the video that drove it. {brand} isn't reaching Hungarian shoppers yet, "
-                   f"and I think it would be a great fit.")
-        run = "We launch and run your whole Hungarian presence for you:"
-        question = "Which product would you launch first in Hungary? Just reply with its name."
-    else:
-        subject = f"TikTok Shop for {brand} in Hungary"
-        noticed = ("You already sell to Hungary, but you're not on TikTok Shop yet. Since this summer, it's open to "
-                   "Hungarian shoppers. People buy straight from the video they're watching, and every sale can be "
-                   "traced back to the video that drove it.")
-        run = "We set up and run the whole shop for you:"
-        question = "Which product would you launch first on TikTok Shop? Just reply with its name."
-    paragraphs = [
-        f"Hi {name},",
-        b["opener"],
-        noticed,
-        "SEDLAK, a small eyewear brand, went from zero to millions of dollars in sales on TikTok Shop.",
-        f"{run} Hungarian listings, your affiliate program, creator management, videos, promotions, customer "
-        f"messages and weekly sales reports. You just send the products.",
-        creator_sentence(b),
-        f"We only take on a few new brands each month, so every shop gets proper attention. If you reply, I'll "
-        f"send you a free Hungarian launch plan for {brand} within 24 hours: the creators I'd match and the first "
-        f"month of videos.",
-        question,
-        SIGNATURE,
-        UNSUBSCRIBE,
-    ]
-    return subject, "\n\n".join(paragraphs)
+    """(subject, text). Paragraphs separated by a blank line; signature lines by single newlines."""
+    f = fill_ins(b)
+    vals = {**f, "in_country": f" in {f['country']}" if f["country"] else ""}
+    paragraphs = [p.format(**vals) for p in (TEMPLATE_A if b["list"] == "A" else TEMPLATE_B)]
+    return SUBJECT[b["list"]].format(**vals), "\n\n".join(paragraphs + [SIGNATURE, UNSUBSCRIBE])
 
 
-FOLLOWUPS = {
+FOLLOWUPS = {  # approved text, word for word
     1: ["Hi {name},",
-        "Just bringing this back to the top of your inbox.",
-        "If you tell me which {brand} product you'd start with, I'll send you the free Hungarian launch plan "
-        "within 24 hours.",
+        "Just bringing this back to the top of your inbox. If you tell me which {brand} product you'd start with, "
+        "I'll send the free Hungarian launch plan within 24 hours.",
         "Viktor"],
     2: ["Hi {name},",
-        "Last note from me. If Hungary isn't a priority for {brand} right now, no problem at all.",
-        "If it is, just reply with one product and I'll take it from there.",
+        "Last note from me. If Hungary isn't a priority for {brand} right now, no problem at all. If it is, just "
+        "reply with one product and I'll take it from there.",
         "Viktor"],
 }
 
@@ -880,11 +885,14 @@ def cmd_draft(args):
     review = [f"# Batch {date}: {len(pick)} brands (cap {daily_cap(date)})\n",
               "Approve with: `python pipeline/intl_pipeline.py approve --date " + date + "` "
               "(or `--exclude domain1,domain2` for \"OK except #n\")\n",
-              "| # | Brand | Country (confirmed on) | List | Product | Opening line | Email |",
-              "|---|---|---|---|---|---|---|"]
+              "Every fill-in value per brand. [country] = where their TikTok Shop is confirmed ('—' = the version "
+              "without a country).\n",
+              "| # | Brand | List | [Name] | [country] | [category] | [product] | Opening line | Email | Home country (confirmed on) |",
+              "|---|---|---|---|---|---|---|---|---|---|"]
     for i, b in enumerate(pick, 1):
-        review.append(f"| {i} | {b['brand']} | {b['country']} ({b.get('legal_page', '')}) | {b['list']} | "
-                      f"{b['product']} | {b['opener']} | {b['email']} |")
+        f = fill_ins(b)
+        review.append(f"| {i} | {f['brand']} | {b['list']} | {f['name']} | {f['country'] if b['list'] == 'A' and f['country'] else '—'} | "
+                      f"{f['category']} | {f['product']} | {f['opener']} | {b['email']} | {b['country']} ({b.get('legal_page', '')}) |")
     (DRAFTS / f"batch-{date}.md").write_text("\n".join(review) + "\n\n" + draft_md(pick, "Full drafts"))
     flagged = [b for b in brands.values() if flag_of(b) and route(b) == "email"]
     print(f"{len(pick)} drafts -> {DRAFTS / f'batch-{date}.md'} ({len(pool) - len(pick)} ready brands left, "

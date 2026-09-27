@@ -8,3 +8,5 @@ user's OK on the batch.
 Never send a follow-up to anyone who hasn't received the first email; follow-ups are same-thread replies with the
 original email quoted below. Test emails are always the full first email (with its opener) to info@joinmatchly.com;
 test a follow-up only when the user asks.
+Email text is the approved template word for word; only the fill-in spots ([Name], [Brand], [country], [category],
+[product], opening line) change per brand. A brand with any fill-in missing is skipped and listed, never sent generic.
