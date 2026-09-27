@@ -690,7 +690,7 @@ def eur(price, cur, rates):
 def retailer_count(n):
     """Distinct retailers (Douglas IT/PL/NL/ES/BE count once)."""
     return len({re.sub(r" (?:[A-Z]{2} )?brand list$", "", x).replace("healf.com", "Healf")
-                for x in n.get("sources", [n.get("source")]) if x})
+                for x in n.get("sources", [n.get("source")]) if x and not x.startswith("SerpAPI")})
 
 
 def revenue_band(n, e, s):
@@ -758,7 +758,7 @@ def size_check(n, r, e, s=None):
     if not sales and not (yt and yt >= 3_000):
         if (s.get("products") or 0) < 5 and not s.get("reviews"):
             return "drop", "too small: no sign of regular sales (no reviews, under 5 products)"
-        reasons.append("no clear sign of regular sales found (reviews/restocks); followers not readable")
+        reasons.append("no clear sign of regular sales found (reviews, restocks, customer counts)")
     return ("review", "; ".join(reasons)) if reasons else ("main", "")
 
 
@@ -848,13 +848,13 @@ def cmd_output(args):
         if s.get("products"):
             notes.append(f"{s['products']} products")
         ship = "yes" if e["hu"] == "yes" else ("EU-wide" if s.get("eu_ship") else "unknown")
-        largest = f"{s['youtube']:,} (YouTube)" if s.get("youtube") else ""
+        largest = f"{s['youtube']:,} (YouTube)" if s.get("youtube") else "unknown"
         row = [n.get("name") or r.get("title"), r["website"], f"{e['country']} — {e['country_where']}", e["category"],
                e["subcategory"], e["product"], price, e["product_url"], WHY.get(e["subcategory"], ""),
                e["marketing_email"] or founder_email, e["general_email"], e["phone"], e["contact"], e["linkedin"],
-               e["instagram"], "", e["tiktok"], "on" if e["tts"] == "on" else "unverified", ship,
+               e["instagram"], "unknown", e["tiktok"], "on" if e["tts"] == "on" else "unverified", ship,
                "A" if e["tts"] == "on" else "B", score, ", ".join(n.get("sources", [n.get("source", "")])), "; ".join(notes), TODAY,
-               largest, band, founder, "", "unknown"]
+               largest, band, founder, "unknown", "unknown"]
         if e["country"] in ("Germany", "Austria"):
             de_at.append(row)
         else:
@@ -897,6 +897,104 @@ def cmd_output(args):
     print("sources:", dict(src.most_common()))
 
 
+SERP_QUERIES = {
+    "healthy snacks": [
+        ("uk", "en", "UK healthy snack brand freeze dried fruit"), ("uk", "en", "independent UK protein snack brand"),
+        ("uk", "en", "best small healthy snack brands UK"), ("ie", "en", "Irish healthy snack brand"),
+        ("pl", "pl", "polska marka zdrowych przekąsek"), ("pl", "pl", "liofilizowane owoce polska marka"),
+        ("pl", "pl", "polska marka batonów proteinowych"), ("es", "es", "marca española snacks saludables"),
+        ("es", "es", "marca española fruta liofilizada snack"), ("fr", "fr", "marque française snacks sains"),
+        ("fr", "fr", "marque française biscuits protéinés"), ("it", "it", "marca italiana snack salutari"),
+        ("nl", "nl", "Nederlands merk gezonde snacks"), ("be", "nl", "Belgisch merk gezonde snacks"),
+    ],
+    "activewear & basics": [
+        ("uk", "en", "independent UK activewear brand leggings"), ("uk", "en", "small British activewear brands women"),
+        ("ie", "en", "Irish activewear brand"), ("pl", "pl", "polska marka odzieży sportowej legginsy"),
+        ("es", "es", "marca española ropa deportiva mujer leggings"), ("fr", "fr", "marque française vêtements de sport femme leggings"),
+        ("it", "it", "marchio italiano abbigliamento sportivo donna leggings"), ("nl", "nl", "Nederlands activewear merk"),
+        ("be", "nl", "Belgisch sportkleding merk vrouwen"),
+    ],
+    "functional drinks & powders": [
+        ("uk", "en", "UK functional drink brand adaptogen"), ("uk", "en", "UK electrolyte drink powder brand"),
+        ("uk", "en", "UK greens powder brand"), ("uk", "en", "UK prebiotic soda brand"), ("ie", "en", "Irish functional drinks brand"),
+        ("pl", "pl", "polska marka napojów funkcjonalnych"), ("pl", "pl", "polska marka elektrolity w proszku"),
+        ("es", "es", "marca española bebidas funcionales"), ("es", "es", "marca española electrolitos en polvo"),
+        ("fr", "fr", "marque française boisson fonctionnelle"), ("fr", "fr", "marque française kombucha"),
+        ("it", "it", "marchio italiano bevande funzionali"), ("nl", "nl", "Nederlands merk functionele dranken"),
+        ("nl", "nl", "Nederlandse kombucha merk"), ("be", "nl", "Belgisch merk kombucha"),
+    ],
+}
+NOT_BRANDS = re.compile(r"amazon|ebay|allegro|ceneo|tesco|sainsbury|ocado|waitrose|asda|morrisons|boots|superdrug|holland|"
+                        r"hollandandbarrett|bol\.com|albert ?heijn|ah\.nl|jumbo|delhaize|colruyt|carrefour|mercadona|elcorteingles|"
+                        r"esselunga|coop|monoprix|franprix|leclerc|auchan|intermarche|lidl|aldi|zalando|decathlon|sportsdirect|"
+                        r"jdsports|asos|next\.co|trustpilot|reddit|quora|instagram|facebook|tiktok|youtube|pinterest|linkedin|"
+                        r"wikipedia|google|apple|glassdoor|indeed|crunchbase|companieshouse|gov\.|yelp|tripadvisor|notino|douglas|"
+                        r"rossmann|hebe|dm\.de|kruidvat|etos|druni|primor|arenal|sephora|lookfantastic|cultbeauty|feelunique", re.I)
+MEDIA = re.compile(r"magazine|news|blog|times|guardian|vogue|elle\.|cosmopolitan|glamour|marieclaire|womenshealth|menshealth|"
+                   r"independent|telegraph|standard\.co|mirror|dailymail|bbc|forbes|businessinsider|thegrocer|foodnavigator|"
+                   r"bevnet|drinks|retail|marketing|wprost|onet|interia|wp\.pl|elpais|elmundo|abc\.es|lefigaro|lemonde|"
+                   r"corriere|repubblica|nu\.nl|ad\.nl|hln\.be|nieuwsblad|best-|top-|/best|/top|ranking|lista|meilleur|migliori|mejores", re.I)
+
+
+def cmd_serp(args):
+    """Gap-filling with SerpAPI (snacks, activewear, drinks). Keeps a reserve of searches."""
+    key = __import__("os").environ.get("SERPAPI_KEY")
+    left = requests.get("https://serpapi.com/account.json", params={"api_key": key}, timeout=30).json().get("total_searches_left", 0)
+    budget = max(0, min(args.max, left - args.reserve))
+    res = ip.load_json(D / "resolved.json", {})
+    names = ip.load_json(D / "names.json", {})
+    done = ip.load_json(D / "serp_done.json", [])
+    known = {v["domain"] for v in res.values() if v} | existing_domains()
+    added, used = 0, 0
+    for cat, qs in SERP_QUERIES.items():
+        for gl, hl, q in qs:
+            if q in done:
+                continue
+            if used >= budget:
+                print(f"search budget reached ({used} used, reserve {args.reserve} kept)")
+                break
+            try:
+                results = ip.serp(q, gl, hl)
+            except Exception as ex:
+                print(f"search failed {q!r}: {ex}")
+                continue
+            used += 1
+            done.append(q)
+            label = f"SerpAPI: {q}"
+            cands = []
+            for r in results:
+                link = r.get("link", "")
+                d = ip.domain_of(link)
+                if not d or NOT_BRANDS.search(d):
+                    continue
+                if MEDIA.search(d) or MEDIA.search(urlparse(link).path):
+                    f, h = polite_get(link)  # article / list page: harvest the brand links it points to
+                    if h and h not in ("ROBOTS", "BLOCKED"):
+                        for a in BeautifulSoup(h, "html.parser").find_all("a", href=True):
+                            u = urljoin(f, a["href"])
+                            dd = ip.domain_of(u)
+                            if u.startswith("http") and dd and dd != d and not NOT_BRANDS.search(dd) and not MEDIA.search(dd) \
+                                    and not ip.is_blocked(dd):
+                                cands.append((dd, a.get_text(" ", strip=True)[:60]))
+                    continue
+                cands.append((d, r.get("title", "")[:80]))
+            n = 0
+            for d, title in dict(cands).items():
+                if d in known:
+                    continue
+                known.add(d)
+                k = "d:" + d
+                res[k] = {"domain": d, "website": f"https://{d}/", "title": title}
+                names[k] = {"name": "", "source": label, "sources": [label]}
+                n += 1
+            added += n
+            print(f"[{cat}] {q!r}: {len(results)} results, +{n} candidate sites")
+            (D / "resolved.json").write_text(json.dumps(res, ensure_ascii=False, indent=1))
+            (D / "names.json").write_text(json.dumps(names, ensure_ascii=False, indent=1))
+            (D / "serp_done.json").write_text(json.dumps(done, indent=1))
+    print(f"{used} searches used, {added} candidate sites added")
+
+
 def main():
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -905,10 +1003,13 @@ def main():
         p = sub.add_parser(c)
         p.add_argument("--limit", type=int)
         p.add_argument("--workers", type=int, default=16)
+    sp = sub.add_parser("serp")
+    sp.add_argument("--max", type=int, default=75)
+    sp.add_argument("--reserve", type=int, default=30)
     o = sub.add_parser("output")
     o.add_argument("--batch", type=int)
     a = ap.parse_args()
-    {"names": cmd_names, "resolve": cmd_resolve, "enrich": cmd_enrich, "signals": cmd_signals, "output": cmd_output}[a.cmd](a)
+    {"names": cmd_names, "resolve": cmd_resolve, "enrich": cmd_enrich, "signals": cmd_signals, "serp": cmd_serp, "output": cmd_output}[a.cmd](a)
 
 
 if __name__ == "__main__":
