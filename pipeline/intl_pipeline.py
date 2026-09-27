@@ -50,6 +50,7 @@ UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
 FROM = "Fazekas Viktor <viktor@outreach.joinmatchly.com>"
 REPLY_TO = "info@joinmatchly.com"
 START_PER_DAY, STEP_PER_DAY, MAX_PER_DAY = 20, 5, 40
+MAX_EMAILS_PER_DAY = 120  # all brand emails in one day: first emails + follow-ups
 FOLLOWUP_DAYS = (3, 7)
 MAX_OPENER_WORDS = 35  # template text is fixed; only the opener is length-checked
 # Rulebook section 2: who gets email, who goes to LinkedIn, who waits for ExpandNow.
@@ -945,6 +946,12 @@ def daily_cap(date):
     return min(MAX_PER_DAY, START_PER_DAY + STEP_PER_DAY * (n - 1))
 
 
+def emails_sent_on(log, date):
+    """First emails + follow-ups sent on this date (counts toward MAX_EMAILS_PER_DAY)."""
+    return sum((r["date_sent"] == date) + (r.get("followup1_date") == date) + (r.get("followup2_date") == date)
+               for r in log)
+
+
 def resend_send(to, subject, text, headers, idem, html=None):
     key = os.environ.get("RESEND_API_KEY")
     if not key:
@@ -1040,7 +1047,8 @@ def cmd_send(args):
     log = read_log()
     sent = {r["email"].lower() for r in log}
     now = today().isoformat()
-    cap = daily_cap(now) - sum(1 for r in log if r["date_sent"] == now)
+    cap = min(daily_cap(now) - sum(1 for r in log if r["date_sent"] == now),
+              MAX_EMAILS_PER_DAY - emails_sent_on(log, now))
     todo = [brands[it["domain"]] for it in batch["items"] if it["approved"] and it["domain"] in brands
             and brands[it["domain"]]["email"].lower() not in sent]
     held = [b["brand"] for b in todo if not ready(b)]  # rules re-checked at send time
@@ -1101,6 +1109,10 @@ def cmd_followup(args):
             print(f"  SKIP {r['brand']} <{r['email']}>: no record of a first email to this address")
             continue
         ok.append((r, n, original))
+    left = MAX_EMAILS_PER_DAY - emails_sent_on(log, now.isoformat())
+    if len(ok) > left:
+        print(f"{len(ok) - max(left, 0)} follow-ups held for tomorrow (daily limit {MAX_EMAILS_PER_DAY})")
+        ok = ok[:max(left, 0)]
     print(f"{len(ok)} follow-ups due")
     for r, n, original in ok:
         b = brands.get(r["domain"]) or {"brand": r["brand"]}
