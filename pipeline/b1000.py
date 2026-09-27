@@ -104,22 +104,44 @@ CATS = {
 }
 CAT_ORDER = list(CATS)
 
-# Legal-page evidence per country (company registries, VAT ids, legal forms, addresses).
-COUNTRY_RX = {
-    "United Kingdom": [r"registered in (?:england|scotland|wales|northern ireland)", r"laws of (?:england|scotland|the united kingdom|united kingdom)",
-                       r"companies house", r"company (?:registration )?(?:number|no\.?)\s*:?\s*(?:sc|ni)?\d{6,8}", r"\bgb ?\d{3} ?\d{4} ?\d{2}\b",
-                       r"\b[a-z]{1,2}\d[a-z\d]? ?\d[a-z]{2}\b.{0,30}(?:united kingdom|uk|england)"],
-    "Ireland": [r"registered in (?:the republic of )?ireland", r"laws of ireland", r"\bcro\b.{0,20}\d{5,6}", r"\bie ?\d{7}[a-z]{1,2}\b",
-                r"co\. (?:dublin|cork|galway|kerry|wicklow|kildare|meath|limerick|mayo|sligo)", r"dublin \d{1,2}\b.{0,20}ireland"],
-    "Poland": [r"\bnip\b\s*:?\s*\d", r"\bkrs\b\s*:?\s*\d", r"\bregon\b", r"sp\. ?z ?o\.? ?o", r"\bpolska\b", r"z siedzibą"],
-    "Spain": [r"\bcif\b\s*:?\s*[a-z]-?\d{7,8}", r"\bnif\b\s*:?\s*[a-z]-?\d{7,8}", r"registro mercantil", r"\bs\.l\.u?\b", r"\bespaña\b", r"domicilio social"],
-    "France": [r"\bsiret\b", r"\bsiren\b", r"\brcs\b", r"si[èe]ge social", r"\bsas\b|\bsarl\b|\bsasu\b", r"\bfrance\b"],
-    "Italy": [r"partita iva|p\.? ?iva", r"\brea\b", r"s\.r\.l\.", r"\bitalia\b", r"sede legale"],
-    "Netherlands": [r"\bkvk\b|kamer van koophandel", r"\bb\.v\.", r"\bnederland\b|the netherlands", r"\bnl ?\d{9}b\d{2}\b"],
-    "Belgium": [r"\bbe ?0?\d{3}\.?\d{3}\.?\d{3}\b", r"ondernemingsnummer|numéro d'entreprise|kbo|bce", r"\bbelgi[eëu]m?\b|\bbelgique\b"],
-    "Germany": [r"handelsregister|amtsgericht", r"\bhrb\b", r"\bgmbh\b", r"ust-?id", r"\bde ?\d{9}\b", r"\bdeutschland\b"],
-    "Austria": [r"firmenbuch", r"\bfn ?\d+ ?[a-z]\b", r"\batu ?\d{8}\b", r"\bösterreich\b|\baustria\b"],
+# Legal-page evidence per country. STRONG = company registry / VAT / legal registration identifiers;
+# a country is confirmed only by a strong identifier on a legal-type page, backed by a second strong identifier
+# or the country's name/city within 300 characters of it. Country names alone never count (currency selectors).
+STRONG = {
+    "United Kingdom": [r"registered in (?:england|scotland|wales|northern ireland)", r"laws of (?:england|scotland)",
+                       r"companies house", r"company (?:registration )?(?:number|no\.?)\s*:?\s*(?:sc|ni)?\d{6,8}\b",
+                       r"\bvat (?:reg(?:istration|istered)?\.? )?(?:number|no\.?)?\s*:?\s*gb ?\d{3} ?\d{4} ?\d{2}\b"],
+    "Ireland": [r"registered in (?:the republic of )?ireland", r"laws of ireland", r"\bcro (?:number|no\.?)?\s*:?\s*\d{5,6}\b",
+                r"\bie ?\d{7}[a-w]{1,2}\b"],
+    "Poland": [r"\bnip\s*:?\s*(?:pl)?\s?\d{3}[- ]?\d{3}[- ]?\d{2}[- ]?\d{2}\b", r"\bkrs\s*:?\s*\d{10}\b", r"\bregon\s*:?\s*\d{9}",
+               r"sp\. ?z ?o\.? ?o\.?.{0,80}z siedzibą"],
+    "Spain": [r"\b(?:cif|nif)\s*:?\s*[a-z]-?\d{7,8}\b", r"registro mercantil de", r"\bes ?[a-z]\d{7}[a-z0-9]\b"],
+    "France": [r"\bsiret\s*:?\s*\d{3} ?\d{3} ?\d{3} ?\d{5}\b", r"\bsiren\s*:?\s*\d{3} ?\d{3} ?\d{3}\b",
+               r"\brcs (?:de )?[a-zé\-]+(?: [a-z]\b)?", r"\bfr ?[0-9a-z]{2} ?\d{9}\b"],
+    "Italy": [r"(?:partita iva|p\.? ?iva)\s*:?\s*(?:it)?\s?\d{11}\b", r"\brea\s*:?\s*[a-z]{2}[- ]?\d{4,7}\b", r"\bit ?\d{11}\b"],
+    "Netherlands": [r"\bkvk(?:-nummer| nummer| number)?\s*:?\s*\d{8}\b", r"kamer van koophandel", r"\bnl ?\d{9} ?b ?\d{2}\b"],
+    "Belgium": [r"\bbe ?0\d{3}[. ]?\d{3}[. ]?\d{3}\b", r"ondernemingsnummer", r"numéro d['’]entreprise", r"kbo-nummer"],
+    "Germany": [r"handelsregister", r"\bhrb ?\d+", r"amtsgericht [a-zäöü]+", r"ust-?id(?:nr)?\.?\s*:?\s*de ?\d{9}"],
+    "Austria": [r"firmenbuch(?:nummer)?", r"\bfn ?\d+ ?[a-z]\b", r"\batu ?\d{8}\b"],
 }
+NEAR = {
+    "United Kingdom": r"united kingdom|\bengland\b|\bscotland\b|\bwales\b|\blondon\b|\b[a-z]{1,2}\d[a-z\d]? ?\d[a-z]{2}\b",
+    "Ireland": r"\bireland\b|\bdublin\b|\bcork\b|\bgalway\b|\beircode\b|\b[a-z]\d{2} ?[a-z0-9]{4}\b",
+    "Poland": r"\bpolska\b|\bpoland\b|\bwarszaw|\bkrak[oó]w|\bwrocław|\bpoznań|\bgdańsk|\błódź|\b\d{2}-\d{3}\b",
+    "Spain": r"\bespaña\b|\bspain\b|\bmadrid\b|\bbarcelona\b|\bvalencia\b|\bsevilla\b|\b\d{5}\b",
+    "France": r"\bfrance\b|\bparis\b|\blyon\b|\bmarseille\b|\b\d{5}\b",
+    "Italy": r"\bitalia\b|\bitaly\b|\bmilano\b|\broma\b|\btorino\b|\b\d{5}\b",
+    "Netherlands": r"\bnederland\b|\bnetherlands\b|\bamsterdam\b|\brotterdam\b|\butrecht\b|\b\d{4} ?[a-z]{2}\b",
+    "Belgium": r"\bbelgi[eëu]m?\b|\bbelgique\b|\bbrussel|\bbruxelles\b|\bantwerp|\bgent\b|\bghent\b",
+    "Germany": r"\bdeutschland\b|\bgermany\b|\bberlin\b|\bmünchen\b|\bhamburg\b|\b\d{5}\b",
+    "Austria": r"\bösterreich\b|\baustria\b|\bwien\b|\bvienna\b|\bgraz\b|\blinz\b|\b\d{4}\b",
+}
+LEGAL_URL_RX = re.compile(r"impress|imprint|legal|mention|aviso|note-legali|terms|conditions|regulamin|privacy|polityka|"
+                          r"contact|kontakt|contatt|contacto|cgv|agb|datenschutz|voorwaarden|condiciones|termini", re.I)
+SELECTOR_RX = re.compile(r"\((?:[A-Z]{3}) [^)]{1,4}\)|(?:[A-Z][a-z]+ \([A-Z]{3} [^)]{1,4}\) ){2,}")
+COUNTRY_RX = STRONG  # backwards name used elsewhere
+
+
 EMAIL_COUNTRIES = ip.EMAIL_COUNTRIES
 PHONE_RX = re.compile(r"(?:tel(?:efon|ephone)?|phone|telefono|téléphone|tél|call us)\.?\s*[:\-]?\s*(\+?\d[\d ()\-.]{7,18}\d)", re.I)
 LEGAL_WORDS = ["impressum", "imprint", "legal", "mentions", "aviso", "note-legali", "terms", "conditions", "regulamin",
@@ -301,23 +323,38 @@ def text_of(h):
     return s, re.sub(r"\s+", " ", s.get_text(" "))
 
 
+REP_RX = re.compile(r"(?:eu|uk|european) (?:authori[sz]ed )?representative|responsible person|authori[sz]ed representative|importer|"
+                    r"imported by|distributed by|distributor|dystrybutor|importador|distribuidor|distributeur|importateur|"
+                    r"distributore|importatore|verantwoordelijke persoon|gpsr", re.I)
+
+
 def confirm_country(pages):
-    """(country, 'url — snippet') if legal/imprint/terms/contact text gives >=2 independent signals, else ('', hint)."""
-    best, best_hits = "", []
-    for country, rxs in COUNTRY_RX.items():
-        hits = []
-        for url, t in pages:
-            low = t.lower()
+    """(country, 'url — snippet') from legal-type pages only; ('', hint) if not confirmed."""
+    best = None
+    for url, t in pages:
+        if not LEGAL_URL_RX.search(url):
+            continue
+        low = SELECTOR_RX.sub(" ", t).lower()
+        for country, rxs in STRONG.items():
+            hits = []
             for rx in rxs:
-                m = re.search(rx, low)
-                if m and rx not in [h[0] for h in hits]:
-                    hits.append((rx, url, t[max(0, m.start() - 70): m.end() + 50]))
-        if len(hits) > len(best_hits):
-            best, best_hits = country, hits
-    if len(best_hits) >= 2:
-        rx, url, snip = best_hits[0]
-        return best, f"{url} — '…{snip.strip()}…'"
-    return "", (f"weak signal: {best}" if best else "")
+                for m in re.finditer(rx, low):
+                    ctx = low[max(0, m.start() - 250): m.end() + 150]
+                    if REP_RX.search(ctx):
+                        continue  # EU representative / importer / distributor address
+                    hits.append(m)
+                    break
+            if not hits:
+                continue
+            m0 = hits[0]
+            near = re.search(NEAR[country], low[max(0, m0.start() - 300): m0.end() + 300])
+            if len(hits) >= 2 or near:
+                cand = (len(hits) + (1 if near else 0), country, url, t[max(0, m0.start() - 80): m0.end() + 60])
+                if not best or cand[0] > best[0]:
+                    best = cand
+    if best:
+        return best[1], f"{best[2]} — '…{best[3].strip()}…'"
+    return "", ""
 
 
 def categorize(text):
@@ -356,6 +393,19 @@ def best_seller(site, home_html):
     return "", "", "", "", ""
 
 
+def shop_base_currency(html):
+    """Shop's base currency only when the page shows it unconverted (Shopify rate 1.0); else ''."""
+    m = re.search(r'Shopify\.currency\s*=\s*\{"active":"([A-Z]{3})","rate":"([\d.]+)"', html or "")
+    return m.group(1) if m and float(m.group(2)) == 1.0 else ""
+
+
+def shop_currency(html):
+    m = re.search(r'Shopify\.currency\s*=\s*\{"active":"([A-Z]{3})"', html) or \
+        re.search(r'"(?:priceCurrency|currencyCode|shop_currency|currency)"\s*:\s*"([A-Z]{3})"', html) or \
+        re.search(r'property="og:price:currency"\s+content="([A-Z]{3})"', html)
+    return m.group(1) if m else ""
+
+
 def currency_of(site_text, url):
     if re.search(r"£\s?\d", site_text):
         return "GBP"
@@ -379,10 +429,12 @@ def enrich_brand(item):
         if h2 and h2 not in ("ROBOTS", "BLOCKED"):
             pages.append((f2, text_of(h2)[1]))
             raw += h2
-    country, where = confirm_country(pages[1:] or pages)
+    country, where = confirm_country(pages)
     blob = " ".join(t for _, t in pages)
     name, price, cur, purl, how = best_seller(site, home)
-    cur = cur or currency_of(htext, site)
+    if "collection" in how:  # Shopify catalogue JSON: prices are in the shop's base currency
+        cur = shop_base_currency(home) or {"United Kingdom": "GBP", "Poland": "PLN"}.get(country, "EUR" if country else "")
+    cur = cur or shop_currency(home) or currency_of(htext, site)
     cat, sub = categorize(blob + " " + name)
     # emails (published only) with context for named-contact detection
     emails, ctx = set(), {}
@@ -437,7 +489,7 @@ def enrich_brand(item):
                "tts": "on" if (tts_links or tts_badge) else "unverified", "tts_evidence": (tts_links or [""])[0] or
                ("'TikTok Shop' mentioned on site" if tts_badge else ""),
                "hu": "yes" if hu else "unknown", "hu_evidence": (hu or [""])[0][:120],
-               "owner": owner[:220], "retailer_entity": retailer[:200], "hreflangs": hreflangs, "stores": stores,
+               "rules": 2, "owner": owner[:220], "retailer_entity": retailer[:200], "hreflangs": hreflangs, "stores": stores,
                "title": r.get("title", ""), "desc": (hs.find("meta", attrs={"name": "description"}) or {}).get("content", "")[:200]
                if hs.find("meta", attrs={"name": "description"}) else ""}
 
@@ -447,7 +499,7 @@ def cmd_enrich(args):
     out = ip.load_json(D / "enriched.json", {})
     # (re)do anything not yet enriched with the ownership/size fields
     todo = [(k, r) for k, r in res.items() if r and not r.get("skip")
-            and (k not in out or (out[k].get("status") == "ok" and "owner" not in out[k]))]
+            and (k not in out or (out[k].get("status") == "ok" and out[k].get("rules") != 2))]
     todo = todo[: args.limit] if args.limit else todo
     print(f"enriching {len(todo)} brands")
     with ThreadPoolExecutor(max_workers=args.workers) as ex:
@@ -459,12 +511,150 @@ def cmd_enrich(args):
     (D / "enriched.json").write_text(json.dumps(out, ensure_ascii=False, indent=1))
 
 
+BIG_RETAILER_LISTS = 5   # distinct big retailers -> 'stocked in most big European retailers'
+REVIEW_RETAILER_LISTS = 3
+
+
+# ---------------------------------------------------------------- signals (size / sales / social, public data only)
+
+YT_RX = re.compile(r"https?://(?:www\.)?youtube\.com/(?:@[\w.\-]+|channel/[\w\-]+|c/[\w\-]+|user/[\w\-]+)")
+REVIEWS_RX = re.compile(r"([\d][\d.,\s]{0,8}\d|\d)\s*\+?\s*(?:verified\s+)?(?:reviews|recenzj\w*|opini\w*|avis|reseñas|opiniones|recensioni|beoordelingen|reviews?\b)", re.I)
+CUSTOMERS_RX = re.compile(r"(?:over|more than|ponad|más de|plus de|oltre|meer dan|join)\s+([\d][\d.,]*)\s*(k|m|000)?\s*\+?\s*(?:happy |satisfied |loyal )?(?:customers|clients|klient\w*|clientes|clients|clienti|klanten|community|followers)", re.I)
+EU_SHIP_RX = re.compile(r"ship(?:ping)? (?:to|across|throughout) (?:the )?(?:eu|europe|european union)|(?:we )?ship (?:worldwide|internationally)|"
+                        r"worldwide (?:shipping|delivery)|international (?:shipping|delivery)|eu[- ]wide (?:shipping|delivery)|"
+                        r"wysyłka (?:do|na terenie) (?:ue|unii|europy)|wysyłka zagraniczna|envíos? (?:a|internacionales|a toda) europa|"
+                        r"livraison (?:en|dans toute l['’]) ?europe|spedizion[ei] in (?:tutta )?europa|verzending (?:naar|binnen) europa", re.I)
+CH_NUM_RX = re.compile(r"(?:company (?:registration )?(?:number|no\.?)|registered (?:number|no\.?)|company no\.?)\s*:?\s*((?:SC|NI|OC)?\d{6,8})", re.I)
+
+
+def parse_count(num, mult=""):
+    try:
+        v = float(num.replace(" ", "").replace(",", "").replace(".", "") if re.search(r"[.,]\d{3}\b", num) else num.replace(",", "."))
+    except ValueError:
+        return None
+    return int(v * {"k": 1_000, "m": 1_000_000}.get((mult or "").lower(), 1))
+
+
+def youtube_subs(url):
+    f, h = polite_get(url.rstrip("/") + "/about" if "/@" in url else url)
+    if not h or h in ("ROBOTS", "BLOCKED"):
+        return None
+    m = re.search(r'"subscriberCountText":\{[^}]*?"(?:simpleText|content)":"([\d.,]+)\s*([KMkm])?', h) or \
+        re.search(r"([\d.,]+)\s*([KMkm])?\s+subscribers", h)
+    return parse_count(m.group(1), m.group(2)) if m else None
+
+
+def companies_house(number):
+    """Latest accounts type from the public Companies House filing history (UK)."""
+    f, h = polite_get(f"https://find-and-update.company-information.service.gov.uk/company/{number}/filing-history")
+    if not h or h in ("ROBOTS", "BLOCKED"):
+        return ""
+    t = re.sub(r"\s+", " ", BeautifulSoup(h, "html.parser").get_text(" "))
+    m = re.search(r"(Micro company accounts|Accounts for a (?:small|medium|dormant) company|Total exemption (?:full|small) accounts|"
+                  r"Unaudited abridged accounts|Abridged accounts|Full accounts|Group of companies' accounts|Audit exemption subsidiary accounts)"
+                  r"[^.]{0,40}?made up to (\d{1,2} \w+ \d{4})", t)
+    return f"{m.group(1)} (made up to {m.group(2)})" if m else ""
+
+
+def signals_one(item):
+    k, r, e = item
+    site = r["website"]
+    out = {"products": None, "reviews": None, "customers": None, "youtube": None, "yt_url": "", "ch": "", "ch_number": "",
+           "eu_ship": False, "restock": False}
+    # product count (Shopify catalogue, public JSON)
+    n, page = 0, 1
+    while page <= 4:
+        j = get_json(urljoin(site, f"/products.json?limit=250&page={page}"))
+        if not j or not j.get("products"):
+            break
+        n += len(j["products"])
+        if len(j["products"]) < 250:
+            break
+        page += 1
+    out["products"] = n or None
+    f, h = polite_get(site)
+    pages = [h] if h and h not in ("ROBOTS", "BLOCKED") else []
+    out["currency"] = shop_currency(h) if pages else ""
+    # re-verify the home-country evidence: it must not be an EU representative / importer address
+    out["country_ok"] = True
+    src_url = (re.findall(r"https?://\S+", e.get("country_where", "")) or [""])[0]
+    snip = re.sub(r"^.*?'…|…'$", "", e.get("country_where", ""))[:60].strip().lower()
+    if src_url and snip:
+        f4, h4 = polite_get(src_url)
+        if h4 and h4 not in ("ROBOTS", "BLOCKED"):
+            low = re.sub(r"\s+", " ", BeautifulSoup(h4, "html.parser").get_text(" ")).lower()
+            i = low.find(snip[:40])
+            if i >= 0 and REP_RX.search(low[max(0, i - 250): i + 200]):
+                out["country_ok"] = False
+    if e.get("product_url"):
+        f2, h2 = polite_get(e["product_url"])
+        if h2 and h2 not in ("ROBOTS", "BLOCKED"):
+            pages.append(h2)
+    best_reviews = 0
+    for html in pages:
+        for m in re.finditer(r'"reviewCount"\s*:\s*"?(\d+)', html):
+            best_reviews = max(best_reviews, int(m.group(1)))
+        t = re.sub(r"\s+", " ", BeautifulSoup(html, "html.parser").get_text(" "))
+        for m in REVIEWS_RX.finditer(t):
+            c = parse_count(m.group(1))
+            if c and c < 2_000_000:
+                best_reviews = max(best_reviews, c)
+        for m in CUSTOMERS_RX.finditer(t):
+            c = parse_count(m.group(1), m.group(2))
+            if c:
+                out["customers"] = max(out["customers"] or 0, c)
+        if EU_SHIP_RX.search(t):
+            out["eu_ship"] = True
+        if re.search(r"back in stock|restock|sold out|wyprzedane|agotado|épuisé|esaurito|uitverkocht", t, re.I):
+            out["restock"] = True
+        y = YT_RX.search(html)
+        if y and not out["yt_url"]:
+            out["yt_url"] = y.group(0)
+    out["reviews"] = best_reviews or None
+    if out["yt_url"]:
+        out["youtube"] = youtube_subs(out["yt_url"])
+    if e.get("country") == "United Kingdom":
+        m = CH_NUM_RX.search(" ".join([e.get("country_where", "")] + [BeautifulSoup(x, "html.parser").get_text(" ") for x in pages]))
+        if not m:  # legal pages carry the number most often
+            for u in [w for w in re.findall(r"https?://\S+", e.get("country_where", ""))][:1]:
+                f3, h3 = polite_get(u)
+                if h3 and h3 not in ("ROBOTS", "BLOCKED"):
+                    m = CH_NUM_RX.search(BeautifulSoup(h3, "html.parser").get_text(" "))
+        if m:
+            out["ch_number"] = m.group(1).upper().zfill(8)
+            out["ch"] = companies_house(out["ch_number"])
+    return k, out
+
+
+def qualifies_for_signals(n, r, e):
+    return e.get("status") == "ok" and e.get("category") and e.get("country") in (EMAIL_COUNTRIES | {"Germany", "Austria"}) \
+        and size_check(n, r, e, None)[0] != "drop"
+
+
+def cmd_signals(args):
+    names, res = ip.load_json(D / "names.json", {}), ip.load_json(D / "resolved.json", {})
+    enr, sig = ip.load_json(D / "enriched.json", {}), ip.load_json(D / "signals.json", {})
+    todo = [(k, res[k], e) for k, e in enr.items() if k not in sig and qualifies_for_signals(names.get(k, {}), res[k], e)]
+    todo = todo[: args.limit] if args.limit else todo
+    print(f"collecting signals for {len(todo)} brands")
+    with ThreadPoolExecutor(max_workers=args.workers) as ex:
+        for i, (k, o) in enumerate(ex.map(signals_one, todo), 1):
+            sig[k] = o
+            if i % 25 == 0:
+                (D / "signals.json").write_text(json.dumps(sig, ensure_ascii=False, indent=1))
+                print(f"  {i}/{len(todo)}")
+    (D / "signals.json").write_text(json.dumps(sig, ensure_ascii=False, indent=1))
+
+
 # ---------------------------------------------------------------- output
 
 COLUMNS = ["Brand", "Website", "Home country + where confirmed", "Category", "Subcategory", "Best-seller product",
            "Product price", "Product URL", "Why it works on TikTok", "Marketing email", "General email", "Company phone",
            "Contact name + role", "LinkedIn URL", "Instagram", "Instagram followers", "TikTok handle",
-           "TikTok Shop status", "Ships to Hungary", "List", "Fit score", "Source", "Notes", "Date found"]
+           "TikTok Shop status", "Ships to Hungary", "List", "Fit score", "Source", "Notes", "Date found",
+           "Largest follower count (platform)", "Estimated revenue band", "Founder name", "Last Instagram post date",
+           "Running Meta ads"]
+FIT, NOTES = 20, 22
 WHY = {"skincare": "Easy to show on camera: apply it and show the result in one short clip.",
        "haircare": "Hair routines film well: before/after and application in one short video.",
        "oral care": "Whitening is a classic before/after TikTok format.",
@@ -484,6 +674,7 @@ WHY = {"skincare": "Easy to show on camera: apply it and show the result in one 
        "electrolytes/hydration": "Mixing the drink on camera is a quick, visual demo.",
        "greens/superfood powders": "Morning-routine videos with the mix-and-drink moment.",
        "functional drinks": "Unboxing and first-sip reactions are easy to film."}
+HIGH_MARGIN = {"skincare/haircare/oral care", "supplements & gummies", "healthy snacks"}
 
 
 def eur(price, cur, rates):
@@ -496,29 +687,47 @@ def eur(price, cur, rates):
     return round(v, 2)
 
 
-def fit_score(e, peur):
-    s = 5
-    if not e.get("category"):
-        s -= 2
-    if peur is None:
-        s -= 1
-    elif not 10 <= peur <= 40:
-        s -= 1 if 6 <= peur <= 60 else 2
-    if not e.get("marketing_email"):
-        s -= 1
-        if not e.get("general_email"):
-            s -= 1
-    if not e.get("instagram"):
-        s -= 1
-    return max(1, s)
+def retailer_count(n):
+    """Distinct retailers (Douglas IT/PL/NL/ES/BE count once)."""
+    return len({re.sub(r" (?:[A-Z]{2} )?brand list$", "", x).replace("healf.com", "Healf")
+                for x in n.get("sources", [n.get("source")]) if x})
 
 
-BIG_RETAILER_LISTS = 5   # in >= 5 of the big-retailer brand lists -> "present in most big European retailers"
-REVIEW_RETAILER_LISTS = 3
+def revenue_band(n, e, s):
+    """(band, reasons). Estimated from public signals only; 'unknown' when they don't point anywhere."""
+    over, under, why = [], [], []
+    ch = (s or {}).get("ch", "")
+    if re.search(r"Full accounts|Group of companies|medium company|Audit exemption subsidiary", ch):
+        over.append(f"Companies House: {ch}")
+    if re.search(r"Micro company", ch):
+        under.append(f"Companies House: {ch} (micro entity: turnover under ~£1M)")
+    k = retailer_count(n)
+    if k >= REVIEW_RETAILER_LISTS:
+        over.append(f"stocked by {k} big retailers")
+    rv, pr, cu, yt = (s or {}).get("reviews"), (s or {}).get("products"), (s or {}).get("customers"), (s or {}).get("youtube")
+    if rv and rv >= 10_000:
+        over.append(f"{rv:,} reviews")
+    if cu and cu >= 250_000:
+        over.append(f"claims {cu:,}+ customers")
+    if yt and yt > 100_000:
+        over.append(f"{yt:,} YouTube subscribers")
+    if pr and pr >= 300:
+        over.append(f"{pr}+ products")
+    if over:
+        return "over 1M", over
+    if under:
+        small = (rv or 0) < 300 and (pr or 0) < 25
+        return ("under 250K" if small else "250K-1M"), under
+    if (rv or 0) >= 500 or (pr or 0) >= 40 or (cu or 0) >= 20_000 or k == 2:
+        return "250K-1M", [x for x in (f"{rv:,} reviews" if rv else "", f"{pr} products" if pr else "",
+                                        f"{k} retailers" if k > 1 else "") if x]
+    if rv is not None and rv < 50 and (pr or 0) < 12 and k <= 1:
+        return "under 250K", [f"{rv or 0} reviews, {pr or '?'} products, not stocked by big retailers"]
+    return "unknown", []
 
 
-def size_check(n, r, e):
-    """('main'|'review'|'drop', reason). Independent small/mid brands stay in the main list."""
+def size_check(n, r, e, s=None):
+    """('main'|'review'|'drop', reason) for the size and ownership rules."""
     name = (n.get("name") or "").strip().lower()
     if name in OWN_LABELS or norm(name) in {norm(x) for x in OWN_LABELS}:
         return "drop", "retailer own label"
@@ -526,31 +735,69 @@ def size_check(n, r, e):
         return "drop", f"retailer own label: {e['retailer_entity']}"
     if e.get("owner"):
         return "drop", f"owned by a large group: {e['owner']}"
-    # Distinct retailers (Douglas IT/PL/NL/ES/BE count once).
-    k = len({re.sub(r" (?:[A-Z]{2} )?brand list$", "", x).replace("healf.com", "Healf")
-             for x in n.get("sources", [n.get("source")]) if x})
+    k = retailer_count(n)
     if k >= BIG_RETAILER_LISTS:
         return "drop", f"stocked by {k} big retailers' brand lists"
+    if s is None:
+        return "main", ""
+    band, why = revenue_band(n, e, s)
+    yt = s.get("youtube")
+    if yt and yt > 100_000:
+        return "drop", f"too big: {yt:,} YouTube subscribers (limit ~100K)"
+    if band == "over 1M" and re.search(r"Full accounts|Group|medium", s.get("ch", "")):
+        return "drop", f"too big: {'; '.join(why)}"
     reasons = []
-    if k >= REVIEW_RETAILER_LISTS:
-        reasons.append(f"stocked by {k} big retailers' brand lists")
+    if band == "over 1M":
+        reasons.append("possibly over ~USD 1M: " + "; ".join(why))
     if e.get("hreflangs", 0) >= 8:
         reasons.append(f"{e['hreflangs']} country/language storefronts")
     if e.get("stores"):
         reasons.append("has physical stores / store locator")
+    # too small to afford a monthly service: no follower data (Instagram/TikTok not readable) and no sign of sales
+    sales = (s.get("reviews") or 0) >= 25 or (s.get("customers") or 0) >= 1_000 or s.get("restock") or k >= 1 and (s.get("reviews") or 0) >= 10
+    if not sales and not (yt and yt >= 3_000):
+        if (s.get("products") or 0) < 5 and not s.get("reviews"):
+            return "drop", "too small: no sign of regular sales (no reviews, under 5 products)"
+        reasons.append("no clear sign of regular sales found (reviews/restocks); followers not readable")
     return ("review", "; ".join(reasons)) if reasons else ("main", "")
+
+
+def fit(e, s, peur, founder, email_ok):
+    """Fit score 1-5 from the 'likely to sign' signs. Unknown signs (Instagram activity/followers, Meta ads,
+    TikTok strength: not readable without Meta API / TikTok access) don't lower the score; known-missing ones do."""
+    known_missing, unknown = [], []
+    if not founder:
+        known_missing.append("founder not named")
+    fol = (s or {}).get("youtube")
+    if fol is None:
+        unknown.append("followers")
+    elif not 10_000 <= fol <= 100_000:
+        known_missing.append("followers outside 10K-100K")
+    unknown.append("Instagram activity")
+    if e.get("tiktok"):
+        unknown.append("TikTok strength")  # handle linked on site; size not readable
+    demo = peur is not None and 10 <= peur <= 40 and e.get("category") in HIGH_MARGIN
+    if not demo:
+        known_missing.append("hero product not EUR 10-40 in a high-margin category" if peur is not None else "hero price unknown")
+    if not (e.get("hu") == "yes" or (s or {}).get("eu_ship")):
+        known_missing.append("no Hungary/EU shipping found")
+    if not email_ok:
+        known_missing.append("no marketing or founder email")
+    unknown.append("Meta ads")
+    return max(1, 5 - len(known_missing)), known_missing, unknown
 
 
 def cmd_output(args):
     names = ip.load_json(D / "names.json", {})
     res = ip.load_json(D / "resolved.json", {})
     enr = ip.load_json(D / "enriched.json", {})
+    sig = ip.load_json(D / "signals.json", {})
     try:
-        import intl_pipeline as _
         rates = __import__("launch_plan").eur_rates()
     except Exception:
         rates = {"EUR": 1.0, "GBP": 0.84, "PLN": 4.25}
-    rows, de_at, review, stats = [], [], [], {"not_target_country": 0, "unconfirmed_country": 0, "no_category": 0, "unreachable": 0}
+    rows, de_at, review, stats = [], [], [], {"not_target_country": 0, "unconfirmed_country": 0, "no_category": 0,
+                                              "unreachable": 0, "signals_pending": 0}
     for k, e in enr.items():
         if e.get("status") != "ok":
             stats["unreachable"] += 1
@@ -562,73 +809,106 @@ def cmd_output(args):
         if not e["country"]:
             stats["unconfirmed_country"] += 1
             continue
-        verdict, why_ = size_check(n, r, e)
+        if e["country"] not in EMAIL_COUNTRIES | {"Germany", "Austria"}:
+            stats["not_target_country"] += 1
+            continue
+        s = sig.get(k)
+        if s is None:
+            stats["signals_pending"] += 1
+            continue
+        verdict, why_ = size_check(n, r, e, s)
         if verdict == "drop":
-            stats[f"dropped: {why_.split(':')[0]}"] = stats.get(f"dropped: {why_.split(':')[0]}", 0) + 1
+            key = "dropped: " + why_.split(":")[0]
+            stats[key] = stats.get(key, 0) + 1
+            continue
+        if s.get("country_ok") is False:
+            stats["dropped: country evidence is an EU representative/importer address"] = \
+                stats.get("dropped: country evidence is an EU representative/importer address", 0) + 1
             continue
         peur = eur(e["price"], e["currency"], rates)
         price = f"{e['price']} {e['currency']}".strip() + (f" (~€{peur:.0f})" if peur and e["currency"] != "EUR" else "") if e["price"] else ""
+        founder = re.sub(r"\s*\(.*$", "", e.get("contact", ""))
+        first = founder.split()[0].lower() if founder else ""
+        founder_email = next((x for x in (e["marketing_email"], e["general_email"]) if first and x and x.split("@")[0].startswith(first)), "")
+        email_ok = bool(e["marketing_email"] or founder_email)
+        score, missing, unknown = fit(e, s, peur, founder, email_ok)
+        band, band_why = revenue_band(n, e, s)
         notes = []
         if not e["marketing_email"] and not e["general_email"]:
             notes.append("NO EMAIL FOUND")
-        if e["tts"] == "unverified":
-            notes.append("TikTok not checked (robots.txt); no TikTok Shop link on site")
-        if e.get("product_how"):
-            notes.append(f"product from {e['product_how']}")
+        if verdict == "review":
+            notes.append(f"REVIEW: {why_}")
+        if missing:
+            notes.append("missing: " + ", ".join(missing))
+        notes.append("not readable: " + ", ".join(unknown))
+        if band_why:
+            notes.append("revenue estimate from: " + "; ".join(band_why))
+        if s.get("reviews"):
+            notes.append(f"{s['reviews']:,} reviews on site")
+        if s.get("products"):
+            notes.append(f"{s['products']} products")
+        ship = "yes" if e["hu"] == "yes" else ("EU-wide" if s.get("eu_ship") else "unknown")
+        largest = f"{s['youtube']:,} (YouTube)" if s.get("youtube") else ""
         row = [n.get("name") or r.get("title"), r["website"], f"{e['country']} — {e['country_where']}", e["category"],
                e["subcategory"], e["product"], price, e["product_url"], WHY.get(e["subcategory"], ""),
-               e["marketing_email"], e["general_email"], e["phone"], e["contact"], e["linkedin"],
-               e["instagram"], "", e["tiktok"], e["tts"] if e["tts"] == "on" else "unverified",
-               e["hu"], "A" if e["tts"] == "on" else "B", fit_score(e, peur), n.get("source", ""), "; ".join(notes), TODAY]
-        if verdict == "review":
-            row[22] = (row[22] + "; " if row[22] else "") + f"REVIEW: {why_}"
+               e["marketing_email"] or founder_email, e["general_email"], e["phone"], e["contact"], e["linkedin"],
+               e["instagram"], "", e["tiktok"], "on" if e["tts"] == "on" else "unverified", ship,
+               "A" if e["tts"] == "on" else "B", score, ", ".join(n.get("sources", [n.get("source", "")])), "; ".join(notes), TODAY,
+               largest, band, founder, "", "unknown"]
         if e["country"] in ("Germany", "Austria"):
             de_at.append(row)
-        elif e["country"] in EMAIL_COUNTRIES:
-            (review if verdict == "review" else rows).append(row)
         else:
-            stats["not_target_country"] += 1
-    rows.sort(key=lambda x: (-x[20], CAT_ORDER.index(x[3]) if x[3] in CAT_ORDER else 9, x[0].lower()))
+            (review if verdict == "review" else rows).append(row)
+    key = lambda x: (-x[FIT], CAT_ORDER.index(x[3]) if x[3] in CAT_ORDER else 9, x[0].lower())
+    rows.sort(key=key)
+    review.sort(key=key)
+    de_at.sort(key=key)
     limit = args.batch * 200 if args.batch else len(rows)
     from openpyxl import Workbook
     from openpyxl.styles import Font
     wb = Workbook()
-    review.sort(key=lambda x: (-x[20], x[0].lower()))
     for title, data in (("Brands", rows[:limit]), ("Review", review), ("DE_AT_LinkedIn_only", de_at)):
         ws = wb.active if title == "Brands" else wb.create_sheet(title)
         ws.title = title
         ws.append(COLUMNS)
         for c in ws[1]:
             c.font = Font(bold=True)
-        for r in data:
-            ws.append(r)
+        for r_ in data:
+            ws.append(r_)
         ws.freeze_panes = "A2"
         for col in ws.columns:
             ws.column_dimensions[col[0].column_letter].width = min(45, max(10, *(len(str(c.value or "")) for c in col)) + 2)
     wb.save(ip.ROOT / "brands_1000.xlsx")
     out = rows[:limit]
     from collections import Counter
-    print(f"rows written: {len(out)} (of {len(rows)} qualifying); review: {len(review)}; DE/AT: {len(de_at)}; excluded: {stats}")
-    print("by category:", dict(Counter(r[3] for r in out)))
-    print("by country:", dict(Counter(r[2].split(' — ')[0] for r in out)))
-    print("marketing email:", sum(1 for r in out if r[9]), "| any email:", sum(1 for r in out if r[9] or r[10]),
-          "| avg fit:", round(sum(r[20] for r in out) / max(1, len(out)), 2))
-    print("by source:", dict(Counter(r[21] for r in out)))
-    print("List A:", sum(1 for r in out if r[19] == "A"), "| ships to HU:", sum(1 for r in out if r[18] == "yes"))
+    print(f"main list: {len(out)} written (of {len(rows)} qualifying); review: {len(review)}; DE/AT: {len(de_at)}")
+    print("excluded:", stats)
+    print("by category:", dict(Counter(x[3] for x in out)))
+    print("by country:", dict(Counter(x[2].split(' — ')[0] for x in out)))
+    print("fit 4-5:", sum(1 for x in out if x[FIT] >= 4), "| by score:", dict(sorted(Counter(x[FIT] for x in out).items(), reverse=True)))
+    print("marketing/founder email:", sum(1 for x in out if x[9]), "| any email:", sum(1 for x in out if x[9] or x[10]),
+          "| avg fit:", round(sum(x[FIT] for x in out) / max(1, len(out)), 2))
+    print("founder named:", sum(1 for x in out if x[26]), "| revenue band:", dict(Counter(x[25] for x in out)))
+    print("ships HU/EU:", dict(Counter(x[18] for x in out)), "| List A:", sum(1 for x in out if x[19] == "A"))
+    src = Counter()
+    for x in out:
+        for y in x[21].split(", "):
+            src[y] += 1
+    print("sources:", dict(src.most_common()))
 
 
 def main():
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("names")
-    for c in ("resolve", "enrich"):
+    for c in ("resolve", "enrich", "signals"):
         p = sub.add_parser(c)
         p.add_argument("--limit", type=int)
         p.add_argument("--workers", type=int, default=16)
     o = sub.add_parser("output")
     o.add_argument("--batch", type=int)
     a = ap.parse_args()
-    {"names": cmd_names, "resolve": cmd_resolve, "enrich": cmd_enrich, "output": cmd_output}[a.cmd](a)
+    {"names": cmd_names, "resolve": cmd_resolve, "enrich": cmd_enrich, "signals": cmd_signals, "output": cmd_output}[a.cmd](a)
 
 
 if __name__ == "__main__":
