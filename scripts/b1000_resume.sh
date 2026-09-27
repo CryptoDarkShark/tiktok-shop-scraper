@@ -20,7 +20,7 @@ publish() {
 $(head -1 data/b1000/last_export.log)
 
 Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
-Claude-Session: https://claude.ai/code/session_01CziznoytHKLtNR6XV1tNPE" -- brands_1000.xlsx \
+Claude-Session: https://claude.ai/code/session_01WB69a89kqZeLpQcubf5W63" -- brands_1000.xlsx \
       && { git pull -q --no-rebase origin claude/trusting-mayer-4s23s5; git push -q origin claude/trusting-mayer-4s23s5; }
     echo "$(date -u +%H:%M) exported: $(head -1 data/b1000/last_export.log)"
   fi
