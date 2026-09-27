@@ -55,7 +55,7 @@ SOURCES = {
 }
 
 # Household names / big groups / retailers' own labels: never targets.
-BIG = {n.strip() for n in """aesop, acqua di parma, clinique, estee lauder, estée lauder, lancome, lancôme, la roche-posay, cerave, the ordinary, nivea, garnier, loreal, l'oreal, l'oréal, maybelline, dior, chanel, gucci, prada, ysl, yves saint laurent, armani, giorgio armani, versace, dolce & gabbana, burberry, hugo boss, calvin klein, tom ford, jo malone, jo malone london, creed, kiehl's, origins, mac, nars, benefit, benefit cosmetics, too faced, urban decay, fenty beauty, charlotte tilbury, rituals, the body shop, neutrogena, olay, dove, vichy, avene, avène, eucerin, bioderma, nuxe, caudalie, clarins, shiseido, sisley, la mer, elemis, dermalogica, kerastase, kérastase, redken, olaplex, ghd, dyson, babyliss, philips, braun, oral-b, colgate, sensodyne, listerine, revlon, rimmel, max factor, bourjois, kiko, kiko milano, essence, catrice, nyx, nyx professional makeup, l'occitane, lush, sol de janeiro, drunk elephant, glossier, tatcha, fresh, sunday riley, paula's choice, the inkey list, revolution, makeup revolution, mac cosmetics, bobbi brown, laura mercier, hourglass, huda beauty, anastasia beverly hills, rare beauty, kylie cosmetics, morphe, e.l.f., elf cosmetics, physicians formula, milani, wet n wild, 4711, davidoff, lacoste, boss, moschino, valentino, givenchy, guerlain, hermes, hermès, marc jacobs, carolina herrera, paco rabanne, rabanne, jean paul gaultier, narciso rodriguez, chloe, chloé, mugler, azzaro, issey miyake, kenzo, abercrombie & fitch, myprotein, optimum nutrition, gymshark, nike, adidas, puma, under armour, lululemon, reebok, asics, new balance, skechers, huel, grenade, bulk, applied nutrition, holland & barrett, vitabiotics, centrum, solgar, nature's bounty, berocca, red bull, monster, innocent, nestle, kellogg's, nature valley, kind, graze, eat natural, cosrx, anua, beauty of joseon, laneige, innisfree, sulwhasoo, some by mi, skin1004, medicube, torriden, round lab, missha, etude, dr. jart+, erborian, aveda, bumble and bumble, moroccanoil, davines, living proof, ouai, briogeo, k18, clarins men, biotherm, helena rubinstein, yves rocher, garnier fructis, pantene, head & shoulders, tresemme, tresemmé, schwarzkopf, wella, john frieda, batiste, simple, cetaphil, aveeno, bioré, biore, st. tropez, st.tropez, bondi sands, tangle teezer, real techniques, ciaté, ciate, sleek, nails inc, barry m, collection, w7, mario badescu, the inkey list, medik8, murad, philosophy, clarisonic, foreo, nuface, currentbody, oskia, 111skin, dr dennis gross, zo skin health, skinceuticals, obagi, peter thomas roth""".split(",")}
+BIG = {n.strip() for n in """cowshed, aesop, acqua di parma, clinique, estee lauder, estée lauder, lancome, lancôme, la roche-posay, cerave, the ordinary, nivea, garnier, loreal, l'oreal, l'oréal, maybelline, dior, chanel, gucci, prada, ysl, yves saint laurent, armani, giorgio armani, versace, dolce & gabbana, burberry, hugo boss, calvin klein, tom ford, jo malone, jo malone london, creed, kiehl's, origins, mac, nars, benefit, benefit cosmetics, too faced, urban decay, fenty beauty, charlotte tilbury, rituals, the body shop, neutrogena, olay, dove, vichy, avene, avène, eucerin, bioderma, nuxe, caudalie, clarins, shiseido, sisley, la mer, elemis, dermalogica, kerastase, kérastase, redken, olaplex, ghd, dyson, babyliss, philips, braun, oral-b, colgate, sensodyne, listerine, revlon, rimmel, max factor, bourjois, kiko, kiko milano, essence, catrice, nyx, nyx professional makeup, l'occitane, lush, sol de janeiro, drunk elephant, glossier, tatcha, fresh, sunday riley, paula's choice, the inkey list, revolution, makeup revolution, mac cosmetics, bobbi brown, laura mercier, hourglass, huda beauty, anastasia beverly hills, rare beauty, kylie cosmetics, morphe, e.l.f., elf cosmetics, physicians formula, milani, wet n wild, 4711, davidoff, lacoste, boss, moschino, valentino, givenchy, guerlain, hermes, hermès, marc jacobs, carolina herrera, paco rabanne, rabanne, jean paul gaultier, narciso rodriguez, chloe, chloé, mugler, azzaro, issey miyake, kenzo, abercrombie & fitch, myprotein, optimum nutrition, gymshark, nike, adidas, puma, under armour, lululemon, reebok, asics, new balance, skechers, huel, grenade, bulk, applied nutrition, holland & barrett, vitabiotics, centrum, solgar, nature's bounty, berocca, red bull, monster, innocent, nestle, kellogg's, nature valley, kind, graze, eat natural, cosrx, anua, beauty of joseon, laneige, innisfree, sulwhasoo, some by mi, skin1004, medicube, torriden, round lab, missha, etude, dr. jart+, erborian, aveda, bumble and bumble, moroccanoil, davines, living proof, ouai, briogeo, k18, clarins men, biotherm, helena rubinstein, yves rocher, garnier fructis, pantene, head & shoulders, tresemme, tresemmé, schwarzkopf, wella, john frieda, batiste, simple, cetaphil, aveeno, bioré, biore, st. tropez, st.tropez, bondi sands, tangle teezer, real techniques, ciaté, ciate, sleek, nails inc, barry m, collection, w7, mario badescu, the inkey list, medik8, murad, philosophy, clarisonic, foreo, nuface, currentbody, oskia, 111skin, dr dennis gross, zo skin health, skinceuticals, obagi, peter thomas roth""".split(",")}
 
 # Retailer own labels (drop) and the retailer companies that own them.
 OWN_LABELS = {n.strip() for n in """isana, alterra, babydream, rival de loop, sun ozon, domol, enerbio, facelle, prokudent,
@@ -67,7 +67,7 @@ escentual, holland & barrett, h&b, marks & spencer, m&s, tesco, sainsbury's, asd
 leclerc, monoprix, franprix, action""".split(",")}
 RETAILER_ENTITIES = r"rossmann|douglas (?:gmbh|polska|italia|spain|nederland|belgium|group)|perfumer[ií]as primor|druni s\.?a|arenal perfumer|dm-drogerie|boots uk|walgreens boots|superdrug stores|hebe sp|a\.s\. watson|jeronimo martins|kruidvat|lidl|aldi|mercadona"
 # Multinationals / large groups (drop when named as owner on the brand's own pages).
-GROUPS = r"l['’]or[eé]al|unilever|procter\s*&\s*gamble|p&g\b|beiersdorf|\bcoty\b|est[eé]e lauder|henkel|nestl[eé]|danone|shiseido|\bkao\b|johnson\s*&\s*johnson|kenvue|haleon|reckitt|colgate-palmolive|lvmh|\bpuig\b|revlon|amorepacific|pierre fabre|interparfums|natura\s*&\s*co|mondel[eē]z|pepsico|coca-cola|\bmars,? inc|ferrero|general mills|kellanova|kellogg|glanbia|bayer|sanofi|perrigo|wella company|the hut group|\bthg\b|kenvue|ab inbev|diageo|haleon|church\s*&\s*dwight|edgewell|spectrum brands|newell|conair|helen of troy|kkr|l catterton|cvc capital|bain capital|blackstone"
+GROUPS = r"soho house|l['’]or[eé]al|unilever|procter\s*&\s*gamble|p&g\b|beiersdorf|\bcoty\b|est[eé]e lauder|henkel|nestl[eé]|danone|shiseido|\bkao\b|johnson\s*&\s*johnson|kenvue|haleon|reckitt|colgate-palmolive|lvmh|\bpuig\b|revlon|amorepacific|pierre fabre|interparfums|natura\s*&\s*co|mondel[eē]z|pepsico|coca-cola|\bmars,? inc|ferrero|general mills|kellanova|kellogg|glanbia|bayer|sanofi|perrigo|wella company|the hut group|\bthg\b|kenvue|ab inbev|diageo|haleon|church\s*&\s*dwight|edgewell|spectrum brands|newell|conair|helen of troy|kkr|l catterton|cvc capital|bain capital|blackstone"
 OWNER_CTX = r"(?:owned by|part of|a subsidiary of|subsidiary|member of|a brand of|brand of|division of|belongs to|acquired by|©\s*\d{4})"
 
 
@@ -692,7 +692,22 @@ Your You Philosophy Beginning History Inspiration Heart Science Promise Collecti
 Sustainability Community Ingredients Blog Press Care Careers Journal Beauty Skin Hair Body Wellness Health Love Life World Nature
 Natural Organic Clean Pure London Paris Madrid Warsaw Poland Spain France Italy Ireland England Uk Europe Eu Ltd Limited Company
 Group Family Founded Created Started Est Established Since In Of For With By At On To Nasza Nasz Historia Notre Nuestra La Le El
-Il Die Der Das De Het Een""".split()}
+Il Die Der Das De Het Een Instytut Instytutu Polskiego Dyplomacji Institute University Uniwersytet Fundacja Foundation
+Stowarzyszenie Association Ministry Ministerstwo""".split()}
+
+
+def own_email(email, site):
+    """Keep an address only if it is on the brand's own domain (e.g. never a personal webmail address)."""
+    if not email:
+        return ""
+    host = email.split("@")[-1].lower()
+    d = ip.domain_of(site)
+    parts = d.split(".")
+    label = parts[0] if len(parts) <= 2 or parts[-2] in ("co", "com", "org", "net") and len(parts) == 3 else parts[-2]
+    return email if label and label in host else ""
+
+
+NOT_A_BRAND_TITLE = re.compile(r"\s[-–|]\s(?:tag|tags|kategoria|category|news|blog|artykuły|articles)\s[-–|]|/tag/", re.I)
 
 
 def clean_person(name, brand=""):
@@ -952,6 +967,14 @@ def cmd_output(args):
             drop(n, r, e, f"home country {e['country']} not in target countries")
             continue
         s = sig.get(k)
+        if NOT_A_BRAND_TITLE.search(r.get("title", "") + " " + r.get("website", "")):
+            drop(n, r, e, "not a brand site (news/tag page)")
+            continue
+        if (n.get("name") or "").strip().lower() in BIG:
+            drop(n, r, e, "household name / owned by a large group")
+            continue
+        e = {**e, "marketing_email": own_email(e.get("marketing_email"), r["website"]),
+             "general_email": own_email(e.get("general_email"), r["website"])}
         verdict, why_ = size_check(n, r, e, s)
         if verdict == "drop":
             key = "dropped: " + why_.split(":")[0]
