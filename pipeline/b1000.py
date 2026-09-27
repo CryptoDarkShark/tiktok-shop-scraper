@@ -1017,6 +1017,120 @@ def cmd_serp(args):
     print(f"{used} searches used, {added} candidate sites added")
 
 
+# ---------------------------------------------------------------- more free sources
+
+AWARD_INDEX = ["https://www.freefromfoodawards.co.uk/winners/"]
+AWARD_EXTRA = ["https://freefrom.evessiocloud.com/ffa2026/en/page/drinks-awards-finalists",
+               "https://freefrom.evessiocloud.com/ffa2026/en/page/food-awards-finalists-2026",
+               "https://freefrom.evessiocloud.com/ffa2026/en/page/nutritional-supplements-awards-finalists-2026"]
+RETAIL_HOST = re.compile(r"waitrose|tesco|sainsbury|ocado|asda|morrisons|m&s|marksandspencer|boots|superdrug|holland|amazon|"
+                         r"lidl|aldi|coop|co-op|iceland|booths|wholefoods|planetorganic|ebay|etsy|allergyshow|twitter|facebook|"
+                         r"instagram|evessio|freefrom|google", re.I)
+
+
+def add_candidate(names, res, known, label, brand, site=None):
+    """Add a brand name (and its site, when the source gives it) as a candidate; returns 1 if new."""
+    k = norm(brand)
+    if not k or len(k) < 3:
+        return 0
+    if site:
+        d = ip.domain_of(site)
+        if not d or RETAIL_HOST.search(d) or d in known:
+            site = None
+    if k in names:
+        if label not in names[k].setdefault("sources", [names[k].get("source")]):
+            names[k]["sources"].append(label)
+        return 0
+    names[k] = {"name": brand, "source": label, "sources": [label]}
+    if site:
+        d = ip.domain_of(site)
+        known.add(d)
+        res[k] = {"domain": d, "website": f"https://{urlparse(site).netloc}/", "title": brand}
+    return 1
+
+
+def cmd_awards(args):
+    names, res = ip.load_json(D / "names.json", {}), ip.load_json(D / "resolved.json", {})
+    known = {v["domain"] for v in res.values() if v} | existing_domains()
+    pages = set(AWARD_EXTRA)
+    for idx in AWARD_INDEX:
+        f, h = polite_get(idx, timeout=30)
+        if h and h not in ("ROBOTS", "BLOCKED"):
+            pages |= {urljoin(f, a["href"]).split("#")[0] for a in BeautifulSoup(h, "html.parser").find_all("a", href=True)
+                      if "evessiocloud.com" in a["href"] and "admin" not in a["href"]}
+    total = 0
+    for u in sorted(pages):
+        f, h = polite_get(u, timeout=40)
+        if not h or h in ("ROBOTS", "BLOCKED"):
+            print(f"skip {u}: {h or 'unreachable'}"); continue
+        soup = BeautifulSoup(h, "html.parser")
+        label = "Free From Awards: " + re.sub(r"https?://freefrom\.evessiocloud\.com/", "", u)
+        n = 0
+        for h4 in soup.find_all("h4", class_="nomination-name"):
+            brand = h4.get_text(" ", strip=True).split(",")[0].strip()
+            brand = re.sub(r"\s+(?:ltd|limited|llp|plc)\.?$", "", brand, flags=re.I)
+            box = h4.find_parent(attrs={"data-slug": True}) or h4.parent.parent
+            site = None
+            if box:
+                m = re.search(r"Where to buy\s*(https?://\S+)", box.get_text(" ", strip=True))
+                site = m.group(1).rstrip(".,)") if m else None
+            n += add_candidate(names, res, known, label, brand, site)
+        total += n
+        print(f"{label}: +{n}")
+    (D / "names.json").write_text(json.dumps(names, ensure_ascii=False, indent=1))
+    (D / "resolved.json").write_text(json.dumps(res, ensure_ascii=False, indent=1))
+    print(f"awards: {total} new brand names")
+
+
+def cmd_lookalike(args):
+    """Brands with fit >= 3 -> their stockists -> small independent shops -> brands those shops also stock
+    (Shopify shops publish their catalogue at /products.json; 'vendor' is the brand)."""
+    from openpyxl import load_workbook
+    names, res = ip.load_json(D / "names.json", {}), ip.load_json(D / "resolved.json", {})
+    known = {v["domain"] for v in res.values() if v} | existing_domains()
+    done = ip.load_json(D / "lookalike_done.json", {"brands": [], "shops": []})
+    wb = load_workbook(ip.ROOT / "brands_1000.xlsx", read_only=True)
+    seeds = [(r[0], r[1]) for sh in ("Brands", "Review") for r in wb[sh].iter_rows(min_row=2, values_only=True)
+             if r and isinstance(r[FIT], int) and r[FIT] >= 3 and r[1] not in done["brands"]]
+    print(f"{len(seeds)} seed brands (fit >= 3)")
+    shops = set()
+    for brand, site in seeds:
+        done["brands"].append(site)
+        f, h = polite_get(site)
+        if not h or h in ("ROBOTS", "BLOCKED"):
+            continue
+        for u in ip.find_links(BeautifulSoup(h, "html.parser"), f, ["stockist", "where-to-buy", "where to buy", "retailers",
+                                                                      "find-us", "punkty-sprzedazy", "revendeurs", "puntos-de-venta"], limit=2):
+            f2, h2 = polite_get(u)
+            if not h2 or h2 in ("ROBOTS", "BLOCKED"):
+                continue
+            for a in BeautifulSoup(h2, "html.parser").find_all("a", href=True):
+                d = ip.domain_of(urljoin(f2, a["href"]))
+                if d and d != ip.domain_of(site) and not NOT_BRANDS.search(d) and not RETAIL_HOST.search(d) \
+                        and not MEDIA.search(d) and not ip.is_blocked(d):
+                    shops.add(d)
+    shops -= set(done["shops"])
+    print(f"{len(shops)} independent shops to read")
+    total = 0
+    for d in sorted(shops):
+        done["shops"].append(d)
+        vendors = set()
+        for page in (1, 2):
+            j = get_json(f"https://{d}/products.json?limit=250&page={page}")
+            if not j or not j.get("products"):
+                break
+            vendors |= {p.get("vendor", "").strip() for p in j["products"] if p.get("vendor")}
+        vendors = {v for v in vendors if norm(v) != norm(d.split(".")[0]) and len(v) <= 40}
+        n = sum(add_candidate(names, res, known, f"lookalike: stocked by {d}", v) for v in vendors)
+        total += n
+        if vendors:
+            print(f"  {d}: {len(vendors)} brands, +{n} new")
+    (D / "names.json").write_text(json.dumps(names, ensure_ascii=False, indent=1))
+    (D / "resolved.json").write_text(json.dumps(res, ensure_ascii=False, indent=1))
+    (D / "lookalike_done.json").write_text(json.dumps(done, indent=1))
+    print(f"lookalike: {total} new brand names")
+
+
 def main():
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -1028,10 +1142,12 @@ def main():
     sp = sub.add_parser("serp")
     sp.add_argument("--max", type=int, default=75)
     sp.add_argument("--reserve", type=int, default=30)
+    sub.add_parser("awards")
+    sub.add_parser("lookalike")
     o = sub.add_parser("output")
     o.add_argument("--batch", type=int)
     a = ap.parse_args()
-    {"names": cmd_names, "resolve": cmd_resolve, "enrich": cmd_enrich, "signals": cmd_signals, "serp": cmd_serp, "output": cmd_output}[a.cmd](a)
+    {"names": cmd_names, "resolve": cmd_resolve, "enrich": cmd_enrich, "signals": cmd_signals, "serp": cmd_serp, "awards": cmd_awards, "lookalike": cmd_lookalike, "output": cmd_output}[a.cmd](a)
 
 
 if __name__ == "__main__":
