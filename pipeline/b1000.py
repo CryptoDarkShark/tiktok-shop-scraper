@@ -256,7 +256,7 @@ def dns_ok(host):
     try:
         socket.getaddrinfo(host, 443)
         return True
-    except OSError:
+    except (OSError, UnicodeError, ValueError):  # invalid hostnames from odd brand names
         return False
 
 
@@ -611,6 +611,50 @@ def signals_one(item):
         if y and not out["yt_url"]:
             out["yt_url"] = y.group(0)
     out["reviews"] = best_reviews or None
+    out["v"] = 2
+    # shipping: policy / delivery pages usually say where they ship
+    home_soup = BeautifulSoup(h, "html.parser") if pages else None
+    ship_urls = [urljoin(site, "/policies/shipping-policy")]
+    if home_soup:
+        ship_urls += ip.find_links(home_soup, f, ["shipping", "delivery", "dostawa", "wysyłka", "envío", "envios",
+                                                  "livraison", "spedizion", "verzending", "bezorg"], limit=2)
+    for u in dict.fromkeys(ship_urls):
+        f5, h5 = polite_get(u)
+        if not h5 or h5 in ("ROBOTS", "BLOCKED"):
+            continue
+        t5 = re.sub(r"\s+", " ", BeautifulSoup(h5, "html.parser").get_text(" "))
+        if re.search(r"hungary|magyarorsz|węgry|hongrie|hungría|ungheria|hongarije", t5, re.I):
+            out["ships_hu"] = True
+        if EU_SHIP_RX.search(t5) or re.search(r"(?:all|most) (?:eu|european) countries|within (?:the )?eu\b|european union|"
+                                             r"kraje ue|países de la ue|pays de l['’]ue|paesi ue|eu-landen", t5, re.I):
+            out["eu_ship"] = True
+    # founder: about / story / team pages
+    if home_soup:
+        for u in ip.find_links(home_soup, f, ["about", "our-story", "story", "founder", "team", "o-nas", "o-marce",
+                                              "qui-sommes", "notre-histoire", "chi-siamo", "quienes-somos", "over-ons"], limit=3):
+            f6, h6 = polite_get(u)
+            if not h6 or h6 in ("ROBOTS", "BLOCKED"):
+                continue
+            t6 = re.sub(r"\s+", " ", BeautifulSoup(h6, "html.parser").get_text(" "))
+            m = FOUNDER_PAT.search(t6)
+            if m:
+                name = next(g for g in m.groups() if g)
+                if norm(name) not in norm(r.get("title", "") + e.get("title", "")) and len(name.split()) <= 3:
+                    out["founder"] = f"{name} (founder, {f6})"
+                    break
+    if out.get("ch_number") and not out.get("founder"):
+        f7, h7 = polite_get(f"https://find-and-update.company-information.service.gov.uk/company/{out['ch_number']}/officers")
+        if h7 and h7 not in ("ROBOTS", "BLOCKED"):
+            soup7 = BeautifulSoup(h7, "html.parser")
+            for blk in soup7.select("div.appointment-1, div[class^='appointment-']"):
+                txt = re.sub(r"\s+", " ", blk.get_text(" "))
+                if "Resigned" in txt or "DIRECTOR" not in txt.upper():
+                    continue
+                nm = blk.find("a")
+                if nm:
+                    last, _, first = nm.get_text(" ", strip=True).partition(",")
+                    out["director"] = f"{first.strip().title()} {last.strip().title()} (director, Companies House)".strip()
+                    break
     if out["yt_url"]:
         out["youtube"] = youtube_subs(out["yt_url"])
     if e.get("country") == "United Kingdom":
@@ -626,6 +670,15 @@ def signals_one(item):
     return k, out
 
 
+WORD = r"[A-Z][a-zà-ž]+(?:[A-Z][a-zà-ž]+)?"   # also McDowell, MacLeod
+NAME = rf"({WORD}(?:[- ](?:{WORD}|O['’]{WORD})){{0,2}})"
+FOUNDER_PAT = re.compile(
+    rf"(?i:founded by|created by|started by|our founder|co-?founders?|founder(?: & ceo| and ceo)?[,:]?|założycielk?a?|"
+    rf"fondatrice|fondateur|fundadora?|oprichtster|oprichter)\s+{NAME}"
+    rf"|{NAME},?\s+(?i:our\s+)?(?i:co-?)?(?i:founder)\b"
+    rf"|(?i:hi|hello|hey),? (?i:i['’]m) {NAME}")
+
+
 def qualifies_for_signals(n, r, e):
     return e.get("status") == "ok" and e.get("category") and e.get("country") in (EMAIL_COUNTRIES | {"Germany", "Austria"}) \
         and size_check(n, r, e, None)[0] != "drop"
@@ -634,7 +687,8 @@ def qualifies_for_signals(n, r, e):
 def cmd_signals(args):
     names, res = ip.load_json(D / "names.json", {}), ip.load_json(D / "resolved.json", {})
     enr, sig = ip.load_json(D / "enriched.json", {}), ip.load_json(D / "signals.json", {})
-    todo = [(k, res[k], e) for k, e in enr.items() if k not in sig and qualifies_for_signals(names.get(k, {}), res[k], e)]
+    todo = [(k, res[k], e) for k, e in enr.items() if (k not in sig or sig[k].get("v") != 2)
+            and e.get("rules") == 2 and qualifies_for_signals(names.get(k, {}), res[k], e)]
     todo = todo[: args.limit] if args.limit else todo
     print(f"collecting signals for {len(todo)} brands")
     with ThreadPoolExecutor(max_workers=args.workers) as ex:
@@ -769,17 +823,17 @@ def fit(e, s, peur, founder, email_ok):
     if not founder:
         known_missing.append("founder not named")
     fol = (s or {}).get("youtube")
-    if fol is None:
-        unknown.append("followers")
-    elif not 10_000 <= fol <= 100_000:
-        known_missing.append("followers outside 10K-100K")
+    if fol is None or fol < 10_000:
+        unknown.append("followers")  # YouTube below 10K isn't evidence: their audience is on Instagram/TikTok
+    elif fol > 100_000:
+        known_missing.append("followers over 100K")
     unknown.append("Instagram activity")
     if e.get("tiktok"):
         unknown.append("TikTok strength")  # handle linked on site; size not readable
     demo = peur is not None and 10 <= peur <= 40 and e.get("category") in HIGH_MARGIN
     if not demo:
         known_missing.append("hero product not EUR 10-40 in a high-margin category" if peur is not None else "hero price unknown")
-    if not (e.get("hu") == "yes" or (s or {}).get("eu_ship")):
+    if not (e.get("hu") == "yes" or (s or {}).get("eu_ship") or (s or {}).get("ships_hu")):
         if s is None:
             unknown.append("EU shipping (signals in progress)")
         else:
@@ -845,7 +899,8 @@ def cmd_output(args):
         s = s or {}
         peur = eur(e["price"], e["currency"], rates)
         price = f"{e['price']} {e['currency']}".strip() + (f" (~€{peur:.0f})" if peur and e["currency"] != "EUR" else "") if e["price"] else ""
-        founder = re.sub(r"\s*\(.*$", "", e.get("contact", ""))
+        founder = re.sub(r"\s*\(.*$", "", e.get("contact", "") or (s or {}).get("founder", "") or (s or {}).get("director", ""))
+        contact_full = e.get("contact", "") or (s or {}).get("founder", "") or (s or {}).get("director", "")
         first = founder.split()[0].lower() if founder else ""
         founder_email = next((x for x in (e["marketing_email"], e["general_email"]) if first and x and x.split("@")[0].startswith(first)), "")
         email_ok = bool(e["marketing_email"] or founder_email)
@@ -865,11 +920,11 @@ def cmd_output(args):
             notes.append(f"{s['reviews']:,} reviews on site")
         if s.get("products"):
             notes.append(f"{s['products']} products")
-        ship = "yes" if e["hu"] == "yes" else ("EU-wide" if s.get("eu_ship") else ("in progress" if pending else "unknown"))
+        ship = "yes" if e["hu"] == "yes" or s.get("ships_hu") else ("EU-wide" if s.get("eu_ship") else ("in progress" if pending else "unknown"))
         largest = f"{s['youtube']:,} (YouTube)" if s.get("youtube") else ("in progress" if pending else "unknown")
         row = [n.get("name") or r.get("title"), r["website"], f"{e['country']} — {e['country_where']}", e["category"],
                e["subcategory"], e["product"], price, e["product_url"], WHY.get(e["subcategory"], ""),
-               e["marketing_email"] or founder_email, e["general_email"], e["phone"], e["contact"], e["linkedin"],
+               e["marketing_email"] or founder_email, e["general_email"], e["phone"], contact_full, e["linkedin"],
                e["instagram"], "unknown", e["tiktok"], "on" if e["tts"] == "on" else "unverified", ship,
                "A" if e["tts"] == "on" else "B", score, ", ".join(n.get("sources", [n.get("source", "")])), "; ".join(notes), TODAY,
                largest, band, founder, "unknown", "unknown"]
