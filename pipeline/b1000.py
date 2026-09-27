@@ -780,7 +780,10 @@ def fit(e, s, peur, founder, email_ok):
     if not demo:
         known_missing.append("hero product not EUR 10-40 in a high-margin category" if peur is not None else "hero price unknown")
     if not (e.get("hu") == "yes" or (s or {}).get("eu_ship")):
-        known_missing.append("no Hungary/EU shipping found")
+        if s is None:
+            unknown.append("EU shipping (signals in progress)")
+        else:
+            known_missing.append("no Hungary/EU shipping found")
     if not email_ok:
         known_missing.append("no marketing or founder email")
     unknown.append("Meta ads")
@@ -796,44 +799,59 @@ def cmd_output(args):
         rates = __import__("launch_plan").eur_rates()
     except Exception:
         rates = {"EUR": 1.0, "GBP": 0.84, "PLN": 4.25}
-    rows, de_at, review, stats = [], [], [], {"not_target_country": 0, "unconfirmed_country": 0, "no_category": 0,
-                                              "unreachable": 0, "signals_pending": 0}
+    rows, de_at, review, dropped = [], [], [], []
+    stats = {"not_target_country": 0, "unconfirmed_country": 0, "no_category": 0, "unreachable": 0, "signals_pending": 0}
+
+    def drop(n, r, e, reason):
+        dropped.append([n.get("name") or r.get("title") or r.get("domain"), r.get("website", ""),
+                        (e or {}).get("country", ""), (e or {}).get("category", ""), reason,
+                        ", ".join(n.get("sources", [n.get("source", "")])), TODAY])
     for k, e in enr.items():
+        r, n = res.get(k, {}), names.get(k, {})
+        if e.get("status") == "ok" and e.get("rules") != 2:
+            stats["being re-checked under current rules"] = stats.get("being re-checked under current rules", 0) + 1
+            continue
         if e.get("status") != "ok":
             stats["unreachable"] += 1
+            drop(n, r, None, f"site not readable ({e.get('status')}: unreachable, blocked or robots.txt)")
             continue
-        r, n = res[k], names.get(k, {})
         if not e["category"]:
             stats["no_category"] += 1
+            drop(n, r, e, "not in a target category (skincare/haircare/oral, supplements, snacks, activewear, drinks)")
             continue
         if not e["country"]:
             stats["unconfirmed_country"] += 1
+            drop(n, r, e, "home country not confirmed on a legal page")
             continue
         if e["country"] not in EMAIL_COUNTRIES | {"Germany", "Austria"}:
             stats["not_target_country"] += 1
+            drop(n, r, e, f"home country {e['country']} not in target countries")
             continue
         s = sig.get(k)
-        if s is None:
-            stats["signals_pending"] += 1
-            continue
         verdict, why_ = size_check(n, r, e, s)
         if verdict == "drop":
             key = "dropped: " + why_.split(":")[0]
             stats[key] = stats.get(key, 0) + 1
+            drop(n, r, e, why_)
             continue
-        if s.get("country_ok") is False:
+        if s is None:
+            stats["signals_pending"] += 1
+        if s and s.get("country_ok") is False:
             stats["dropped: country evidence is an EU representative/importer address"] = \
                 stats.get("dropped: country evidence is an EU representative/importer address", 0) + 1
+            drop(n, r, e, "country evidence is an EU representative/importer address")
             continue
+        pending = s is None
+        s = s or {}
         peur = eur(e["price"], e["currency"], rates)
         price = f"{e['price']} {e['currency']}".strip() + (f" (~€{peur:.0f})" if peur and e["currency"] != "EUR" else "") if e["price"] else ""
         founder = re.sub(r"\s*\(.*$", "", e.get("contact", ""))
         first = founder.split()[0].lower() if founder else ""
         founder_email = next((x for x in (e["marketing_email"], e["general_email"]) if first and x and x.split("@")[0].startswith(first)), "")
         email_ok = bool(e["marketing_email"] or founder_email)
-        score, missing, unknown = fit(e, s, peur, founder, email_ok)
-        band, band_why = revenue_band(n, e, s)
-        notes = []
+        score, missing, unknown = fit(e, None if pending else s, peur, founder, email_ok)
+        band, band_why = ("in progress", []) if pending else revenue_band(n, e, s)
+        notes = ["SIGNALS IN PROGRESS (size, reviews, shipping still being collected)"] if pending else []
         if not e["marketing_email"] and not e["general_email"]:
             notes.append("NO EMAIL FOUND")
         if verdict == "review":
@@ -847,8 +865,8 @@ def cmd_output(args):
             notes.append(f"{s['reviews']:,} reviews on site")
         if s.get("products"):
             notes.append(f"{s['products']} products")
-        ship = "yes" if e["hu"] == "yes" else ("EU-wide" if s.get("eu_ship") else "unknown")
-        largest = f"{s['youtube']:,} (YouTube)" if s.get("youtube") else "unknown"
+        ship = "yes" if e["hu"] == "yes" else ("EU-wide" if s.get("eu_ship") else ("in progress" if pending else "unknown"))
+        largest = f"{s['youtube']:,} (YouTube)" if s.get("youtube") else ("in progress" if pending else "unknown")
         row = [n.get("name") or r.get("title"), r["website"], f"{e['country']} — {e['country_where']}", e["category"],
                e["subcategory"], e["product"], price, e["product_url"], WHY.get(e["subcategory"], ""),
                e["marketing_email"] or founder_email, e["general_email"], e["phone"], e["contact"], e["linkedin"],
@@ -867,10 +885,13 @@ def cmd_output(args):
     from openpyxl import Workbook
     from openpyxl.styles import Font
     wb = Workbook()
-    for title, data in (("Brands", rows[:limit]), ("Review", review), ("DE_AT_LinkedIn_only", de_at)):
+    dropped.sort(key=lambda x: (x[4], str(x[0]).lower()))
+    sheets = (("Brands", rows[:limit], COLUMNS), ("Review", review, COLUMNS), ("DE_AT_LinkedIn_only", de_at, COLUMNS),
+              ("Dropped", dropped, ["Brand", "Website", "Home country", "Category", "Reason dropped", "Source", "Date checked"]))
+    for title, data, cols in sheets:
         ws = wb.active if title == "Brands" else wb.create_sheet(title)
         ws.title = title
-        ws.append(COLUMNS)
+        ws.append(cols)
         for c in ws[1]:
             c.font = Font(bold=True)
         for r_ in data:
@@ -881,7 +902,8 @@ def cmd_output(args):
     wb.save(ip.ROOT / "brands_1000.xlsx")
     out = rows[:limit]
     from collections import Counter
-    print(f"main list: {len(out)} written (of {len(rows)} qualifying); review: {len(review)}; DE/AT: {len(de_at)}")
+    print(f"main list: {len(out)} written (of {len(rows)} qualifying, {sum(1 for x in out if 'SIGNALS IN PROGRESS' in x[NOTES])} "
+          f"with signals in progress); review: {len(review)}; DE/AT: {len(de_at)}; dropped: {len(dropped)}")
     print("excluded:", stats)
     print("by category:", dict(Counter(x[3] for x in out)))
     print("by country:", dict(Counter(x[2].split(' — ')[0] for x in out)))
