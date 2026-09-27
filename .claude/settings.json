@@ -2,6 +2,7 @@
   "permissions": {
     "allow": [
       "Bash(python pipeline/intl_pipeline.py:*)",
+      "Bash(pip install -r pipeline/requirements.txt)",
       "Bash(git fetch:*)",
       "Bash(git checkout:*)",
       "Bash(git add:*)",
