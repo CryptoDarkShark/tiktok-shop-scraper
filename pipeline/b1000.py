@@ -57,6 +57,20 @@ SOURCES = {
 # Household names / big groups / retailers' own labels: never targets.
 BIG = {n.strip() for n in """aesop, acqua di parma, clinique, estee lauder, estée lauder, lancome, lancôme, la roche-posay, cerave, the ordinary, nivea, garnier, loreal, l'oreal, l'oréal, maybelline, dior, chanel, gucci, prada, ysl, yves saint laurent, armani, giorgio armani, versace, dolce & gabbana, burberry, hugo boss, calvin klein, tom ford, jo malone, jo malone london, creed, kiehl's, origins, mac, nars, benefit, benefit cosmetics, too faced, urban decay, fenty beauty, charlotte tilbury, rituals, the body shop, neutrogena, olay, dove, vichy, avene, avène, eucerin, bioderma, nuxe, caudalie, clarins, shiseido, sisley, la mer, elemis, dermalogica, kerastase, kérastase, redken, olaplex, ghd, dyson, babyliss, philips, braun, oral-b, colgate, sensodyne, listerine, revlon, rimmel, max factor, bourjois, kiko, kiko milano, essence, catrice, nyx, nyx professional makeup, l'occitane, lush, sol de janeiro, drunk elephant, glossier, tatcha, fresh, sunday riley, paula's choice, the inkey list, revolution, makeup revolution, mac cosmetics, bobbi brown, laura mercier, hourglass, huda beauty, anastasia beverly hills, rare beauty, kylie cosmetics, morphe, e.l.f., elf cosmetics, physicians formula, milani, wet n wild, 4711, davidoff, lacoste, boss, moschino, valentino, givenchy, guerlain, hermes, hermès, marc jacobs, carolina herrera, paco rabanne, rabanne, jean paul gaultier, narciso rodriguez, chloe, chloé, mugler, azzaro, issey miyake, kenzo, abercrombie & fitch, myprotein, optimum nutrition, gymshark, nike, adidas, puma, under armour, lululemon, reebok, asics, new balance, skechers, huel, grenade, bulk, applied nutrition, holland & barrett, vitabiotics, centrum, solgar, nature's bounty, berocca, red bull, monster, innocent, nestle, kellogg's, nature valley, kind, graze, eat natural, cosrx, anua, beauty of joseon, laneige, innisfree, sulwhasoo, some by mi, skin1004, medicube, torriden, round lab, missha, etude, dr. jart+, erborian, aveda, bumble and bumble, moroccanoil, davines, living proof, ouai, briogeo, k18, clarins men, biotherm, helena rubinstein, yves rocher, garnier fructis, pantene, head & shoulders, tresemme, tresemmé, schwarzkopf, wella, john frieda, batiste, simple, cetaphil, aveeno, bioré, biore, st. tropez, st.tropez, bondi sands, tangle teezer, real techniques, ciaté, ciate, sleek, nails inc, barry m, collection, w7, mario badescu, the inkey list, medik8, murad, philosophy, clarisonic, foreo, nuface, currentbody, oskia, 111skin, dr dennis gross, zo skin health, skinceuticals, obagi, peter thomas roth""".split(",")}
 
+# Retailer own labels (drop) and the retailer companies that own them.
+OWN_LABELS = {n.strip() for n in """isana, alterra, babydream, rival de loop, sun ozon, domol, enerbio, facelle, prokudent,
+profissimo, rossmann, altapharma, jessa, for your beauty, winston, ideenwelt, douglas, douglas collection, douglas essentials,
+douglas naturals, douglas make-up, primor, druni, arenal, balea, alverde, ebelin, babylove, sundance, trend it up, s-he, dm,
+no7, boots, botanics, boots essentials, superdrug, b. by superdrug, solait, studio london, hebe, cien, lacura, deliplus,
+carrefour, hema, kruidvat, etos, trekpleister, rituals, sephora collection, notino, lookfantastic, cult beauty, space nk,
+escentual, holland & barrett, h&b, marks & spencer, m&s, tesco, sainsbury's, asda, ocado, aldi, lidl, mercadona, auchan,
+leclerc, monoprix, franprix, action""".split(",")}
+RETAILER_ENTITIES = r"rossmann|douglas (?:gmbh|polska|italia|spain|nederland|belgium|group)|perfumer[ií]as primor|druni s\.?a|arenal perfumer|dm-drogerie|boots uk|walgreens boots|superdrug stores|hebe sp|a\.s\. watson|jeronimo martins|kruidvat|lidl|aldi|mercadona"
+# Multinationals / large groups (drop when named as owner on the brand's own pages).
+GROUPS = r"l['’]or[eé]al|unilever|procter\s*&\s*gamble|p&g\b|beiersdorf|\bcoty\b|est[eé]e lauder|henkel|nestl[eé]|danone|shiseido|\bkao\b|johnson\s*&\s*johnson|kenvue|haleon|reckitt|colgate-palmolive|lvmh|\bpuig\b|revlon|amorepacific|pierre fabre|interparfums|natura\s*&\s*co|mondel[eē]z|pepsico|coca-cola|\bmars,? inc|ferrero|general mills|kellanova|kellogg|glanbia|bayer|sanofi|perrigo|wella company|the hut group|\bthg\b|kenvue|ab inbev|diageo|haleon|church\s*&\s*dwight|edgewell|spectrum brands|newell|conair|helen of troy|kkr|l catterton|cvc capital|bain capital|blackstone"
+OWNER_CTX = r"(?:owned by|part of|a subsidiary of|subsidiary|member of|a brand of|brand of|division of|belongs to|acquired by|©\s*\d{4})"
+
+
 CATS = {
     "skincare/haircare/oral care": {
         "skincare": r"serum|moisturi[sz]er|cleanser|face (?:cream|mask|oil)|skin ?care|spf|sunscreen|toner|exfoliat|retinol|niacinamide|eye cream|lip (?:balm|oil|mask)|body (?:butter|lotion|scrub)",
@@ -198,9 +212,13 @@ def cmd_names(args):
                 continue
             if re.search(r"/(brands?|merken|marques|marcas?|marki|brand)/[^/?#]+|/collections/[^/?#]+|/b/|brand=|/marka/", href):
                 k = norm(t)
-                if k and k not in out:
-                    out[k] = {"name": t, "source": label}
+                if not k:
+                    continue
+                if k not in out:
+                    out[k] = {"name": t, "source": label, "sources": [label]}
                     n += 1
+                elif label not in out[k].setdefault("sources", [out[k]["source"]]):
+                    out[k]["sources"].append(label)
         print(f"{label}: +{n}")
     (D / "names.json").write_text(json.dumps(out, ensure_ascii=False, indent=1))
     print(f"{len(out)} unique names")
@@ -399,6 +417,19 @@ def enrich_brand(item):
     tts_links = sorted({m.group(0)[:120] for rx in ip.TTS_PATTERNS for m in rx.finditer(raw)})
     tts_badge = bool(re.search(r"tiktok\s?shop", blob, re.I))
     hu = ip.hu_evidence(r["domain"], [hs], [home], blob)
+    legal_blob = " ".join(t for u, t in pages[1:])
+    owner = ""
+    for m in re.finditer(GROUPS, legal_blob, re.I):
+        near = legal_blob[max(0, m.start() - 90): m.end() + 60]
+        if re.search(OWNER_CTX, near, re.I) or re.search(r"\b(?:s\.a\.|gmbh|ltd|limited|inc|plc|b\.v\.)", near, re.I):
+            owner = f"{m.group(0)}: …{near.strip()}…"
+            break
+    retailer = ""
+    m = re.search(RETAILER_ENTITIES, legal_blob, re.I)
+    if m:
+        retailer = f"…{legal_blob[max(0, m.start() - 60): m.end() + 60].strip()}…"
+    hreflangs = len({l.get("hreflang", "").lower() for l in hs.find_all("link", hreflang=True)} - {"x-default", ""})
+    stores = bool(re.search(r"(?:find|visit) (?:a|our|your nearest) (?:store|shop|boutique)|store locator|our stores|nasze sklepy|nuestras tiendas|nos boutiques", blob, re.I))
     return k, {"status": "ok", "country": country, "country_where": where, "category": cat, "subcategory": sub,
                "product": name, "price": price, "currency": cur, "product_url": purl, "product_how": how,
                "marketing_email": mkt, "general_email": gen, "phone": phone, "contact": founder,
@@ -406,6 +437,7 @@ def enrich_brand(item):
                "tts": "on" if (tts_links or tts_badge) else "unverified", "tts_evidence": (tts_links or [""])[0] or
                ("'TikTok Shop' mentioned on site" if tts_badge else ""),
                "hu": "yes" if hu else "unknown", "hu_evidence": (hu or [""])[0][:120],
+               "owner": owner[:220], "retailer_entity": retailer[:200], "hreflangs": hreflangs, "stores": stores,
                "title": r.get("title", ""), "desc": (hs.find("meta", attrs={"name": "description"}) or {}).get("content", "")[:200]
                if hs.find("meta", attrs={"name": "description"}) else ""}
 
@@ -413,7 +445,9 @@ def enrich_brand(item):
 def cmd_enrich(args):
     res = ip.load_json(D / "resolved.json", {})
     out = ip.load_json(D / "enriched.json", {})
-    todo = [(k, r) for k, r in res.items() if r and not r.get("skip") and k not in out]
+    # (re)do anything not yet enriched with the ownership/size fields
+    todo = [(k, r) for k, r in res.items() if r and not r.get("skip")
+            and (k not in out or (out[k].get("status") == "ok" and "owner" not in out[k]))]
     todo = todo[: args.limit] if args.limit else todo
     print(f"enriching {len(todo)} brands")
     with ThreadPoolExecutor(max_workers=args.workers) as ex:
@@ -479,6 +513,34 @@ def fit_score(e, peur):
     return max(1, s)
 
 
+BIG_RETAILER_LISTS = 5   # in >= 5 of the big-retailer brand lists -> "present in most big European retailers"
+REVIEW_RETAILER_LISTS = 3
+
+
+def size_check(n, r, e):
+    """('main'|'review'|'drop', reason). Independent small/mid brands stay in the main list."""
+    name = (n.get("name") or "").strip().lower()
+    if name in OWN_LABELS or norm(name) in {norm(x) for x in OWN_LABELS}:
+        return "drop", "retailer own label"
+    if e.get("retailer_entity"):
+        return "drop", f"retailer own label: {e['retailer_entity']}"
+    if e.get("owner"):
+        return "drop", f"owned by a large group: {e['owner']}"
+    # Distinct retailers (Douglas IT/PL/NL/ES/BE count once).
+    k = len({re.sub(r" (?:[A-Z]{2} )?brand list$", "", x).replace("healf.com", "Healf")
+             for x in n.get("sources", [n.get("source")]) if x})
+    if k >= BIG_RETAILER_LISTS:
+        return "drop", f"stocked by {k} big retailers' brand lists"
+    reasons = []
+    if k >= REVIEW_RETAILER_LISTS:
+        reasons.append(f"stocked by {k} big retailers' brand lists")
+    if e.get("hreflangs", 0) >= 8:
+        reasons.append(f"{e['hreflangs']} country/language storefronts")
+    if e.get("stores"):
+        reasons.append("has physical stores / store locator")
+    return ("review", "; ".join(reasons)) if reasons else ("main", "")
+
+
 def cmd_output(args):
     names = ip.load_json(D / "names.json", {})
     res = ip.load_json(D / "resolved.json", {})
@@ -488,7 +550,7 @@ def cmd_output(args):
         rates = __import__("launch_plan").eur_rates()
     except Exception:
         rates = {"EUR": 1.0, "GBP": 0.84, "PLN": 4.25}
-    rows, de_at, stats = [], [], {"not_target_country": 0, "unconfirmed_country": 0, "no_category": 0, "unreachable": 0}
+    rows, de_at, review, stats = [], [], [], {"not_target_country": 0, "unconfirmed_country": 0, "no_category": 0, "unreachable": 0}
     for k, e in enr.items():
         if e.get("status") != "ok":
             stats["unreachable"] += 1
@@ -499,6 +561,10 @@ def cmd_output(args):
             continue
         if not e["country"]:
             stats["unconfirmed_country"] += 1
+            continue
+        verdict, why_ = size_check(n, r, e)
+        if verdict == "drop":
+            stats[f"dropped: {why_.split(':')[0]}"] = stats.get(f"dropped: {why_.split(':')[0]}", 0) + 1
             continue
         peur = eur(e["price"], e["currency"], rates)
         price = f"{e['price']} {e['currency']}".strip() + (f" (~€{peur:.0f})" if peur and e["currency"] != "EUR" else "") if e["price"] else ""
@@ -514,10 +580,12 @@ def cmd_output(args):
                e["marketing_email"], e["general_email"], e["phone"], e["contact"], e["linkedin"],
                e["instagram"], "", e["tiktok"], e["tts"] if e["tts"] == "on" else "unverified",
                e["hu"], "A" if e["tts"] == "on" else "B", fit_score(e, peur), n.get("source", ""), "; ".join(notes), TODAY]
+        if verdict == "review":
+            row[22] = (row[22] + "; " if row[22] else "") + f"REVIEW: {why_}"
         if e["country"] in ("Germany", "Austria"):
             de_at.append(row)
         elif e["country"] in EMAIL_COUNTRIES:
-            rows.append(row)
+            (review if verdict == "review" else rows).append(row)
         else:
             stats["not_target_country"] += 1
     rows.sort(key=lambda x: (-x[20], CAT_ORDER.index(x[3]) if x[3] in CAT_ORDER else 9, x[0].lower()))
@@ -525,7 +593,8 @@ def cmd_output(args):
     from openpyxl import Workbook
     from openpyxl.styles import Font
     wb = Workbook()
-    for title, data in (("Brands", rows[:limit]), ("DE_AT_LinkedIn_only", de_at)):
+    review.sort(key=lambda x: (-x[20], x[0].lower()))
+    for title, data in (("Brands", rows[:limit]), ("Review", review), ("DE_AT_LinkedIn_only", de_at)):
         ws = wb.active if title == "Brands" else wb.create_sheet(title)
         ws.title = title
         ws.append(COLUMNS)
@@ -539,7 +608,7 @@ def cmd_output(args):
     wb.save(ip.ROOT / "brands_1000.xlsx")
     out = rows[:limit]
     from collections import Counter
-    print(f"rows written: {len(out)} (of {len(rows)} qualifying); DE/AT: {len(de_at)}; excluded: {stats}")
+    print(f"rows written: {len(out)} (of {len(rows)} qualifying); review: {len(review)}; DE/AT: {len(de_at)}; excluded: {stats}")
     print("by category:", dict(Counter(r[3] for r in out)))
     print("by country:", dict(Counter(r[2].split(' — ')[0] for r in out)))
     print("marketing email:", sum(1 for r in out if r[9]), "| any email:", sum(1 for r in out if r[9] or r[10]),
