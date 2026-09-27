@@ -895,9 +895,12 @@ def size_check(n, r, e, s=None):
     # too small to afford a monthly service: no follower data (Instagram/TikTok not readable) and no sign of sales
     sales = (s.get("reviews") or 0) >= 25 or (s.get("customers") or 0) >= 1_000 or s.get("restock") or k >= 1 and (s.get("reviews") or 0) >= 10
     if not sales and not (yt and yt >= 3_000):
+        # Instagram/TikTok follower counts aren't readable, so the ~3K-follower minimum is never known to fail:
+        # no sign of sales puts a brand on the Review sheet, it doesn't drop it.
         if (s.get("products") or 0) < 5 and not s.get("reviews"):
-            return "drop", "too small: no sign of regular sales (no reviews, under 5 products)"
-        reasons.append("no clear sign of regular sales found (reviews, restocks, customer counts)")
+            reasons.append("no sign of regular sales (no reviews, under 5 products); follower count unknown")
+        else:
+            reasons.append("no clear sign of regular sales found (reviews, restocks, customer counts)")
     return ("review", "; ".join(reasons)) if reasons else ("main", "")
 
 
@@ -1027,6 +1030,7 @@ def cmd_output(args):
             de_at.append(row)
         else:
             (review if verdict == "review" else rows).append(row)
+    dropped += [v["carried_drop"] for k, v in res.items() if v and v.get("carried_drop") and k not in enr]
     key = lambda x: (-x[FIT], CAT_ORDER.index(x[3]) if x[3] in CAT_ORDER else 9, x[0].lower())
     rows.sort(key=key)
     review.sort(key=key)
@@ -1096,6 +1100,31 @@ SERP_QUERIES = {
         ("nl", "nl", "Nederlandse kombucha merk"), ("be", "nl", "Belgisch merk kombucha"),
     ],
 }
+# Second round (after the cache loss on 2026-09-27): the first round's queries above all ran; these cover the
+# high-margin categories that score highest (skincare/haircare/oral care, supplements) in every email country.
+SERP_QUERIES_DONE_ROUND1 = [q for qs in SERP_QUERIES.values() for _, _, q in qs]
+SERP_QUERIES.update({
+    "skincare/haircare/oral care": [
+        ("uk", "en", "independent British skincare brand small batch"), ("uk", "en", "UK indie haircare brand scalp serum"),
+        ("uk", "en", "UK teeth whitening brand independent"), ("uk", "en", "small UK self tan brand"),
+        ("ie", "en", "Irish skincare brand independent"), ("ie", "en", "Irish haircare brand"),
+        ("pl", "pl", "polska marka kosmetyków naturalnych mała"), ("pl", "pl", "polska marka kosmetyków do włosów"),
+        ("es", "es", "marca española cosmética natural independiente"), ("es", "es", "marca española cuidado del cabello"),
+        ("fr", "fr", "marque française cosmétique indépendante soin visage"), ("fr", "fr", "marque française soin cheveux naturelle"),
+        ("it", "it", "marchio italiano skincare indipendente"), ("it", "it", "marchio italiano cura capelli naturale"),
+        ("nl", "nl", "Nederlands skincare merk klein"), ("be", "nl", "Belgisch skincare merk"),
+        ("be", "fr", "marque belge cosmétique naturelle"),
+    ],
+    "supplements & gummies": [
+        ("uk", "en", "UK vitamin gummies brand independent"), ("uk", "en", "UK collagen supplement brand small"),
+        ("uk", "en", "UK magnesium sleep supplement brand"), ("ie", "en", "Irish supplement brand"),
+        ("pl", "pl", "polska marka suplementów diety żelki"), ("pl", "pl", "polska marka kolagenu"),
+        ("es", "es", "marca española suplementos gominolas"), ("es", "es", "marca española colágeno suplemento"),
+        ("fr", "fr", "marque française compléments alimentaires gummies"), ("fr", "fr", "marque française collagène"),
+        ("it", "it", "marchio italiano integratori gummies"), ("nl", "nl", "Nederlands supplementen merk gummies"),
+        ("be", "nl", "Belgisch supplementen merk"),
+    ],
+})
 NOT_BRANDS = re.compile(r"amazon|ebay|allegro|ceneo|tesco|sainsbury|ocado|waitrose|asda|morrisons|boots|superdrug|holland|"
                         r"hollandandbarrett|bol\.com|albert ?heijn|ah\.nl|jumbo|delhaize|colruyt|carrefour|mercadona|elcorteingles|"
                         r"esselunga|coop|monoprix|franprix|leclerc|auchan|intermarche|lidl|aldi|zalando|decathlon|sportsdirect|"
@@ -1281,6 +1310,43 @@ def cmd_lookalike(args):
     print(f"lookalike: {total} new brand names")
 
 
+def cmd_restore(args):
+    """Rebuild the data/b1000 caches from brands_1000.xlsx after they were lost (data/ is not in git).
+    Kept brands (Brands / Review / DE_AT) are queued for enrich + signals again; dropped brands keep their
+    recorded reason and are never fetched again; every name and domain stays known, so new sources skip them."""
+    from openpyxl import load_workbook
+    D.mkdir(parents=True, exist_ok=True)
+    names, res = ip.load_json(D / "names.json", {}), ip.load_json(D / "resolved.json", {})
+    wb = load_workbook(ip.ROOT / "brands_1000.xlsx", read_only=True)
+    kept = dropped = 0
+    for sh in ("Brands", "Review", "DE_AT_LinkedIn_only", "Dropped"):
+        for r in wb[sh].iter_rows(min_row=2, values_only=True):
+            if not r or not (r[0] or r[1]):
+                continue
+            name, site = (r[0] or "").strip(), r[1] or ""
+            src = r[21] if sh != "Dropped" else r[5]
+            sources = [x for x in (src or "").split(", ") if x] or ["brands_1000.xlsx"]
+            d = ip.domain_of(site) if site else ""
+            k = norm(name) or ("d:" + d if d else "")
+            if not k or k in names:
+                continue
+            names[k] = {"name": name, "source": sources[0], "sources": sources}
+            # the old "too small" drop relied on an unknown follower count: re-check those under the current rule
+            if sh == "Dropped" and not (r[4] or "").startswith("too small: no sign of regular sales"):
+                res[k] = {"domain": d, "website": site, "title": name, "skip": "dropped earlier: " + (r[4] or ""),
+                          "carried_drop": [name, site, r[2] or "", r[3] or "", r[4] or "", src or "", r[6] or ""]} if d \
+                    else None
+                dropped += 1
+            elif d:
+                res[k] = {"domain": d, "website": site if site.endswith("/") else site + "/", "title": name}
+                kept += 1
+    (D / "names.json").write_text(json.dumps(names, ensure_ascii=False, indent=1))
+    (D / "resolved.json").write_text(json.dumps(res, ensure_ascii=False, indent=1))
+    done = ip.load_json(D / "serp_done.json", [])
+    (D / "serp_done.json").write_text(json.dumps(sorted(set(done) | set(SERP_QUERIES_DONE_ROUND1)), indent=1))
+    print(f"restored {kept} kept brands (to re-check) and {dropped} dropped brands (not fetched again)")
+
+
 def main():
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -1294,10 +1360,11 @@ def main():
     sp.add_argument("--reserve", type=int, default=30)
     sub.add_parser("awards")
     sub.add_parser("lookalike")
+    sub.add_parser("restore")
     o = sub.add_parser("output")
     o.add_argument("--batch", type=int)
     a = ap.parse_args()
-    {"names": cmd_names, "resolve": cmd_resolve, "enrich": cmd_enrich, "signals": cmd_signals, "serp": cmd_serp, "awards": cmd_awards, "lookalike": cmd_lookalike, "output": cmd_output}[a.cmd](a)
+    {"names": cmd_names, "resolve": cmd_resolve, "enrich": cmd_enrich, "signals": cmd_signals, "serp": cmd_serp, "awards": cmd_awards, "lookalike": cmd_lookalike, "restore": cmd_restore, "output": cmd_output}[a.cmd](a)
 
 
 if __name__ == "__main__":
