@@ -10,7 +10,7 @@ import re
 import sys
 import urllib.parse
 
-COLS = ["termékcsoport", "márka", "weboldal", "cégforma", "becsült méret", "magyar-e", "TikTok Shop-jelenlét",
+COLS = ["termékcsoport", "márka", "márkatípus", "weboldal", "cégforma", "becsült méret", "magyar-e", "TikTok Shop-jelenlét",
         "tulajdonos/döntéshozó (név + forrás)", "marketingvezető (név + forrás)", "LinkedIn cég-URL",
         "Meta Ad Library-link", "forrás", "forrás dátuma", "státusz"]
 FILES = {"Skincare": "1_skincare.csv", "Supplement": "2_supplement.csv", "Smink": "3_smink.csv",
@@ -44,11 +44,11 @@ def size_ok(n):
 
 
 def form_of(company):
-    if re.search(r"Zrt", company or ""):
+    if re.search(r"Zrt", company or "", re.I):
         return "Zrt."
-    if re.search(r"Betéti|Bt\b", company or ""):
+    if re.search(r"Betéti|Bt\b", company or "", re.I):
         return "Bt."
-    if re.search(r"Korlátolt|Kft", company or ""):
+    if re.search(r"Korlátolt|Kft", company or "", re.I):
         return "Kft."
     return ""
 
@@ -91,7 +91,7 @@ def main():
         year, rev = revenue_m(n.get("revenue"))
         size = []
         if rev is not None:
-            size.append(f"nettó árbevétel {year}: {rev:,.1f} M Ft".replace(",", " "))
+            size.append(f"nettó árbevétel {year}: {rev:,.1f} M Ft".replace(",", " ").replace(".", ","))
         if n.get("headcount"):
             size.append(f"létszám: {n['headcount'].replace(' Fő', ' fő')}")
         size = "; ".join(size) + (f" (forrás: {n['url']})" if size else "")
@@ -132,9 +132,11 @@ def main():
             status = "részleges"
         else:
             status = "nem igazolt"
+        if x.get("status"):
+            status = x["status"]
         status += " — " + "; ".join(notes)
         row = {
-            "termékcsoport": r["group"], "márka": r["brand"], "weboldal": r["website"],
+            "termékcsoport": r["group"], "márka": r["brand"], "márkatípus": x.get("type", "saját márka"), "weboldal": r["website"],
             "cégforma": f"{form_of(company)} ({company})" if company else "",
             "becsült méret": size or "", "magyar-e": x.get("hungarian", "igen" if have_company else ""),
             "TikTok Shop-jelenlét": tts, "tulajdonos/döntéshozó (név + forrás)": owner,
@@ -144,6 +146,10 @@ def main():
             "státusz": status,
         }
         by_group.setdefault(r["group"], []).append(row)
+    seen_sites = {host(r["website"]) for r in recs}
+    for k, v in extra.items():
+        if v.get("skip") and v.get("group") and host(k) not in seen_sites:
+            skipped.append((v["group"], v.get("brand", ""), k, v["skip"]))
     for g, rows in by_group.items():
         with open(f"{out_dir}/{FILES[g]}", "w", newline="", encoding="utf-8-sig") as f:
             w = csv.DictWriter(f, COLS)

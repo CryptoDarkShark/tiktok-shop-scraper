@@ -74,6 +74,7 @@ def find_company(pages):
         for m in COMPANY_RE.finditer(t):
             name = m.group(1).strip(" |,.")
             name = re.sub(r"^(?:(?:Üzemeltető|Szolgáltató|Cégnév|Név|Neve|cég|Cég)\s*[:\-]?\s*|(?:A|Az)\s+)", "", name)
+            name = re.sub(r"^(?:©|Copyright|\(c\))?\s*(?:\d{4}(?:\s*[-–]\s*\d{4})?)?\s*[-–|,]?\s*", "", name).strip()
             if len(name) < 5 or re.search(r"Facebook|Google|Meta|Shopify|UNAS|Shoprenter|GLS|Magyar Posta|Foxpost|"
                                           r"Packeta|Barion|OTP|SimplePay|Simple|DPD|Expressone|Sprinter|Billingo|"
                                           r"Számlázz|KBOSS|Mailchimp|Wix|WooCommerce|Netlify|Rackhost|Tárhely|"

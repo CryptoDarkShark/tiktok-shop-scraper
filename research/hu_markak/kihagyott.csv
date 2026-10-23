@@ -77,7 +77,7 @@ Kiegészítők,Bluestar,https://bluestar.hu/,"a bluestar.hu DJ-eszközbérlő (B
 Kiegészítők,TimeStore,https://www.timestore.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
 Skincare,Primus,https://primuscosmetics.com/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
 Skincare,Drop Organics,https://droporganics.com/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
-Skincare,Herbow,https://herbow.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Hajápolás,Herbow,https://herbow.hu/,"a Herbow háztartási tisztítószer-márka (Herbow International Zrt., tisztítószergyártás), nem hajápolás"
 Skincare,krem.hu,https://krem.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
 Skincare,Caola,https://caola.hu/,"a talált Caola Zrt. 16,6 M Ft / 0 fő (https://www.nemzeticegtar.hu/), a gyártó cég nem azonosítható biztosan"
 Kiegészítők,Napszemuvegek.com,https://napszemuvegek.com/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
@@ -93,7 +93,6 @@ Kiegészítők,Fülhallgató.hu,https://fulhallgato.hu/,üzemeltető Kft./Bt. ne
 Kiegészítők,Ezüstékszerek.hu,https://ezustekszerek.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
 Skincare,Aroma Manufaktúra,https://www.aromamanufaktura.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
 Skincare,HerbaDoctor,https://www.herbadoctor.hu/,üzemeltető cég nem azonosítható (a talált MBH Bank Nyrt. a kedvezményezett bank)
-Skincare,Naturcomfort,https://www.naturcomfort.hu/,"főleg étrend-kiegészítő (ízület, immun, vitamin) — a Supplement csoportban vizsgálandó (NaturComfort Kft., 902 M Ft)"
 Skincare,Vitális bőr,https://vitalisbor.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
 Kiegészítők,GSMbox,https://gsmbox.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
 Kiegészítők,Mobilnagyker,https://mobilnagyker.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
@@ -105,3 +104,140 @@ Kiegészítők,Kincses Ékszer,https://kincsesekszer.hu/,"zálogház, 61,9 M Ft 
 Kiegészítők,Táskatár,https://taskatar.hu/,túl kicsi (< 100 M Ft és < 5 fő)
 Kiegészítők,Férfitáska.hu,https://ferfitaska.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
 Kiegészítők,Fülhallgatók.hu,https://fulhallgatok.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Supplement,YiYa,https://www.yiya.hu/,túl nagy (árbevétel > 2 Mrd Ft)
+Supplement,GAL,https://www.gal.hu/,túl nagy (árbevétel > 2 Mrd Ft)
+Supplement,Flavin7,https://flavin7.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Supplement,Nutriversum,https://nutriversum.com/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Supplement,Interherb,https://www.interherb.hu/,túl nagy (árbevétel > 2 Mrd Ft)
+Supplement,Mismio,https://www.mismio.hu/,üzemeltető cég nem azonosítható (a talált Logistic Logisztikai Kft. nem egyértelmű)
+Supplement,Collagenius,https://collagenius.hu/,túl kicsi (< 100 M Ft és < 5 fő)
+Supplement,SunPure,https://sunpure.hu/,túl kicsi (< 100 M Ft és < 5 fő)
+Supplement,Pure Gold,https://puregold.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Supplement,Béres,https://www.beres.hu/,a weboldalon talált Sybell Informatika Kft. nem a márkatulajdonos (Béres Gyógyszergyár nagyvállalat)
+Supplement,BioMenü,https://www.biomenu.hu/,a talált CALEIDO IT-OUTSOURCE Kft. fő tevékenysége számítógépgyártás; a webshop üzemeltetőjével való egyezés bizonytalan
+Supplement,Kiegészítő Pont,https://herbalbox.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Supplement,Protein Trade (Builder),https://shopbuilder.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Supplement,Cerbona,https://cerbona.com/,túl nagy (árbevétel > 2 Mrd Ft)
+Ruházat,Farmer Király,https://www.farmerkiraly.hu/,túl kicsi (< 100 M Ft és < 5 fő)
+Ruházat,AdryFashion,https://adryfashion.hu/,túl kicsi (< 100 M Ft és < 5 fő)
+Ruházat,Matyodesign,https://matyodesign.hu/,túl kicsi (< 100 M Ft és < 5 fő)
+Ruházat,Budmil,https://budmil.eu/,túl nagy (árbevétel > 2 Mrd Ft)
+Ruházat,Touch Me Not,https://www.touchmenotclothing.com/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Ruházat,Spycraft,https://spycraft.hu/,"egyéni vállalkozó (Varga Annamária e.v. — https://spycraft.hu/policies/terms-of-service), nem Kft./Bt."
+Ruházat,Patentduo,https://patentduo.hu/,üzemeltető cég nem azonosítható (a talált CIB Bank Zrt. a számlavezető bank)
+Ruházat,Valid,https://valid.co.hu/,túl kicsi (< 100 M Ft és < 5 fő)
+Ruházat,Király Beáta,https://kiralybeata.com/,túl kicsi (< 100 M Ft és < 5 fő)
+Ruházat,Zhoja,https://www.zhoja.hu/,túl kicsi (< 100 M Ft és < 5 fő)
+Ruházat,Art on Me,https://artonme.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Ruházat,UTO,https://www.u-t-o.eu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Ruházat,Konsanszky,https://www.konsanszky.com/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Ruházat,Wanted,https://wanted.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Ruházat,Ruhaszalon,http://ruhaszalon.hu/page/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Ruházat,Dora Abodi,https://doraabodi.com/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Smink,KAP Kell a púder,https://kapcosmetics.com/,túl kicsi (< 100 M Ft és < 5 fő)
+Smink,PomPom,https://www.pompom.hu/,"a pompom.hu egy gyermekzenekar oldala, nem a kozmetikai márka webshopja"
+Smink,Gloss Twins,https://www.glosstwins.com/,"a glosstwins.com egy idegen nyelvű blog, nem a márka webshopja; magyar háttér nem igazolható"
+Smink,Bellissima,https://bellissima.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Sportkiegészítő,Frenetic,https://frenetic.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Sportkiegészítő,Dark Fitness,https://www.darkfitness.hu/,az üzemeltető FitArea Kft. felszámolás alatt (https://www.nemzeticegtar.hu/fitarea-kft-e10841419.html)
+Sportkiegészítő,Beyond by ST,https://beyondbyst.com/,túl kicsi (< 100 M Ft és < 5 fő)
+Sportkiegészítő,CCK Cocktail Sport,https://www.cocktail-sport.com/,túl kicsi (< 100 M Ft és < 5 fő)
+Sportkiegészítő,Toti Sport,https://totisport.hu/,"a talált Toti és Társa 2004 Kft. építőipari cég, a márka üzemeltetője nem azonosítható egyértelműen"
+Sportkiegészítő,Patentduo sport,https://patentduo.com/,üzemeltető cég nem azonosítható
+Sportkiegészítő,Fittmama,https://fittmama.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Sportkiegészítő,Grandis,https://www.grandis.hu/,"munkavédelmi ruházat, nem sport/fitness kategória"
+Hajápolás,Hairboom,https://hairboom.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Hajápolás,Hair Care Kft,https://haircare.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Hajápolás,Hair-Line,https://hairline.hu/,túl nagy (árbevétel > 2 Mrd Ft)
+Hajápolás,Naturhair,https://naturhair.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Hajápolás,Hajkoronam,https://hajkorona.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Kiegészítők,Ékszergyár,https://ekszergyar.hu/,túl kicsi (< 100 M Ft és < 5 fő)
+Kiegészítők,Helyretesz,https://www.helyretesz.hu/,"a weboldal 403-at adott, nem kerültem meg"
+Kiegészítők,Tibor Bőrdíszmű,https://tibor-bordiszmu.hu/,a weboldalon talált cég (Tibor Bőrdíszműves Kft) nem található a nemzeticegtar.hu-n
+Kiegészítők,Kolokolo,https://www.kolokolo.hu/,a weboldalon talált cég (11. Adatkezelés a General Logistics Systems Hungary Kft) nem található a nemzeticegtar.hu-n
+Kiegészítők,Bekabag,https://www.bekabag.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Kiegészítők,Lengyel Zsuzsi,https://lengyelzsuzsi.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Kiegészítők,Gemmorion,https://gemmorion.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Kiegészítők,Olett Ékszer,https://olettekszer.hu/,"a weboldal 403-at adott, nem kerültem meg"
+Sportkiegészítő,G&T cipő,https://www.gtcipo.hu/,"a weboldal 403-at adott, nem kerültem meg"
+Sportkiegészítő,SportSarok,https://www.sportsarok.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Hajápolás,Black Professional Line,https://black.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Hajápolás,Hajvarázs,https://www.hajvarazs.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Supplement,Natur Tanya,https://www.naturtanya.hu/,túl nagy (árbevétel > 2 Mrd Ft)
+Supplement,Paleocentrum,https://paleocentrum.hu/,"túl nagy: a talált üzemeltető GAL SynergyTech Zrt. 7,4 Mrd Ft"
+Supplement,Vitaplus,https://ceres-pharma.com/hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Supplement,Jutavit,https://jutavit.com/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Supplement,Vitaday,https://vitaday.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Supplement,Biotechusa,https://biotechusa.hu/,túl nagy: BioTech USA Kft. 93 Mrd Ft
+Supplement,Scitec,https://scitec.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Supplement,Pharmaforte,https://www.pharmaforte.hu/,túl kicsi (< 100 M Ft és < 5 fő)
+Ruházat,Kata Szegedi,https://kataszegedi.com/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Ruházat,Nanushka,https://www.nanushka.com/,"nagy, nemzetközi divatmárka (Zara-szintű kizárási szabály); a magyar üzemeltető NHU Operations Kft. árbevétele nem olvasható"
+Ruházat,Mona Swims,https://monaswims.com/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Ruházat,Abodi,https://abodi.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Sportkiegészítő,Sportfit,https://www.sportfit.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Sportkiegészítő,Gymbuddy,https://www.gymbuddy.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Hajápolás,Curly,https://curlyhair.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Ruházat,Essential Wardrobe,https://kapszularuhatar.hu/,"túl kicsi: EW Group Kft. 9,8 M Ft, 1 fő (https://www.nemzeticegtar.hu/ew-group-kft-e10216343.html)"
+Ruházat,BOTANIKA,https://hellobotanika.com/,üzemeltető nem azonosítható (a talált 23VNet Kft. a honlap fejlesztője)
+Ruházat,Camou design,https://www.camou.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Ruházat,Cabala,https://cabalafashion.hu/,túl kicsi (< 100 M Ft és < 5 fő)
+Ruházat,Viktoriabolla,https://www.viktoriabolla.com/,túl kicsi (< 100 M Ft és < 5 fő)
+Ruházat,sulyandesign,https://sulyandesign.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Ruházat,OAT AVA,https://www.oatava.com/,túl kicsi (< 100 M Ft és < 5 fő)
+Ruházat,LAZLO Fashion,https://www.lazlo.co.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Ruházat,Müskinn,https://muskinn.com/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Ruházat,Réthy Fashion,https://rethy-fashion.com/,az impresszumban szereplő Réthy Fashion Kft. nem található egyértelműen a nemzeticegtar.hu-n (a kereső más céget ad)
+Ruházat,Philomén,https://philomen.eu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Ruházat,Pizsi,https://pizsistore.com/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Ruházat,Elischer R.,https://elischer-r.hu/hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Ruházat,Linini,https://linini.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Sportkiegészítő,NES shoes,https://nesshoes.com/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Supplement,Vitamin360,https://hu.vitamin360.com/,üzemeltető nem azonosítható (a talált Utánvét Ellenőr Kft. szolgáltató)
+Supplement,Mannavita,https://mannavita.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Supplement,Nutriboost,https://nutriboost.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Supplement,Myshape,https://myshape.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Supplement,Damona,https://damona.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Supplement,Hellovital,https://www.hellovital.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Supplement,Natúrpiac,https://naturpiac.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Ruházat,StarShinerS,https://starshiners.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Ruházat,Glitterbox,https://glitterbox.hu/,túl kicsi (< 100 M Ft és < 5 fő)
+Ruházat,Szervető,https://www.szerveto.hu/,túl kicsi (< 100 M Ft és < 5 fő)
+Ruházat,Szédi Butik,https://www.szedibutik.hu/,túl kicsi (< 100 M Ft és < 5 fő)
+Hajápolás,Luxoya,https://luxoya.com/,túl nagy (árbevétel > 2 Mrd Ft)
+Ruházat,Pólóker,https://www.poloker.hu/,túl kicsi (< 100 M Ft és < 5 fő)
+Ruházat,Je Suis Belle,https://www.jesuisbelle.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Ruházat,Ruhabirodalom,https://ruhabirodalom.hu/,túl kicsi (< 100 M Ft és < 5 fő)
+Ruházat,Nolly,https://nolly.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Ruházat,Stílusruha,https://stilusruha.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Ruházat,Nemzeti Póló,https://nemzetipolo.hu/,túl kicsi (< 100 M Ft és < 5 fő)
+Sportkiegészítő,Trendfit,https://trendfit.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Sportkiegészítő,Jógamatrac.hu,https://www.jogamatrac.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Sportkiegészítő,Yogamatrac.hu,https://yogamatrac.hu/,az üzemeltető Ro-Liv Dent Kft. fogorvosi rendelő; a létszám/árbevétel nem a webshophoz tartozik
+Sportkiegészítő,Fittyshop,https://fittyshop.hu/,túl kicsi (< 100 M Ft és < 5 fő)
+Sportkiegészítő,Pilatesshop,https://www.pilatesshop.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Ruházat,Diána Fehérnemű,https://www.dianafehernemu.hu/,túl kicsi (< 100 M Ft és < 5 fő)
+Ruházat,ETRE Organic Underwear,https://etreunderwear.com/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Ruházat,Emanuele,https://emanuele.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Hajápolás,Bioextra,https://bioextra.hu/,"túl nagy: BIOEXTRA Zrt. 4,3 Mrd Ft, 50–99 fő (https://www.nemzeticegtar.hu/bioextra-zrt-e10482247.html)"
+Hajápolás,Kallos,https://kallos.com/,"túl nagy: Kallos Cosmetics Kft. 8,9 Mrd Ft, 100–149 fő (https://www.nemzeticegtar.hu/kallos-cosmetics-kft-e10163243.html)"
+Kiegészítők,Blackbird,https://blackbirdshop.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Kiegészítők,Delight,https://delight.hu/,"a delight.hu PR-ügynökség (Delight Productions Kft.), nem kiegészítő-márka"
+Kiegészítők,Monarchy,https://monarchy.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Kiegészítők,Karikagyűrű.hu,https://karikagyuru.hu/,az üzemeltető Ékszerkészítő 2.0 Kft. felszámolás alatt (https://www.nemzeticegtar.hu/ekszerkeszito-20-kft-e10973739.html)
+Kiegészítők,Gyöngyékszer,https://gyongyekszer.hu/,üzemeltető Kft./Bt. nem azonosítható a weboldal impresszumában/ÁSZF-ében
+Supplement,Medicol,https://medicol.hu/,"a weboldal 403-at adott (bot-szűrés/rate limit), nem kerültem meg"
+Ruházat,Retro Jeans,https://retrojeans.com/,"a weboldal 403-at adott (bot-szűrés/rate limit), nem kerültem meg"
+Ruházat,NON+,https://nonplusz.hu/,"a weboldal 429-at adott (bot-szűrés/rate limit), nem kerültem meg"
+Ruházat,Dorko,https://dorko.hu/,"a weboldal 403-at adott (bot-szűrés/rate limit), nem kerültem meg"
+Ruházat,Pizsi,https://pizsi.hu/,"a weboldal 403-at adott (bot-szűrés/rate limit), nem kerültem meg"
+Ruházat,Süel,https://suel.hu/,"a weboldal 403-at adott (bot-szűrés/rate limit), nem kerültem meg"
+Sportkiegészítő,Gymbeam,https://gymbeam.hu/,"a weboldal 403-at adott (bot-szűrés/rate limit), nem kerültem meg"
+Sportkiegészítő,Wellness Shop,https://wellnessshop.hu/,"a weboldal 503-at adott (bot-szűrés/rate limit), nem kerültem meg"
+Ruházat,Aeron,https://aeron.hu/,"a weboldal 406-ot adott (bot-szűrés), nem kerültem meg"
+Ruházat,Viccespolo,https://viccespolo.hu/,"a weboldal 403-at adott, nem kerültem meg"
+Sportkiegészítő,Fitshop,https://fitshop.hu/,"a weboldal 403-at adott, nem kerültem meg"
+Sportkiegészítő,Ugrókötél.hu,https://ugrokotel.hu/,"a weboldal 403-at adott, nem kerültem meg"
+Kiegészítők,Ezüstgyűrű.hu,https://ezustgyuru.hu/,"a weboldal 403-at adott, nem kerültem meg"
+Kiegészítők,Tokguru,http://www.tokguru.hu/,"a weboldal 403-at adott, nem kerültem meg"
+Supplement,Naturgold,https://naturgold.hu/,"a weboldal 403-as ellenőrző oldalt adott (bot-szűrés), nem kerültem meg"
