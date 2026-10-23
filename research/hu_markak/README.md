@@ -47,7 +47,7 @@ A 20-as célba csak a **saját márkák** számítanak (`márkatípus` = „saj�
    - Kft./Bt./Zrt. kell; az egyéni vállalkozók, valamint a felszámolás és végelszámolás alatt álló cégek kiestek.
 4. **Márkatípus**: ha a kínálat főleg más gyártók termékeiből áll, „viszonteladó webshop”. Ilyen például a Gyémántsziget (Tommy Hilfiger, Guess) és a Lachmann (Olymp, Pierre Cardin).
 5. **TikTok**: a weboldalon linkelt TikTok-profil nyilvános oldala (`ttSeller` jelölés). Ha nincs linkelt profil, vagy nem olvasható: „nem ellenőrizve”.
-6. **LinkedIn**: csak nyilvános cégoldal, bejelentkezés nélkül. Csak akkor töltöttem ki, ha az oldal a márka domainjére hivatkozik.
+6. **LinkedIn**: csak nyilvános cégoldal, bejelentkezés nélkül. Csak akkor töltöttem ki, ha az oldal a márka domainjére hivatkozik. A 2026-10-23-i futás közben a LinkedIn 999-es választ (bot-limit) adott. Itt leállítottam, ezért a supplement-lista egy részénél és az utána következő csoportoknál a LinkedIn-oszlop nincs végigellenőrizve.
 7. **Alapító / marketingvezető**: csak ha a márka saját oldala vagy egy cikk megnevezi (a forrás ott van mellette).
 
 Státusz:
