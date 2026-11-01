@@ -1,0 +1,191 @@
+{
+ "ruha": [
+  {
+   "márka": "Kiprun (Decathlon)",
+   "magyar szál": "Decathlon saját futómárka, magyar leányvállalat",
+   "magyar cég": "Tízpróba Magyarország Kft.",
+   "név": "Sabrina Jacksteit",
+   "pozíció": "ügyvezető",
+   "forrás": "https://www.nemzeticegtar.hu/tizproba-magyarorszag-kft-e10364097.html",
+   "megjegyzés": "online: decathlon.hu"
+  },
+  {
+   "márka": "Domyos (Decathlon)",
+   "magyar szál": "Decathlon saját fitneszmárka, magyar leányvállalat",
+   "magyar cég": "Tízpróba Magyarország Kft.",
+   "név": "Sabrina Jacksteit",
+   "pozíció": "ügyvezető",
+   "forrás": "https://www.nemzeticegtar.hu/tizproba-magyarorszag-kft-e10364097.html",
+   "megjegyzés": "online: decathlon.hu"
+  },
+  {
+   "márka": "Quechua (Decathlon)",
+   "magyar szál": "Decathlon saját outdoormárka, magyar leányvállalat",
+   "magyar cég": "Tízpróba Magyarország Kft.",
+   "név": "Sabrina Jacksteit",
+   "pozíció": "ügyvezető",
+   "forrás": "https://www.nemzeticegtar.hu/tizproba-magyarorszag-kft-e10364097.html",
+   "megjegyzés": "online: decathlon.hu"
+  },
+  {
+   "márka": "Dockers (Levi Strauss)",
+   "magyar szál": "Levi Strauss-márka, magyar leányvállalat",
+   "magyar cég": "Levi Strauss Magyarország Kft.",
+   "név": "Dóri Balázs",
+   "pozíció": "cégvezető",
+   "forrás": "https://www.nemzeticegtar.hu/levi-strauss-magyarorszag-kft-e10165934.html",
+   "megjegyzés": "ügyvezetők: Jolanta Wronska, Lucia Marcuzzo, Torsten Rath"
+  },
+  {
+   "márka": "Tchibo",
+   "magyar szál": "magyar leányvállalat, saját ruházati és kiegészítő-kollekciók, online: tchibo.hu",
+   "magyar cég": "TCHIBO Budapest Kft. (2025: 29,0 Mrd Ft)",
+   "név": "Mészáros Zsolt",
+   "pozíció": "ügyvezető",
+   "forrás": "https://www.nemzeticegtar.hu/tchibo-budapest-kft-e10158244.html",
+   "megjegyzés": "másik ügyvezető: Erik Hofstädter; cégvezető: Szabó Barnabás Dénes; fő profil a kávé"
+  }
+ ],
+ "kiegészítő": [
+  {
+   "márka": "Vogue Eyewear (Luxottica)",
+   "magyar szál": "Luxottica-márka, budapesti regionális központ",
+   "magyar cég": "Luxottica Central Europe Kft. (2025: 15,1 Mrd Ft)",
+   "név": "Rákóczy Botond György",
+   "pozíció": "ügyvezető",
+   "forrás": "https://www.nemzeticegtar.hu/luxottica-central-europe-kft-e10381048.html",
+   "megjegyzés": "további ügyvezetők: Leonardo Rosato, Ludovic Mathieu"
+  }
+ ],
+ "táplálékkiegészítő": [],
+ "smink": [
+  {
+   "márka": "Valentino Beauty",
+   "magyar szál": "L'Oréal-márka, magyar leányvállalat",
+   "magyar cég": "L'OREAL Magyarország Kft.",
+   "név": "Monika Natalia Masewicz",
+   "pozíció": "ügyvezető",
+   "forrás": "https://www.nemzeticegtar.hu/loreal-magyarorszag-kft-e10203054.html",
+   "megjegyzés": ""
+  },
+  {
+   "márka": "Prada Beauty",
+   "magyar szál": "L'Oréal-márka, magyar leányvállalat",
+   "magyar cég": "L'OREAL Magyarország Kft.",
+   "név": "Monika Natalia Masewicz",
+   "pozíció": "ügyvezető",
+   "forrás": "https://www.nemzeticegtar.hu/loreal-magyarorszag-kft-e10203054.html",
+   "megjegyzés": ""
+  },
+  {
+   "márka": "Smashbox",
+   "magyar szál": "Estée Lauder-márka, magyar leányvállalat",
+   "magyar cég": "Estée Lauder Kft.",
+   "név": "Joanna Ewa Zboch",
+   "pozíció": "ügyvezető",
+   "forrás": "https://www.nemzeticegtar.hu/estee-lauder-kft-e10145388.html",
+   "megjegyzés": ""
+  },
+  {
+   "márka": "Tom Ford Beauty",
+   "magyar szál": "Estée Lauder-márka, magyar leányvállalat",
+   "magyar cég": "Estée Lauder Kft.",
+   "név": "Joanna Ewa Zboch",
+   "pozíció": "ügyvezető",
+   "forrás": "https://www.nemzeticegtar.hu/estee-lauder-kft-e10145388.html",
+   "megjegyzés": ""
+  }
+ ],
+ "skincare": [
+  {
+   "márka": "Mixa",
+   "magyar szál": "L'Oréal-márka, magyar leányvállalat",
+   "magyar cég": "L'OREAL Magyarország Kft.",
+   "név": "Monika Natalia Masewicz",
+   "pozíció": "ügyvezető",
+   "forrás": "https://www.nemzeticegtar.hu/loreal-magyarorszag-kft-e10203054.html",
+   "megjegyzés": ""
+  },
+  {
+   "márka": "Helena Rubinstein",
+   "magyar szál": "L'Oréal-márka, magyar leányvállalat",
+   "magyar cég": "L'OREAL Magyarország Kft.",
+   "név": "Monika Natalia Masewicz",
+   "pozíció": "ügyvezető",
+   "forrás": "https://www.nemzeticegtar.hu/loreal-magyarorszag-kft-e10203054.html",
+   "megjegyzés": ""
+  },
+  {
+   "márka": "Aesop",
+   "magyar szál": "L'Oréal-márka (2023 óta), magyar leányvállalat",
+   "magyar cég": "L'OREAL Magyarország Kft.",
+   "név": "Monika Natalia Masewicz",
+   "pozíció": "ügyvezető",
+   "forrás": "https://www.nemzeticegtar.hu/loreal-magyarorszag-kft-e10203054.html",
+   "megjegyzés": ""
+  },
+  {
+   "márka": "Medik8",
+   "magyar szál": "L'Oréal-márka (2025 óta), magyar leányvállalat",
+   "magyar cég": "L'OREAL Magyarország Kft.",
+   "név": "Monika Natalia Masewicz",
+   "pozíció": "ügyvezető",
+   "forrás": "https://www.nemzeticegtar.hu/loreal-magyarorszag-kft-e10203054.html",
+   "megjegyzés": ""
+  },
+  {
+   "márka": "Origins",
+   "magyar szál": "Estée Lauder-márka, magyar leányvállalat",
+   "magyar cég": "Estée Lauder Kft.",
+   "név": "Joanna Ewa Zboch",
+   "pozíció": "ügyvezető",
+   "forrás": "https://www.nemzeticegtar.hu/estee-lauder-kft-e10145388.html",
+   "megjegyzés": ""
+  },
+  {
+   "márka": "Darphin",
+   "magyar szál": "Estée Lauder-márka, magyar leányvállalat",
+   "magyar cég": "Estée Lauder Kft.",
+   "név": "Joanna Ewa Zboch",
+   "pozíció": "ügyvezető",
+   "forrás": "https://www.nemzeticegtar.hu/estee-lauder-kft-e10145388.html",
+   "megjegyzés": ""
+  },
+  {
+   "márka": "La Prairie",
+   "magyar szál": "Beiersdorf-márka, magyar leányvállalat",
+   "magyar cég": "BEIERSDORF Kft. (2025: 19,7 Mrd Ft)",
+   "név": "Anna Singer",
+   "pozíció": "ügyvezető",
+   "forrás": "https://www.nemzeticegtar.hu/beiersdorf-kft-e10160871.html",
+   "megjegyzés": "másik ügyvezető: Oscar Amezcua Valenzuela"
+  },
+  {
+   "márka": "Lancaster",
+   "magyar szál": "Coty-márka, magyar leányvállalat",
+   "magyar cég": "COTY Hungary Kozmetikai Kft. (2024: 7,7 Mrd Ft)",
+   "név": "Filip Arkadiusz Mielczarek",
+   "pozíció": "ügyvezető",
+   "forrás": "https://www.nemzeticegtar.hu/coty-hungary-kozmetikai-kft-e10200772.html",
+   "megjegyzés": ""
+  },
+  {
+   "márka": "SEINZ (dm)",
+   "magyar szál": "a dm saját férfiápolási márkája, magyar cég",
+   "magyar cég": "dm Kft.",
+   "név": "Görgey András",
+   "pozíció": "ügyvezető",
+   "forrás": "https://www.nemzeticegtar.hu/dm-kft-e10854109.html",
+   "megjegyzés": ""
+  },
+  {
+   "márka": "Sundance (dm)",
+   "magyar szál": "a dm saját napvédő márkája, magyar cég",
+   "magyar cég": "dm Kft.",
+   "név": "Görgey András",
+   "pozíció": "ügyvezető",
+   "forrás": "https://www.nemzeticegtar.hu/dm-kft-e10854109.html",
+   "megjegyzés": ""
+  }
+ ]
+}
