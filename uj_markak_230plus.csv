@@ -1,30 +1,115 @@
-﻿niche,márka,magyar szál,magyar cég,név,pozíció,forrás,megjegyzés
-ruha,Columbia,"magyar üzemeltető, columbia.hu (impresszum: https://www.columbia.hu/altalanos-szerzodesi-feltetelek)","Dockyard Islands Kft. (2025: 6,1 Mrd Ft)",Maróty István,ügyvezető,https://www.nemzeticegtar.hu/dockyard-islands-kft-e10298223.html,másik ügyvezető: Maróty Miklós Géza
-ruha,Converse,"magyar forgalmazó, converse.hu (impresszum: https://www.converse.hu/jogi-nyilatkozat/)","Maximus HCD Kft. (2025: 2,0 Mrd Ft)",Stevan Pavlovic,ügyvezető,https://www.nemzeticegtar.hu/maximus-hcd-kft-e10179462.html,
-ruha,Vans,"magyar webáruház-üzemeltető, vans.hu (impresszum: https://vans.hu/policies/contact-information)",Acéltigris Kft. (2025: 225 M Ft),Markó Áron,ügyvezető,https://www.nemzeticegtar.hu/aceltigris-kft-e19204745.html,"másik ügyvezető: Faisztl-Németh Zoltán; nem ellenőriztem, hogy hivatalos márkapartner-e"
-ruha,Kiprun (Decathlon),"Decathlon saját futómárka, magyar leányvállalat",Tízpróba Magyarország Kft.,Sabrina Jacksteit,ügyvezető,https://www.nemzeticegtar.hu/tizproba-magyarorszag-kft-e10364097.html,online: decathlon.hu
-ruha,Domyos (Decathlon),"Decathlon saját fitneszmárka, magyar leányvállalat",Tízpróba Magyarország Kft.,Sabrina Jacksteit,ügyvezető,https://www.nemzeticegtar.hu/tizproba-magyarorszag-kft-e10364097.html,online: decathlon.hu
-ruha,Quechua (Decathlon),"Decathlon saját outdoormárka, magyar leányvállalat",Tízpróba Magyarország Kft.,Sabrina Jacksteit,ügyvezető,https://www.nemzeticegtar.hu/tizproba-magyarorszag-kft-e10364097.html,online: decathlon.hu
-ruha,Dockers (Levi Strauss),"Levi Strauss-márka, magyar leányvállalat",Levi Strauss Magyarország Kft.,Dóri Balázs,cégvezető,https://www.nemzeticegtar.hu/levi-strauss-magyarorszag-kft-e10165934.html,"ügyvezetők: Jolanta Wronska, Lucia Marcuzzo, Torsten Rath"
-ruha,Tchibo,"magyar leányvállalat, saját ruházati és kiegészítő-kollekciók, online: tchibo.hu","TCHIBO Budapest Kft. (2025: 29,0 Mrd Ft)",Mészáros Zsolt,ügyvezető,https://www.nemzeticegtar.hu/tchibo-budapest-kft-e10158244.html,másik ügyvezető: Erik Hofstädter; cégvezető: Szabó Barnabás Dénes; fő profil a kávé
-kiegészítő,Vogue Eyewear (Luxottica),"Luxottica-márka, budapesti regionális központ","Luxottica Central Europe Kft. (2025: 15,1 Mrd Ft)",Rákóczy Botond György,ügyvezető,https://www.nemzeticegtar.hu/luxottica-central-europe-kft-e10381048.html,"további ügyvezetők: Leonardo Rosato, Ludovic Mathieu"
-táplálékkiegészítő,Pharmaton,"Opella-márka (a Sanofi fogyasztói üzletága), magyar leányvállalat","Opella Healthcare Hungary Kft. (2025: 45,8 Mrd Ft)",Göncz Gábor,ügyvezető,https://www.nemzeticegtar.hu/opella-healthcare-hungary-kft-e10270004.html,"másik ügyvezető: Adler Péter; a Magne B6 kizárt; azt nem ellenőriztem, hogy a Pharmaton itthon is ennél a cégnél van-e"
-táplálékkiegészítő,Doppelherz,"magyar forgalmazó, doppelherz.hu (impresszum: https://www.doppelherz.hu/impresszum)",Pharmacy Technology Kft. (2025: 159 M Ft),Domonkos István,ügyvezető,https://www.nemzeticegtar.hu/pharmacy-technology-kft-e10641436.html,"a cég főtevékenysége gép-nagykereskedelem, a forgalmazói szerepet csak az impresszum mutatja"
-smink,Guerlain,"LVMH-márka, magyar leányvállalat",GUERLAIN HUNGARY Kft. (2025: 354 M Ft),Gabrielle Anne Saint-Genis,ügyvezető,https://www.nemzeticegtar.hu/guerlain-hungary-kft-e18293284.html,másik ügyvezető: Sandra Talbot
-smink,Valentino Beauty,"L'Oréal-márka, magyar leányvállalat",L'OREAL Magyarország Kft.,Monika Natalia Masewicz,ügyvezető,https://www.nemzeticegtar.hu/loreal-magyarorszag-kft-e10203054.html,
-smink,Prada Beauty,"L'Oréal-márka, magyar leányvállalat",L'OREAL Magyarország Kft.,Monika Natalia Masewicz,ügyvezető,https://www.nemzeticegtar.hu/loreal-magyarorszag-kft-e10203054.html,
-smink,Smashbox,"Estée Lauder-márka, magyar leányvállalat",Estée Lauder Kft.,Joanna Ewa Zboch,ügyvezető,https://www.nemzeticegtar.hu/estee-lauder-kft-e10145388.html,
-smink,Tom Ford Beauty,"Estée Lauder-márka, magyar leányvállalat",Estée Lauder Kft.,Joanna Ewa Zboch,ügyvezető,https://www.nemzeticegtar.hu/estee-lauder-kft-e10145388.html,
-skincare,Mixa,"L'Oréal-márka, magyar leányvállalat",L'OREAL Magyarország Kft.,Monika Natalia Masewicz,ügyvezető,https://www.nemzeticegtar.hu/loreal-magyarorszag-kft-e10203054.html,
-skincare,Helena Rubinstein,"L'Oréal-márka, magyar leányvállalat",L'OREAL Magyarország Kft.,Monika Natalia Masewicz,ügyvezető,https://www.nemzeticegtar.hu/loreal-magyarorszag-kft-e10203054.html,
-skincare,Aesop,"L'Oréal-márka (2023 óta), magyar leányvállalat",L'OREAL Magyarország Kft.,Monika Natalia Masewicz,ügyvezető,https://www.nemzeticegtar.hu/loreal-magyarorszag-kft-e10203054.html,
-skincare,Medik8,"L'Oréal-márka (2025 óta), magyar leányvállalat",L'OREAL Magyarország Kft.,Monika Natalia Masewicz,ügyvezető,https://www.nemzeticegtar.hu/loreal-magyarorszag-kft-e10203054.html,
-skincare,Origins,"Estée Lauder-márka, magyar leányvállalat",Estée Lauder Kft.,Joanna Ewa Zboch,ügyvezető,https://www.nemzeticegtar.hu/estee-lauder-kft-e10145388.html,
-skincare,Darphin,"Estée Lauder-márka, magyar leányvállalat",Estée Lauder Kft.,Joanna Ewa Zboch,ügyvezető,https://www.nemzeticegtar.hu/estee-lauder-kft-e10145388.html,
-skincare,La Prairie,"Beiersdorf-márka, magyar leányvállalat","BEIERSDORF Kft. (2025: 19,7 Mrd Ft)",Anna Singer,ügyvezető,https://www.nemzeticegtar.hu/beiersdorf-kft-e10160871.html,másik ügyvezető: Oscar Amezcua Valenzuela
-skincare,Lancaster,"Coty-márka, magyar leányvállalat","COTY Hungary Kozmetikai Kft. (2024: 7,7 Mrd Ft)",Filip Arkadiusz Mielczarek,ügyvezető,https://www.nemzeticegtar.hu/coty-hungary-kozmetikai-kft-e10200772.html,
-skincare,SEINZ (dm),"a dm saját férfiápolási márkája, magyar cég",dm Kft.,Görgey András,ügyvezető,https://www.nemzeticegtar.hu/dm-kft-e10854109.html,
-skincare,Sundance (dm),"a dm saját napvédő márkája, magyar cég",dm Kft.,Görgey András,ügyvezető,https://www.nemzeticegtar.hu/dm-kft-e10854109.html,
-skincare,Diadermine,"Henkel-márka, magyar leányvállalat","Henkel Magyarország Kft. (2025: 96,0 Mrd Ft)",Kocsis Zoltán László,ügyvezető,https://www.nemzeticegtar.hu/henkel-magyarorszag-kft-e10230488.html,a Schwarzkopf kizárt
-skincare,Institut Esthederm,"NAOS-márka, magyar leányvállalat","NAOS Hungary Kft. (2025: 2,8 Mrd Ft)",Márkus Ádám,cégvezető,https://www.nemzeticegtar.hu/naos-hungary-kft-e10319152.html,a Bioderma kizárt
-skincare,Carmex,"magyar forgalmazó, carmex.hu (impresszum: https://www.carmex.hu/hu/impresszum)","Biopont Kft. (2025: 3,2 Mrd Ft)",Egervári Márk,ügyvezető,https://www.nemzeticegtar.hu/biopont-kft-e10944517.html,"cégvezetők: Bujdosó Balázs, Csecserits Beáta"
+﻿márka,niche,web,döntéshozó neve,pozíció,linkedin_url,ügyvezető (Opten)
+Decathlon,ruha,https://www.decathlon.hu,Sabrina Jacksteit,ügyvezető,,Sabrina Jacksteit
+Reserved,ruha,https://www.reserved.com/hu/hu/,Kalovits Gábor Tamás,ügyvezető,,Kalovits Gábor Tamás
+Sinsay,ruha,https://www.sinsay.com/hu/hu/,Kalovits Gábor Tamás,ügyvezető (LPP Hungary),,Kalovits Gábor Tamás
+Primark,ruha,https://www.primark.com/hu-hu,Eamon Connolly,ügyvezető,,Eamon Connolly
+Mohito,ruha,https://www.mohito.com/hu/hu/,Kalovits Gábor Tamás,ügyvezető (LPP Hungary),,Kalovits Gábor Tamás
+House,ruha,https://www.housebrand.com/hu/hu/,Kalovits Gábor Tamás,ügyvezető (LPP Hungary),,Kalovits Gábor Tamás
+Cropp,ruha,https://www.cropp.com/hu/hu/,Kalovits Gábor Tamás,ügyvezető (LPP Hungary),,Kalovits Gábor Tamás
+Pepco,ruha,https://pepco.hu,Bóka Andrea,ügyvezető,,Bóka Andrea
+New Yorker,ruha,https://www.newyorker.de/hu/,Helene Steiner,ügyvezető,,Helene Steiner
+adidas,ruha,https://www.adidas.hu,Barbara Niepel,ügyvezető,,Barbara Niepel
+Mango,ruha,https://shop.mango.com/hu,Margarita Salvans Puigbo,ügyvezető,,Margarita Salvans Puigbo
+Takko Fashion,ruha,https://www.takko.com/hu-hu/,Zsák Judit Ágnes,ügyvezető,,Zsák Judit Ágnes
+KiK,ruha,https://www.kik.hu,Rikk József Róbert,ügyvezető,,Rikk József Róbert
+Levi's,ruha,https://www.levi.com/HU/hu_HU/,Dóri Balázs,cégvezető,,Dóri Balázs
+Roland,ruha,https://www.roland.hu,Berendi András István,az igazgatóság elnöke (tulajdonos),,Berendi András István
+Tom Tailor,ruha,https://www.tom-tailor.eu,Marina Vukojicic,ügyvezető,,Marina Vukojicic
+s.Oliver,ruha,https://www.soliver.hu,Nagyné Kőrösi Krisztina Márta,cégvezető,,Nagyné Kőrösi Krisztina Márta
+Tally Weijl,ruha,https://www.tally-weijl.com/hu_HU/,Sugár György András,ügyvezető,,Sugár György András
+Daalarna,ruha,https://www.daalarna.com,Benes Anita,ügyvezető,,Benes Anita
+TOTHBORI,ruha,https://tothbori.com,Tóth Borbála,"alapító, ügyvezető",,Tóth Borbála
+Peek & Cloppenburg,ruha,https://www.peek-cloppenburg.hu,Stoica Radu,ügyvezető,,Stoica Radu
+Sportisimo,ruha,https://www.sportisimo.hu,Frantisek Gregor,ügyvezető,,Frantisek Gregor
+Orsay,ruha,https://www.orsay.com/hu-hu/,Marek Drvota,ügyvezető,,Marek Drvota
+Columbia,ruha,https://www.columbia.hu,Maróty István,ügyvezető,,Maróty István
+Converse,ruha,https://www.converse.hu,Stevan Pavlovic,ügyvezető,,Stevan Pavlovic
+Vans,ruha,https://vans.hu,Markó Áron,ügyvezető,,Markó Áron
+Kiprun (Decathlon),ruha,https://www.decathlon.hu,Sabrina Jacksteit,ügyvezető,,Sabrina Jacksteit
+Domyos (Decathlon),ruha,https://www.decathlon.hu,Sabrina Jacksteit,ügyvezető,,Sabrina Jacksteit
+Quechua (Decathlon),ruha,https://www.decathlon.hu,Sabrina Jacksteit,ügyvezető,,Sabrina Jacksteit
+Dockers (Levi Strauss),ruha,https://www.dockers.com,Dóri Balázs,cégvezető,,Dóri Balázs
+Tchibo,ruha,https://www.tchibo.hu,Mészáros Zsolt,ügyvezető,,Mészáros Zsolt
+Ofotért,kiegészítő,https://www.ofotert.hu,Makkai Krisztián László,ügyvezető,,Makkai Krisztián László
+Ray-Ban (Luxottica),kiegészítő,https://www.ray-ban.com/hungary,Rákóczy Botond György,ügyvezető,,Rákóczy Botond György
+Michael Kors,kiegészítő,https://www.michaelkors.eu/hu,Christopher Nicholas Amplo,ügyvezető,,Christopher Nicholas Amplo
+Oakley (Luxottica),kiegészítő,https://www.oakley.com/hu-hu,Rákóczy Botond György,ügyvezető,,Rákóczy Botond György
+Guess,kiegészítő,https://www.guess.eu/hu-hu/,Ugo Boveri,ügyvezető,,Ugo Boveri
+Bijou Brigitte,kiegészítő,https://www.bijou-brigitte.com,Anja Passow,ügyvezető,,Anja Passow
+Claire's,kiegészítő,https://www.claires.com,Richard Mark Russell Flint,ügyvezető,,Richard Mark Russell Flint
+Wittchen,kiegészítő,https://www.wittchen.com/hu,Monika Magdalena Wittchen,ügyvezető,,Monika Magdalena Wittchen
+Humanic,kiegészítő,https://www.humanic.net/hu,Milan Hodza,ügyvezető,,Milan Hodza
+Kazar,kiegészítő,https://kazar.com/hu,Arkadiusz Robert Szczepaniak,ügyvezető,,Arkadiusz Robert Szczepaniak
+Lovisa,kiegészítő,https://www.lovisa.com,Christopher John Lauder,ügyvezető,,Christopher John Lauder
+Batz,kiegészítő,https://batz.hu,Kárpáti Zoltán,ügyvezető,,Kárpáti Zoltán
+LAONI,kiegészítő,https://laoni.hu,Ács Ilona,"alapító, tervező",,
+MrCarterCo,kiegészítő,https://mrcarterco.com,Szekeres Ákos,alapító,,
+Gabor Kiss Handmade,kiegészítő,https://shopgaborkiss.hu,Kiss Gábor,alapító (a márka az ő nevét viseli),,
+LAMOPPE,kiegészítő,https://mozeslaura.com,Mózes Laura,alapító (a webshop az ő nevén fut),,
+Gaál Gyöngyvér,kiegészítő,https://gaalgyongyver.hu,Gaál Gyöngyvér,"alapító, tervező",,
+Zámori Eszter,kiegészítő,https://www.eszterzamori.hu,Zámori Eszter,"alapító, tervező",,
+Fekete Fruzsi,kiegészítő,https://wonderlabconcept.com/collections/fruzsi-fekete,Fekete Fruzsi,"alapító, tervező",,
+Reno,kiegészítő,https://www.reno.hu,Uwe Johannes Niemann,ügyvezető,,Uwe Johannes Niemann
+ebelin (dm),kiegészítő,https://www.dm.hu,Görgey András,ügyvezető,,Görgey András
+Vogue Eyewear (Luxottica),kiegészítő,https://www.vogue-eyewear.com,Rákóczy Botond György,ügyvezető,,Rákóczy Botond György
+Nutrilite (Amway),táplálékkiegészítő,https://www.amway.hu,Jon Lyle Voskuil,ügyvezető,,Jon Lyle Voskuil
+Berocca / Elevit (Bayer),táplálékkiegészítő,https://www.bayer.hu,Sáli Tünde,cégvezető,,Sáli Tünde
+Mivolis (dm),táplálékkiegészítő,https://www.dm.hu,Görgey András,ügyvezető,,Görgey András
+BodySelect,táplálékkiegészítő,https://bodyselect.com/hu,Prohászka Andrea,ügyvezető,,Prohászka Andrea
+Dr. Theiss,táplálékkiegészítő,https://drtheiss.hu,Németh Endre,cégvezető,,Németh Endre
+1x1 Vitamin,táplálékkiegészítő,https://1x1vitamin.hu,Eöri Márk Gyula,ügyvezető,,Eöri Márk Gyula
+Flavin7,táplálékkiegészítő,https://flavin7.hu,Lukács Józsefné,ügyvezető,,Lukács Józsefné
+Pharma Nord,táplálékkiegészítő,https://www.pharmanord.hu,Michael Svarrer,ügyvezető,,Michael Svarrer
+Vitabalans,táplálékkiegészítő,https://www.vitabalans.hu,Juho Henrik Taipale,ügyvezető,,Juho Henrik Taipale
+Pharmaton,táplálékkiegészítő,https://www.pharmaton.com,Göncz Gábor,ügyvezető,,Göncz Gábor
+Doppelherz,táplálékkiegészítő,https://www.doppelherz.hu,Domonkos István,ügyvezető,,Domonkos István
+L'Oréal Paris,smink,https://www.loreal-paris.hu,Monika Natalia Masewicz,ügyvezető,,Monika Natalia Masewicz
+NYX Professional Makeup,smink,https://www.nyxcosmetics.hu,Monika Natalia Masewicz,ügyvezető (L'Oréal Magyarország),,Monika Natalia Masewicz
+Lancôme,smink,https://www.lancome.hu,Monika Natalia Masewicz,ügyvezető (L'Oréal Magyarország),,Monika Natalia Masewicz
+trend !t up (dm),smink,https://www.dm.hu,Görgey András,ügyvezető,,Görgey András
+Estée Lauder,smink,https://www.esteelauder.hu,Joanna Ewa Zboch,ügyvezető,,Joanna Ewa Zboch
+Yves Saint Laurent Beauty,smink,https://www.yslbeauty.hu,Monika Natalia Masewicz,ügyvezető (L'Oréal Magyarország),,Monika Natalia Masewicz
+Douglas Collection,smink,https://www.douglas.hu,Palocsay Géza Zsolt,ügyvezető,,Palocsay Géza Zsolt
+M·A·C Cosmetics,smink,https://www.maccosmetics.hu,Joanna Ewa Zboch,ügyvezető (Estée Lauder Kft.),,Joanna Ewa Zboch
+Pupa Milano,smink,https://www.pupa.hu,Andrea Conti,ügyvezető,,Andrea Conti
+MarilyNails,smink,https://www.marilynails.hu,Lagyánszki Sára,ügyvezető,,Lagyánszki Sára
+Urban Decay,smink,https://www.urbandecay.com,Monika Natalia Masewicz,ügyvezető (L'Oréal Magyarország),,Monika Natalia Masewicz
+Bobbi Brown,smink,https://www.bobbibrown.eu,Joanna Ewa Zboch,ügyvezető (Estée Lauder Kft.),,Joanna Ewa Zboch
+Too Faced,smink,https://www.toofaced.com,Joanna Ewa Zboch,ügyvezető (Estée Lauder Kft.),,Joanna Ewa Zboch
+Giorgio Armani Beauty,smink,https://www.armanibeauty.hu,Monika Natalia Masewicz,ügyvezető (L'Oréal Magyarország),,Monika Natalia Masewicz
+Guerlain,smink,https://www.guerlain.com,Gabrielle Anne Saint-Genis,ügyvezető,,Gabrielle Anne Saint-Genis
+Valentino Beauty,smink,https://www.valentino-beauty.com,Monika Natalia Masewicz,ügyvezető,,Monika Natalia Masewicz
+Prada Beauty,smink,https://www.pradabeauty.com,Monika Natalia Masewicz,ügyvezető,,Monika Natalia Masewicz
+Smashbox,smink,https://www.smashbox.com,Joanna Ewa Zboch,ügyvezető,,Joanna Ewa Zboch
+Tom Ford Beauty,smink,https://www.tomfordbeauty.com,Joanna Ewa Zboch,ügyvezető,,Joanna Ewa Zboch
+Balea (dm),skincare,https://www.dm.hu,Görgey András,ügyvezető,,Görgey András
+Clinique,skincare,https://www.clinique.hu,Joanna Ewa Zboch,ügyvezető (Estée Lauder Kft.),,Joanna Ewa Zboch
+Kiehl's,skincare,https://www.kiehls.hu,Monika Natalia Masewicz,ügyvezető (L'Oréal Magyarország),,Monika Natalia Masewicz
+alverde (dm),skincare,https://www.dm.hu,Görgey András,ügyvezető,,Görgey András
+The Ordinary,skincare,https://theordinary.com,Joanna Ewa Zboch,ügyvezető (Estée Lauder Kft.),,Joanna Ewa Zboch
+Labello,skincare,https://www.labello.com/hu,Anna Singer,ügyvezető,,Anna Singer
+Vaseline (Unilever),skincare,https://www.vaseline.com,Ács Tamás,ügyvezető,,Ács Tamás
+Yves Rocher,skincare,https://www.yves-rocher.hu,Berendi Dominik,ügyvezető,,Berendi Dominik
+Lush,skincare,https://www.lush.com/hu,Hubert Sára,cégvezető,,Hubert Sára
+The Body Shop,skincare,https://the-body-shop.hu,Banga Sándor Zsolt,ügyvezető,,Banga Sándor Zsolt
+Rituals,skincare,https://www.rituals.com/hu-hu/,,,,
+Nu Skin,skincare,https://www.nuskin.com/hu,Szelényi Borbála Katalin,cégvezető,,Szelényi Borbála Katalin
+La Mer,skincare,https://www.lamer.eu,Joanna Ewa Zboch,ügyvezető (Estée Lauder Kft.),,Joanna Ewa Zboch
+Notino,skincare,https://www.notino.hu,Jakub Sedy,ügyvezető,,Jakub Sedy
+Skinsmart,skincare,https://www.skinsmart.hu,Rácz Judit Apollónia,"alapító, ügyvezető",,Rácz Judit Apollónia
+Dr.Jart+,skincare,https://www.drjart.com,Joanna Ewa Zboch,ügyvezető (Estée Lauder Kft.),,Joanna Ewa Zboch
+Biotherm,skincare,https://www.biotherm.hu,Monika Natalia Masewicz,ügyvezető (L'Oréal Magyarország),,Monika Natalia Masewicz
+SkinCeuticals,skincare,https://www.skinceuticals.hu,Monika Natalia Masewicz,ügyvezető (L'Oréal Magyarország),,Monika Natalia Masewicz
+Mixa,skincare,https://www.mixa.hu,Monika Natalia Masewicz,ügyvezető,,Monika Natalia Masewicz
+Helena Rubinstein,skincare,https://www.helenarubinstein.com,Monika Natalia Masewicz,ügyvezető,,Monika Natalia Masewicz
+Aesop,skincare,https://www.aesop.com,Monika Natalia Masewicz,ügyvezető,,Monika Natalia Masewicz
+Medik8,skincare,https://www.medik8.com,Monika Natalia Masewicz,ügyvezető,,Monika Natalia Masewicz
+Origins,skincare,https://www.origins.com,Joanna Ewa Zboch,ügyvezető,,Joanna Ewa Zboch
+Darphin,skincare,https://www.darphin.com,Joanna Ewa Zboch,ügyvezető,,Joanna Ewa Zboch
+La Prairie,skincare,https://www.laprairie.com,Anna Singer,ügyvezető,,Anna Singer
+Lancaster,skincare,https://www.lancaster-beauty.com,Filip Arkadiusz Mielczarek,ügyvezető,,Filip Arkadiusz Mielczarek
+SEINZ (dm),skincare,https://www.dm.hu,Görgey András,ügyvezető,,Görgey András
+Sundance (dm),skincare,https://www.dm.hu,Görgey András,ügyvezető,,Görgey András
+Diadermine,skincare,https://www.diadermine.hu,Kocsis Zoltán László,ügyvezető,,Kocsis Zoltán László
+Institut Esthederm,skincare,https://www.esthederm.com,Márkus Ádám,cégvezető,,Márkus Ádám
+Carmex,skincare,https://www.carmex.hu,Egervári Márk,ügyvezető,,Egervári Márk
