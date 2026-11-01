@@ -10,13 +10,49 @@
    "megjegyzés": "forrás: https://www.nemzeticegtar.hu/tizproba-magyarorszag-kft-e10364097.html"
   },
   {
-   "márka": "Reserved (LPP: Sinsay, Mohito, House, Cropp)",
+   "márka": "Reserved",
    "weboldal": "https://www.reserved.com/hu/hu/",
    "magyar szál": "magyar leányvállalat (LPP Hungary Kft., 2025: 84,3 Mrd Ft)",
    "név": "Kalovits Gábor Tamás",
    "pozíció": "ügyvezető",
    "linkedin_url": "",
    "megjegyzés": "forrás: https://www.nemzeticegtar.hu/lpp-hungary-kft-e10323437.html"
+  },
+  {
+   "márka": "Sinsay",
+   "weboldal": "https://www.sinsay.com/hu/hu/",
+   "magyar szál": "LPP-márka, magyar leányvállalat (LPP Hungary Kft.)",
+   "név": "Kalovits Gábor Tamás",
+   "pozíció": "ügyvezető (LPP Hungary)",
+   "linkedin_url": "",
+   "megjegyzés": "ugyanaz a cég, mint a Reserved; forrás: https://www.nemzeticegtar.hu/lpp-hungary-kft-e10323437.html"
+  },
+  {
+   "márka": "Mohito",
+   "weboldal": "https://www.mohito.com/hu/hu/",
+   "magyar szál": "LPP-márka, magyar leányvállalat (LPP Hungary Kft.)",
+   "név": "Kalovits Gábor Tamás",
+   "pozíció": "ügyvezető (LPP Hungary)",
+   "linkedin_url": "",
+   "megjegyzés": "ugyanaz a cég, mint a Reserved; forrás: https://www.nemzeticegtar.hu/lpp-hungary-kft-e10323437.html"
+  },
+  {
+   "márka": "House",
+   "weboldal": "https://www.housebrand.com/hu/hu/",
+   "magyar szál": "LPP-márka, magyar leányvállalat (LPP Hungary Kft.)",
+   "név": "Kalovits Gábor Tamás",
+   "pozíció": "ügyvezető (LPP Hungary)",
+   "linkedin_url": "",
+   "megjegyzés": "ugyanaz a cég, mint a Reserved; forrás: https://www.nemzeticegtar.hu/lpp-hungary-kft-e10323437.html"
+  },
+  {
+   "márka": "Cropp",
+   "weboldal": "https://www.cropp.com/hu/hu/",
+   "magyar szál": "LPP-márka, magyar leányvállalat (LPP Hungary Kft.)",
+   "név": "Kalovits Gábor Tamás",
+   "pozíció": "ügyvezető (LPP Hungary)",
+   "linkedin_url": "",
+   "megjegyzés": "ugyanaz a cég, mint a Reserved; forrás: https://www.nemzeticegtar.hu/lpp-hungary-kft-e10323437.html"
   },
   {
    "márka": "Pepco",
@@ -118,6 +154,15 @@
    "megjegyzés": "forrás: https://www.nemzeticegtar.hu/tally-weijl-hungary-kft-e10468729.html"
   },
   {
+   "márka": "Daalarna",
+   "weboldal": "https://www.daalarna.com",
+   "magyar szál": "magyar menyasszonyiruha- és divatmárka (DAALARNA Kft.)",
+   "név": "Benes Anita",
+   "pozíció": "ügyvezető",
+   "linkedin_url": "",
+   "megjegyzés": "forrás: https://www.nemzeticegtar.hu/daalarna-kft-e10337487.html"
+  },
+  {
    "márka": "TOTHBORI",
    "weboldal": "https://tothbori.com",
    "magyar szál": "magyar tervezői márka (TOTHBORI Kft.)",
@@ -125,6 +170,33 @@
    "pozíció": "alapító, ügyvezető",
    "linkedin_url": "",
    "megjegyzés": "forrás: https://www.nemzeticegtar.hu/tothbori-kft-e18821219.html"
+  },
+  {
+   "márka": "Hervis",
+   "weboldal": "https://www.hervis.hu",
+   "magyar szál": "magyar cég (HERVIS Kft., 2025: 13,9 Mrd Ft)",
+   "név": "Dalnoki Balázs János",
+   "pozíció": "ügyvezető",
+   "linkedin_url": "",
+   "megjegyzés": "cégvezető: Csernus Zoltán; sportkereskedő saját márkákkal; forrás: https://www.nemzeticegtar.hu/hervis-kft-e10708930.html"
+  },
+  {
+   "márka": "Peek & Cloppenburg",
+   "weboldal": "https://www.peek-cloppenburg.hu",
+   "magyar szál": "magyar cég (Peek & Cloppenburg Kft., 2025: 13,8 Mrd Ft)",
+   "név": "Stoica Radu",
+   "pozíció": "ügyvezető",
+   "linkedin_url": "",
+   "megjegyzés": "7 ügyvezető, köztük Johannes Sautner; divatáruház saját márkákkal; forrás: https://www.nemzeticegtar.hu/peek-cloppenburg-kft-e10323036.html"
+  },
+  {
+   "márka": "Sportisimo",
+   "weboldal": "https://www.sportisimo.hu",
+   "magyar szál": "magyar cég (Sportisimo retail Kft., 2025: 4,4 Mrd Ft)",
+   "név": "Frantisek Gregor",
+   "pozíció": "ügyvezető",
+   "linkedin_url": "",
+   "megjegyzés": "másik ügyvezető: Thai Ngoc Nguyen; sportkereskedő saját márkákkal; forrás: https://www.nemzeticegtar.hu/sportisimo-retail-kft-e10237961.html"
   }
  ],
  "kiegészítő": [
@@ -136,6 +208,24 @@
    "pozíció": "ügyvezető",
    "linkedin_url": "",
    "megjegyzés": "forrás: https://www.nemzeticegtar.hu/grandvision-hungary-kft-e10294833.html"
+  },
+  {
+   "márka": "Ray-Ban (Luxottica)",
+   "weboldal": "https://www.ray-ban.com/hungary",
+   "magyar szál": "regionális központ Budapesten (Luxottica Central Europe Kft., 2025: 15,1 Mrd Ft)",
+   "név": "Rákóczy Botond György",
+   "pozíció": "ügyvezető",
+   "linkedin_url": "",
+   "megjegyzés": "további ügyvezetők: Leonardo Rosato, Ludovic Mathieu; az Oakley, Vogue Eyewear is ide tartozik; forrás: https://www.nemzeticegtar.hu/luxottica-central-europe-kft-e10381048.html"
+  },
+  {
+   "márka": "Michael Kors",
+   "weboldal": "https://www.michaelkors.eu/hu",
+   "magyar szál": "magyar leányvállalat (Michael Kors (Hungary) Kft., 2025: 3,6 Mrd Ft); táska, óra, kiegészítő",
+   "név": "Christopher Nicholas Amplo",
+   "pozíció": "ügyvezető",
+   "linkedin_url": "",
+   "megjegyzés": "másik ügyvezető: Francesco Attilio Pasero; forrás: https://www.nemzeticegtar.hu/michael-kors-hungary-kft-e10171504.html"
   },
   {
    "márka": "Guess",
@@ -156,6 +246,24 @@
    "megjegyzés": "forrás: https://www.nemzeticegtar.hu/bijou-brigitte-kft-e10324247.html"
   },
   {
+   "márka": "Claire's",
+   "weboldal": "https://www.claires.com",
+   "magyar szál": "magyar leányvállalat (Claire's Hungary Kft., 2023: 1,6 Mrd Ft)",
+   "név": "Richard Mark Russell Flint",
+   "pozíció": "ügyvezető",
+   "linkedin_url": "",
+   "megjegyzés": "a legfrissebb nyilvános árbevétel 2023-as; forrás: https://www.nemzeticegtar.hu/claires-hungary-kft-e10435282.html"
+  },
+  {
+   "márka": "Wittchen",
+   "weboldal": "https://www.wittchen.com/hu",
+   "magyar szál": "magyar leányvállalat (Wittchen Hungary Kft., 2025: 579 M Ft); táska, bőrönd, pénztárca",
+   "név": "Monika Magdalena Wittchen",
+   "pozíció": "ügyvezető",
+   "linkedin_url": "",
+   "megjegyzés": "forrás: https://www.nemzeticegtar.hu/wittchen-hungary-kft-e10270021.html"
+  },
+  {
    "márka": "Humanic",
    "weboldal": "https://www.humanic.net/hu",
    "magyar szál": "magyar leányvállalat (Leder & Schuh Kft., 2025: 6,0 Mrd Ft)",
@@ -165,13 +273,31 @@
    "megjegyzés": "forrás: https://www.nemzeticegtar.hu/leder-schuh-kft-e10320266.html"
   },
   {
+   "márka": "Kazar",
+   "weboldal": "https://kazar.com/hu",
+   "magyar szál": "magyar leányvállalat (Kazar Hungary Kft., 2025: 913 M Ft); táska, cipő",
+   "név": "Arkadiusz Robert Szczepaniak",
+   "pozíció": "ügyvezető",
+   "linkedin_url": "",
+   "megjegyzés": "másik ügyvezető: Artur Augustyn Kazienko; forrás: https://www.nemzeticegtar.hu/kazar-hungary-kft-e10241376.html"
+  },
+  {
+   "márka": "Lovisa",
+   "weboldal": "https://www.lovisa.com",
+   "magyar szál": "magyar leányvállalat (Lovisa Hungary Kft., 2024: 250 M Ft); divatékszer",
+   "név": "Christopher John Lauder",
+   "pozíció": "ügyvezető",
+   "linkedin_url": "",
+   "megjegyzés": "másik ügyvezető: John Robert Cheston; forrás: https://www.nemzeticegtar.hu/lovisa-hungary-kft-e18364470.html"
+  },
+  {
    "márka": "Batz",
    "weboldal": "https://batz.hu",
    "magyar szál": "magyar papucs- és lábbeligyártó (BATZ HUNGARY Kft., 2025: 3,9 Mrd Ft)",
    "név": "Kárpáti Zoltán",
    "pozíció": "ügyvezető",
    "linkedin_url": "",
-   "megjegyzés": "forrás: https://www.nemzeticegtar.hu/batz-hungary-kft-e10974164.html"
+   "megjegyzés": "tulajdonos is (BÉT50 2021: https://bse.hu/Issuers/bet50/bet50-fifty-prosperous-hungarian-companies-2021/bet50-companies---2021/batz-footwear-world-class-oriental-comfort-batz-kft.); forrás: https://www.nemzeticegtar.hu/batz-hungary-kft-e10974164.html"
   },
   {
    "márka": "LAONI",
@@ -190,6 +316,51 @@
    "pozíció": "alapító",
    "linkedin_url": "",
    "megjegyzés": "cégadat nem ellenőrizve; forrás: https://welovebudapest.com/toplista/shopping-taska-valltaska-kezitaska-magyar-tervezo-design-divat-oszi-depresszio-ellen/"
+  },
+  {
+   "márka": "Gabor Kiss Handmade",
+   "weboldal": "https://shopgaborkiss.hu",
+   "magyar szál": "magyar bőrtáska-márka",
+   "név": "Kiss Gábor",
+   "pozíció": "alapító (a márka az ő nevét viseli)",
+   "linkedin_url": "",
+   "megjegyzés": "cégadat nem ellenőrizve; forrás: https://welovebudapest.com/toplista/shopping-taska-hatitaska-hatizsak-magyar-tervezo-design-divat-korkep/"
+  },
+  {
+   "márka": "LAMOPPE",
+   "weboldal": "https://mozeslaura.com",
+   "magyar szál": "magyar hátizsák-márka",
+   "név": "Mózes Laura",
+   "pozíció": "alapító (a webshop az ő nevén fut)",
+   "linkedin_url": "",
+   "megjegyzés": "cégadat nem ellenőrizve; forrás: https://welovebudapest.com/toplista/shopping-taska-hatitaska-hatizsak-magyar-tervezo-design-divat-korkep/"
+  },
+  {
+   "márka": "Gaál Gyöngyvér",
+   "weboldal": "https://gaalgyongyver.hu",
+   "magyar szál": "magyar ékszertervező márka",
+   "név": "Gaál Gyöngyvér",
+   "pozíció": "alapító, tervező",
+   "linkedin_url": "",
+   "megjegyzés": "cégadat nem ellenőrizve; forrás: https://welovebudapest.com/toplista/2023/07/18/shopping-legjobb-magyar-ekszereszek-2023/"
+  },
+  {
+   "márka": "Zámori Eszter",
+   "weboldal": "https://www.eszterzamori.hu",
+   "magyar szál": "magyar ékszertervező márka",
+   "név": "Zámori Eszter",
+   "pozíció": "alapító, tervező",
+   "linkedin_url": "",
+   "megjegyzés": "cégadat nem ellenőrizve; forrás: https://welovebudapest.com/toplista/2023/07/18/shopping-legjobb-magyar-ekszereszek-2023/"
+  },
+  {
+   "márka": "Fekete Fruzsi",
+   "weboldal": "https://wonderlabconcept.com/collections/fruzsi-fekete",
+   "magyar szál": "magyar ékszertervező márka",
+   "név": "Fekete Fruzsi",
+   "pozíció": "alapító, tervező",
+   "linkedin_url": "",
+   "megjegyzés": "saját webshop nincs, a Wonderlab Concept árulja; cégadat nem ellenőrizve; forrás: https://welovebudapest.com/toplista/2023/07/18/shopping-legjobb-magyar-ekszereszek-2023/"
   }
  ],
  "táplálékkiegészítő": [
@@ -203,6 +374,15 @@
    "megjegyzés": "forrás: https://www.nemzeticegtar.hu/amway-hungaria-kft-e10151310.html"
   },
   {
+   "márka": "Mivolis (dm)",
+   "weboldal": "https://www.dm.hu",
+   "magyar szál": "a dm magyar cégének saját márkája (dm Kft., 2025: 245,6 Mrd Ft)",
+   "név": "Görgey András",
+   "pozíció": "ügyvezető",
+   "linkedin_url": "",
+   "megjegyzés": "másik ügyvezető: Csoknyainé Horváth Gertrud; ugyanaz a cég, mint a Balea és a trend !t up; forrás: https://www.nemzeticegtar.hu/dm-kft-e10854109.html"
+  },
+  {
    "márka": "BodySelect",
    "weboldal": "https://bodyselect.com/hu",
    "magyar szál": "magyar márka (TUTTI Kft., Győr, 2025: 8,3 Mrd Ft)",
@@ -210,6 +390,15 @@
    "pozíció": "ügyvezető",
    "linkedin_url": "",
    "megjegyzés": "cégvezető: Prohászka Ottó; forrás: https://www.nemzeticegtar.hu/tutti-kft-e10747178.html"
+  },
+  {
+   "márka": "Dr. Theiss",
+   "weboldal": "https://drtheiss.hu",
+   "magyar szál": "magyar leányvállalat (DR. THEISS NATURPRODUKT Kft., 2025: 5,5 Mrd Ft)",
+   "név": "Németh Endre",
+   "pozíció": "cégvezető",
+   "linkedin_url": "",
+   "megjegyzés": "ügyvezető: Giuseppe Nardi; forrás: https://www.nemzeticegtar.hu/dr-theiss-naturprodukt-kft-e10161784.html"
   },
   {
    "márka": "1x1 Vitamin",
@@ -237,6 +426,15 @@
    "pozíció": "ügyvezető",
    "linkedin_url": "",
    "megjegyzés": "forrás: https://www.nemzeticegtar.hu/pharma-nord-kft-e10358371.html"
+  },
+  {
+   "márka": "Vitabalans",
+   "weboldal": "https://www.vitabalans.hu",
+   "magyar szál": "magyar leányvállalat (VITABALANS Kft., 2024: 200 M Ft)",
+   "név": "Juho Henrik Taipale",
+   "pozíció": "ügyvezető",
+   "linkedin_url": "",
+   "megjegyzés": "forrás: https://www.nemzeticegtar.hu/vitabalans-kft-e10367049.html"
   }
  ],
  "smink": [
@@ -259,6 +457,24 @@
    "megjegyzés": "ugyanaz a cég, mint a L'Oréal Paris; forrás: https://www.nemzeticegtar.hu/loreal-magyarorszag-kft-e10203054.html"
   },
   {
+   "márka": "Lancôme",
+   "weboldal": "https://www.lancome.hu",
+   "magyar szál": "L'OREAL Magyarország Kft. márkája",
+   "név": "Monika Natalia Masewicz",
+   "pozíció": "ügyvezető (L'Oréal Magyarország)",
+   "linkedin_url": "",
+   "megjegyzés": "ugyanaz a cég, mint a L'Oréal Paris; forrás: https://www.nemzeticegtar.hu/loreal-magyarorszag-kft-e10203054.html"
+  },
+  {
+   "márka": "trend !t up (dm)",
+   "weboldal": "https://www.dm.hu",
+   "magyar szál": "a dm magyar cégének saját sminkmárkája (dm Kft.)",
+   "név": "Görgey András",
+   "pozíció": "ügyvezető",
+   "linkedin_url": "",
+   "megjegyzés": "ugyanaz a cég, mint a Balea; forrás: https://www.nemzeticegtar.hu/dm-kft-e10854109.html"
+  },
+  {
    "márka": "Estée Lauder",
    "weboldal": "https://www.esteelauder.hu",
    "magyar szál": "magyar leányvállalat (Estée Lauder Kft., 2024: 12,4 Mrd Ft)",
@@ -266,6 +482,24 @@
    "pozíció": "ügyvezető",
    "linkedin_url": "",
    "megjegyzés": "másik ügyvezető: Mariusz Grajda; forrás: https://www.nemzeticegtar.hu/estee-lauder-kft-e10145388.html"
+  },
+  {
+   "márka": "Yves Saint Laurent Beauty",
+   "weboldal": "https://www.yslbeauty.hu",
+   "magyar szál": "L'OREAL Magyarország Kft. márkája",
+   "név": "Monika Natalia Masewicz",
+   "pozíció": "ügyvezető (L'Oréal Magyarország)",
+   "linkedin_url": "",
+   "megjegyzés": "ugyanaz a cég, mint a L'Oréal Paris; forrás: https://www.nemzeticegtar.hu/loreal-magyarorszag-kft-e10203054.html"
+  },
+  {
+   "márka": "Douglas Collection",
+   "weboldal": "https://www.douglas.hu",
+   "magyar szál": "a Douglas saját márkája, magyar cég (\"Parfümerie Douglas\" Kft., 2025: 21,6 Mrd Ft)",
+   "név": "Palocsay Géza Zsolt",
+   "pozíció": "ügyvezető",
+   "linkedin_url": "",
+   "megjegyzés": "további ügyvezetők: Fudala Péter Zoltán, Agnieszka Mosurek-Zava; kereskedő is; forrás: https://www.nemzeticegtar.hu/parfumerie-douglas-kft-e10326651.html"
   },
   {
    "márka": "M·A·C Cosmetics",
@@ -293,9 +527,72 @@
    "pozíció": "ügyvezető",
    "linkedin_url": "",
    "megjegyzés": "másik ügyvezető: Pótor Mária Hajnalka; forrás: https://www.nemzeticegtar.hu/marilynails-kft-e10206957.html"
+  },
+  {
+   "márka": "Urban Decay",
+   "weboldal": "https://www.urbandecay.com",
+   "magyar szál": "L'OREAL Magyarország Kft. márkája",
+   "név": "Monika Natalia Masewicz",
+   "pozíció": "ügyvezető (L'Oréal Magyarország)",
+   "linkedin_url": "",
+   "megjegyzés": "ugyanaz a cég, mint a L'Oréal Paris; forrás: https://www.nemzeticegtar.hu/loreal-magyarorszag-kft-e10203054.html"
+  },
+  {
+   "márka": "Bobbi Brown",
+   "weboldal": "https://www.bobbibrown.eu",
+   "magyar szál": "Estée Lauder Kft. márkája",
+   "név": "Joanna Ewa Zboch",
+   "pozíció": "ügyvezető (Estée Lauder Kft.)",
+   "linkedin_url": "",
+   "megjegyzés": "ugyanaz a cég, mint az Estée Lauder; forrás: https://www.nemzeticegtar.hu/estee-lauder-kft-e10145388.html"
+  },
+  {
+   "márka": "Too Faced",
+   "weboldal": "https://www.toofaced.com",
+   "magyar szál": "Estée Lauder Kft. márkája",
+   "név": "Joanna Ewa Zboch",
+   "pozíció": "ügyvezető (Estée Lauder Kft.)",
+   "linkedin_url": "",
+   "megjegyzés": "ugyanaz a cég, mint az Estée Lauder; forrás: https://www.nemzeticegtar.hu/estee-lauder-kft-e10145388.html"
   }
  ],
  "skincare": [
+  {
+   "márka": "Balea (dm)",
+   "weboldal": "https://www.dm.hu",
+   "magyar szál": "a dm magyar cégének saját bőrápolási márkája (dm Kft., 2025: 245,6 Mrd Ft)",
+   "név": "Görgey András",
+   "pozíció": "ügyvezető",
+   "linkedin_url": "",
+   "megjegyzés": "másik ügyvezető: Csoknyainé Horváth Gertrud; forrás: https://www.nemzeticegtar.hu/dm-kft-e10854109.html"
+  },
+  {
+   "márka": "Clinique",
+   "weboldal": "https://www.clinique.hu",
+   "magyar szál": "Estée Lauder Kft. márkája",
+   "név": "Joanna Ewa Zboch",
+   "pozíció": "ügyvezető (Estée Lauder Kft.)",
+   "linkedin_url": "",
+   "megjegyzés": "ugyanaz a cég, mint az Estée Lauder; forrás: https://www.nemzeticegtar.hu/estee-lauder-kft-e10145388.html"
+  },
+  {
+   "márka": "Kiehl's",
+   "weboldal": "https://www.kiehls.hu",
+   "magyar szál": "L'OREAL Magyarország Kft. márkája",
+   "név": "Monika Natalia Masewicz",
+   "pozíció": "ügyvezető (L'Oréal Magyarország)",
+   "linkedin_url": "",
+   "megjegyzés": "ugyanaz a cég, mint a L'Oréal Paris; forrás: https://www.nemzeticegtar.hu/loreal-magyarorszag-kft-e10203054.html"
+  },
+  {
+   "márka": "alverde (dm)",
+   "weboldal": "https://www.dm.hu",
+   "magyar szál": "a dm magyar cégének saját natúrkozmetikum-márkája (dm Kft.)",
+   "név": "Görgey András",
+   "pozíció": "ügyvezető",
+   "linkedin_url": "",
+   "megjegyzés": "ugyanaz a cég, mint a Balea; forrás: https://www.nemzeticegtar.hu/dm-kft-e10854109.html"
+  },
   {
    "márka": "Yves Rocher",
    "weboldal": "https://www.yves-rocher.hu",
@@ -340,6 +637,33 @@
    "pozíció": "cégvezető",
    "linkedin_url": "",
    "megjegyzés": "forrás: https://www.nemzeticegtar.hu/nu-skin-eastern-europe-kft-e10365027.html"
+  },
+  {
+   "márka": "La Mer",
+   "weboldal": "https://www.lamer.eu",
+   "magyar szál": "Estée Lauder Kft. márkája",
+   "név": "Joanna Ewa Zboch",
+   "pozíció": "ügyvezető (Estée Lauder Kft.)",
+   "linkedin_url": "",
+   "megjegyzés": "ugyanaz a cég, mint az Estée Lauder; forrás: https://www.nemzeticegtar.hu/estee-lauder-kft-e10145388.html"
+  },
+  {
+   "márka": "Notino",
+   "weboldal": "https://www.notino.hu",
+   "magyar szál": "a Notino magyarországi fióktelepe (2024: 823,7 Mrd Ft – az egész cégcsoport adata); saját márkák is",
+   "név": "Jakub Sedy",
+   "pozíció": "ügyvezető",
+   "linkedin_url": "",
+   "megjegyzés": "másik ügyvezető: Bartosz Stefan Klis; elsősorban online kereskedő; forrás: https://www.nemzeticegtar.hu/notino-sro-magyarorszagi-fioktelepe-e10493294.html"
+  },
+  {
+   "márka": "Skinsmart",
+   "weboldal": "https://www.skinsmart.hu",
+   "magyar szál": "magyar bőrápolási webáruház, a Geek & Gorgeous (kizárt) alapítóitól (Skinsmart Kft., 2025: 592 M Ft)",
+   "név": "Rácz Judit Apollónia",
+   "pozíció": "alapító, ügyvezető",
+   "linkedin_url": "",
+   "megjegyzés": "másik ügyvezető: Rácz István; kereskedő, nem saját gyártó; forrás: https://www.nemzeticegtar.hu/skinsmart-kft-e10469426.html"
   }
  ]
 }
