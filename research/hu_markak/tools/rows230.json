@@ -1,6 +1,33 @@
 {
  "ruha": [
   {
+   "márka": "Columbia",
+   "magyar szál": "magyar üzemeltető, columbia.hu (impresszum: https://www.columbia.hu/altalanos-szerzodesi-feltetelek)",
+   "magyar cég": "Dockyard Islands Kft. (2025: 6,1 Mrd Ft)",
+   "név": "Maróty István",
+   "pozíció": "ügyvezető",
+   "forrás": "https://www.nemzeticegtar.hu/dockyard-islands-kft-e10298223.html",
+   "megjegyzés": "másik ügyvezető: Maróty Miklós Géza"
+  },
+  {
+   "márka": "Converse",
+   "magyar szál": "magyar forgalmazó, converse.hu (impresszum: https://www.converse.hu/jogi-nyilatkozat/)",
+   "magyar cég": "Maximus HCD Kft. (2025: 2,0 Mrd Ft)",
+   "név": "Stevan Pavlovic",
+   "pozíció": "ügyvezető",
+   "forrás": "https://www.nemzeticegtar.hu/maximus-hcd-kft-e10179462.html",
+   "megjegyzés": ""
+  },
+  {
+   "márka": "Vans",
+   "magyar szál": "magyar webáruház-üzemeltető, vans.hu (impresszum: https://vans.hu/policies/contact-information)",
+   "magyar cég": "Acéltigris Kft. (2025: 225 M Ft)",
+   "név": "Markó Áron",
+   "pozíció": "ügyvezető",
+   "forrás": "https://www.nemzeticegtar.hu/aceltigris-kft-e19204745.html",
+   "megjegyzés": "másik ügyvezető: Faisztl-Németh Zoltán; nem ellenőriztem, hogy hivatalos márkapartner-e"
+  },
+  {
    "márka": "Kiprun (Decathlon)",
    "magyar szál": "Decathlon saját futómárka, magyar leányvállalat",
    "magyar cég": "Tízpróba Magyarország Kft.",
@@ -57,8 +84,36 @@
    "megjegyzés": "további ügyvezetők: Leonardo Rosato, Ludovic Mathieu"
   }
  ],
- "táplálékkiegészítő": [],
+ "táplálékkiegészítő": [
+  {
+   "márka": "Pharmaton",
+   "magyar szál": "Opella-márka (a Sanofi fogyasztói üzletága), magyar leányvállalat",
+   "magyar cég": "Opella Healthcare Hungary Kft. (2025: 45,8 Mrd Ft)",
+   "név": "Göncz Gábor",
+   "pozíció": "ügyvezető",
+   "forrás": "https://www.nemzeticegtar.hu/opella-healthcare-hungary-kft-e10270004.html",
+   "megjegyzés": "másik ügyvezető: Adler Péter; a Magne B6 kizárt; azt nem ellenőriztem, hogy a Pharmaton itthon is ennél a cégnél van-e"
+  },
+  {
+   "márka": "Doppelherz",
+   "magyar szál": "magyar forgalmazó, doppelherz.hu (impresszum: https://www.doppelherz.hu/impresszum)",
+   "magyar cég": "Pharmacy Technology Kft. (2025: 159 M Ft)",
+   "név": "Domonkos István",
+   "pozíció": "ügyvezető",
+   "forrás": "https://www.nemzeticegtar.hu/pharmacy-technology-kft-e10641436.html",
+   "megjegyzés": "a cég főtevékenysége gép-nagykereskedelem, a forgalmazói szerepet csak az impresszum mutatja"
+  }
+ ],
  "smink": [
+  {
+   "márka": "Guerlain",
+   "magyar szál": "LVMH-márka, magyar leányvállalat",
+   "magyar cég": "GUERLAIN HUNGARY Kft. (2025: 354 M Ft)",
+   "név": "Gabrielle Anne Saint-Genis",
+   "pozíció": "ügyvezető",
+   "forrás": "https://www.nemzeticegtar.hu/guerlain-hungary-kft-e18293284.html",
+   "megjegyzés": "másik ügyvezető: Sandra Talbot"
+  },
   {
    "márka": "Valentino Beauty",
    "magyar szál": "L'Oréal-márka, magyar leányvállalat",
@@ -186,6 +241,33 @@
    "pozíció": "ügyvezető",
    "forrás": "https://www.nemzeticegtar.hu/dm-kft-e10854109.html",
    "megjegyzés": ""
+  },
+  {
+   "márka": "Diadermine",
+   "magyar szál": "Henkel-márka, magyar leányvállalat",
+   "magyar cég": "Henkel Magyarország Kft. (2025: 96,0 Mrd Ft)",
+   "név": "Kocsis Zoltán László",
+   "pozíció": "ügyvezető",
+   "forrás": "https://www.nemzeticegtar.hu/henkel-magyarorszag-kft-e10230488.html",
+   "megjegyzés": "a Schwarzkopf kizárt"
+  },
+  {
+   "márka": "Institut Esthederm",
+   "magyar szál": "NAOS-márka, magyar leányvállalat",
+   "magyar cég": "NAOS Hungary Kft. (2025: 2,8 Mrd Ft)",
+   "név": "Márkus Ádám",
+   "pozíció": "cégvezető",
+   "forrás": "https://www.nemzeticegtar.hu/naos-hungary-kft-e10319152.html",
+   "megjegyzés": "a Bioderma kizárt"
+  },
+  {
+   "márka": "Carmex",
+   "magyar szál": "magyar forgalmazó, carmex.hu (impresszum: https://www.carmex.hu/hu/impresszum)",
+   "magyar cég": "Biopont Kft. (2025: 3,2 Mrd Ft)",
+   "név": "Egervári Márk",
+   "pozíció": "ügyvezető",
+   "forrás": "https://www.nemzeticegtar.hu/biopont-kft-e10944517.html",
+   "megjegyzés": "cégvezetők: Bujdosó Balázs, Csecserits Beáta"
   }
  ]
 }
