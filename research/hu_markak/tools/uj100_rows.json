@@ -28,6 +28,15 @@
    "megjegyzés": "ugyanaz a cég, mint a Reserved; forrás: https://www.nemzeticegtar.hu/lpp-hungary-kft-e10323437.html"
   },
   {
+   "márka": "Primark",
+   "weboldal": "https://www.primark.com/hu-hu",
+   "magyar szál": "magyar leányvállalat (Primark Üzletek Kft., 2025: 11,0 Mrd Ft)",
+   "név": "Eamon Connolly",
+   "pozíció": "ügyvezető",
+   "linkedin_url": "",
+   "megjegyzés": "másik ügyvezető: Bernard John Mansfield; forrás: https://www.nemzeticegtar.hu/primark-uzletek-kft-e10282720.html"
+  },
+  {
    "márka": "Mohito",
    "weboldal": "https://www.mohito.com/hu/hu/",
    "magyar szál": "LPP-márka, magyar leányvállalat (LPP Hungary Kft.)",
@@ -188,6 +197,15 @@
    "pozíció": "ügyvezető",
    "linkedin_url": "",
    "megjegyzés": "másik ügyvezető: Thai Ngoc Nguyen; sportkereskedő saját márkákkal; forrás: https://www.nemzeticegtar.hu/sportisimo-retail-kft-e10237961.html"
+  },
+  {
+   "márka": "Orsay",
+   "weboldal": "https://www.orsay.com/hu-hu/",
+   "magyar szál": "magyar leányvállalat (Orsay Hungary Kft., 2025: 288 M Ft)",
+   "név": "Marek Drvota",
+   "pozíció": "ügyvezető",
+   "linkedin_url": "",
+   "megjegyzés": "másik ügyvezető: Miroslav Kolár; forrás: https://www.nemzeticegtar.hu/orsay-hungary-kft-e18885116.html"
   }
  ],
  "kiegészítő": [
@@ -363,6 +381,15 @@
    "pozíció": "ügyvezető",
    "linkedin_url": "",
    "megjegyzés": "forrás: https://www.nemzeticegtar.hu/amway-hungaria-kft-e10151310.html"
+  },
+  {
+   "márka": "Berocca / Elevit (Bayer)",
+   "weboldal": "https://www.bayer.hu",
+   "magyar szál": "magyar leányvállalat (Bayer Hungária Kft., 2025: 93,9 Mrd Ft)",
+   "név": "Sáli Tünde",
+   "pozíció": "cégvezető",
+   "linkedin_url": "",
+   "megjegyzés": "ügyvezető: Dr. Carolin Christina Clausen; cégvezetők még: Dr. Horváth Gergely Antal, Lidiia Fontanezi; a Supradyn kizárt, ezért csak a Berocca és az Elevit; forrás: https://www.nemzeticegtar.hu/bayer-hungaria-kft-e10145736.html"
   },
   {
    "márka": "Mivolis (dm)",
